@@ -35,12 +35,18 @@ const Navbar = () => {
             >
               About
             </Link>
-            {/* <Link
+             <Link
               to="/signup"
               className="text-black font-medium hover:text-primary"
             >
               Sign Up
-            </Link> */}
+            </Link> 
+            <Link
+              to="/login"
+              className="text-black font-medium hover:text-primary"
+            >
+              Login
+            </Link> 
           </div>
 
           {/* Right side - Icons */}
@@ -55,7 +61,7 @@ const Navbar = () => {
                 variant="ghost"
                 className="absolute right-0 top-0 h-full"
               >
-                <Search size={20} />
+               <Search size={20} />
               </Button>
             </div>
 
@@ -130,6 +136,13 @@ const Navbar = () => {
                 onClick={() => setIsMenuOpen(false)}
               >
                 Sign Up
+              </Link>
+              <Link
+                to="/login"
+                className="text-black font-medium hover:text-primary py-2 px-4 rounded hover:bg-gray-50"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Login
               </Link>
             </div>
           </div>
