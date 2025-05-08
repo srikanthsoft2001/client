@@ -11,7 +11,7 @@ const Home = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <div className="flex-grow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-12xl mx-auto px-4 sm:px-6 lg:px-8">
           <HeroBanner />
           <FlashSales />
           <CategoryBrowser />

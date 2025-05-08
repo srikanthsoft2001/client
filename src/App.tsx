@@ -6,7 +6,7 @@ import Home from './pages/Home';
 import Layout from './components/Layout';
 import SignUp from './pages/SignUp';
 import Login from './pages/Login';
-import About from './pages/About copy';
+import About from './pages/About';
 import WishlistPage from './pages/WishlistPage';
 import Contact from './pages/Contact';
 import Cart from './pages/Cart';

@@ -1,152 +1,211 @@
+import ServiceFeatures from '@/components/home/ServiceFeatures';
 import React from 'react';
 import {
-  ShoppingBag,
-  DollarSign,
-  Users,
-  Gift,
-  Instagram,
-  Facebook,
-  Linkedin,
-} from 'lucide-react';
+  FaLinkedin,
+  FaTwitter,
+  FaFacebook,
+  FaInstagram,
+  FaDribbble,
+  FaBehance,
+  FaChartLine,
+  FaShoppingBag,
+  FaUsers,
+  FaUserTie,
+} from 'react-icons/fa';
 
 const About = () => {
+  const team = [
+    {
+      name: 'Tom Cruise',
+      role: 'Founder & Chairman',
+      image: '/images/founder.jpg',
+      social: [
+        { platform: 'linkedin', icon: FaLinkedin, url: '#' },
+        { platform: 'twitter', icon: FaTwitter, url: '#' },
+        { platform: 'facebook', icon: FaFacebook, url: '#' },
+      ],
+    },
+    {
+      name: 'Emma Watson',
+      role: 'Managing Director',
+      image: '/images/md.jpg',
+      social: [
+        { platform: 'linkedin', icon: FaLinkedin, url: '#' },
+        { platform: 'instagram', icon: FaInstagram, url: '#' },
+        { platform: 'twitter', icon: FaTwitter, url: '#' },
+      ],
+    },
+    {
+      name: 'Will Smith',
+      role: 'Product Designer',
+      image: '/images/product_designer.webp',
+      social: [
+        { platform: 'dribbble', icon: FaDribbble, url: '#' },
+        { platform: 'behance', icon: FaBehance, url: '#' },
+        { platform: 'linkedin', icon: FaLinkedin, url: '#' },
+      ],
+    },
+  ];
+
+  const statsData = [
+    {
+      value: '10.5k',
+      label: 'Sellers active our site',
+      icon: (
+        <FaUserTie className="w-10 h-10 mx-auto mb-4 text-primary group-hover:text-white" />
+      ),
+    },
+    {
+      value: '33k',
+      label: 'Monthly Product Sale',
+      icon: (
+        <FaShoppingBag className="w-10 h-10 mx-auto mb-4 text-primary group-hover:text-white" />
+      ),
+    },
+    {
+      value: '45.5k',
+      label: 'Customer active in our site',
+      icon: (
+        <FaUsers className="w-10 h-10 mx-auto mb-4 text-primary group-hover:text-white" />
+      ),
+    },
+    {
+      value: '25k',
+      label: 'Annual gross sale in our site',
+      icon: (
+        <FaChartLine className="w-10 h-10 mx-auto mb-4 text-primary group-hover:text-white" />
+      ),
+    },
+  ];
+
   return (
-    <div className="min-h-screen flex flex-col">
-      <main className="flex-grow">
-        {/* About Hero Section */}
-        <div className="container mx-auto px-4 py-16 grid md:grid-cols-2 gap-12 items-center">
+    <div className="container mx-auto px-4 py-12 max-w-6xl bg-white text-dark">
+      {/* About Content */}
+      <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        <div className="grid md:grid-cols-2 gap-12 items-center">
           <div>
-            <h2 className="text-4xl font-bold mb-8">Our Story</h2>
-            <p className="mb-6">
-              Launched in 2015, Exclusive is East Africa's premier online
-              shopping marketplace with an active presence in Kenya. Supported
-              by wide range of tailored marketing, data and service solutions,
-              Exclusive has 10,000 stores and 8 million customers across the
-              region.
+            <h1 className="text-3xl md:text-4xl font-bold mb-6">Our Story</h1>
+            <p className="text-gray mb-6">
+              Bliveus is making remarkable progress as a next-generation
+              eCommerce platform, focusing on innovation and intelligent
+              experiences. We are actively building solutions powered by GenAI
+              and modern AI technologies to enhance user interaction, product
+              discovery, and personalization.
             </p>
-            <p>
-              Exclusive has continued to build a vibrant ecosystem that supports
-              over a very fast, secure online shopping environment in categories
-              ranging from electronics to fashion.
+            <p className="text-gray">
+              Bliveus has recently partnered with IoT device-selling companies
+              to create a seamless smart shopping ecosystem. From connected home
+              devices to wearable tech, our vision is to revolutionize the way
+              customers engage with technology through an intelligent, adaptive
+              online marketplace.
             </p>
           </div>
           <div>
             <img
-              src="/lovable-uploads/1119d5f5-02b9-41b0-8608-9aa203a4b120.png"
-              alt="Two women shopping"
-              className="w-full rounded-xl"
+              src="/images/11487.jpg"
+              alt="About Bliveus"
+              className="rounded-lg shadow-lg w-full"
             />
           </div>
         </div>
+      </div>
 
-        {/* Stats Section */}
-        <div className="container mx-auto px-4 py-16">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <StatsCard
-              icon={ShoppingBag}
-              value="10.5k"
-              description="Sellers active our site"
-            />
-            <StatsCard
-              icon={DollarSign}
-              value="33k"
-              description="Monthly Products Sale"
-              highlight={true}
-            />
-            <StatsCard
-              icon={Users}
-              value="45.5k"
-              description="Customer active in our site"
-            />
-            <StatsCard
-              icon={Gift}
-              value="25k"
-              description="Annual gross sale in our site"
-            />
-          </div>
-        </div>
-
-        {/* Team Section */}
-        <div className="container mx-auto px-4 py-16">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              {
-                name: 'Tom Cruise',
-                role: 'Founder & Chairman',
-                image: '/placeholder.svg',
-              },
-              {
-                name: 'Emma Watson',
-                role: 'Managing Director',
-                image: '/placeholder.svg',
-              },
-              {
-                name: 'Will Smith',
-                role: 'Product Designer',
-                image: '/placeholder.svg',
-              },
-            ].map((member, index) => (
-              <div key={index} className="team-card">
-                <img
-                  src={member.image}
-                  alt={member.name}
-                  className="w-full aspect-square object-cover mb-4 rounded-md"
-                />
-                <h3 className="font-medium text-lg">{member.name}</h3>
-                <p className="text-gray-500 text-sm">{member.role}</p>
-                <div className="flex justify-center space-x-3 mt-3">
-                  <Instagram className="h-5 w-5" />
-                  <Facebook className="h-5 w-5" />
-                  <Linkedin className="h-5 w-5" />
-                </div>
+      {/* Stats Section */}
+      <div className="bg-white py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            {statsData.map((stat, index) => (
+              <div
+                key={index}
+                className="text-center p-6 rounded-lg transition-all duration-500 ease-out hover:bg-red-500 hover:text-white group"
+              >
+                {stat.icon}
+                <p className="text-3xl font-bold text-primary transition-transform duration-300 group-hover:text-white group-hover:scale-110">
+                  {stat.value}
+                </p>
+                <p className="text-gray-700 font-semibold mt-2 transition-colors duration-300 group-hover:text-white">
+                  {stat.label}
+                </p>
               </div>
             ))}
           </div>
-          <div className="flex justify-center mt-8">
-            <div className="flex space-x-2">
-              {[...Array(5)].map((_, i) => (
-                <div
-                  key={i}
-                  className={`h-2 w-2 rounded-full ${
-                    i === 0 ? 'bg-black' : 'bg-gray-300'
-                  }`}
+        </div>
+      </div>
+
+      {/* Team section */}
+      <div className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold mb-4">Meet Our Team</h2>
+          <p className="text-gray max-w-2xl mx-auto">
+            The talented people behind the success of our company
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+          {team.map((member, index) => (
+            <div
+              key={index}
+              className="group relative overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300"
+            >
+              <div className="relative overflow-hidden h-80">
+                <img
+                  src={member.image}
+                  alt={member.name}
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  loading="lazy"
                 />
-              ))}
+                <div
+                  className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent 
+            opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6"
+                >
+                  <div className="text-white">
+                    <h3 className="text-xl font-semibold">{member.name}</h3>
+                    <p className="text-primary-light">{member.role}</p>
+                    <div className="flex mt-3 space-x-3">
+                      {member.social.map((social, i) => (
+                        <a
+                          key={i}
+                          href={social.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-white hover:text-primary transition-colors"
+                          aria-label={`${member.name}'s ${social.platform}`}
+                        >
+                          {React.createElement(social.icon, {
+                            className: 'w-5 h-5',
+                            'aria-hidden': 'true',
+                          })}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Newsletter Section */}
+      {/* <div className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div className="bg-black text-secondary rounded-lg p-8 md:p-12">
+          <div className="max-w-2xl mx-auto text-center">
+            <h2 className="text-2xl md:text-3xl font-bold mb-4">Subscribe</h2>
+            <p className="mb-6">Get 20% off your first order</p>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <input
+                type="email"
+                placeholder="Enter your email"
+                className="flex-grow px-4 py-3 rounded text-secondary focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+              <button className="bg-primary hover:bg-primary-dark text-white px-6 py-3 rounded font-medium transition-colors">
+                Subscribe
+              </button>
             </div>
           </div>
         </div>
-      </main>
-    </div>
-  );
-};
-
-// StatsCard component
-const StatsCard = ({
-  icon: Icon,
-  value,
-  description,
-  highlight = false,
-}: {
-  icon: React.ElementType;
-  value: string;
-  description: string;
-  highlight?: boolean;
-}) => {
-  return (
-    <div
-      className={`stats-card ${
-        highlight ? 'bg-red-500 text-white' : 'bg-white'
-      }`}
-    >
-      <div
-        className={`stats-icon ${highlight ? 'bg-white/20' : 'bg-gray-100'}`}
-      >
-        <Icon
-          className={`h-6 w-6 ${highlight ? 'text-white' : 'text-black'}`}
-        />
-      </div>
-      <h3 className="text-2xl font-bold">{value}</h3>
-      <p className="text-sm mt-2">{description}</p>
+      </div> */}
+      <ServiceFeatures />
     </div>
   );
 };

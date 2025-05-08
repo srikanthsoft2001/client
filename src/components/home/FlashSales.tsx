@@ -1,6 +1,6 @@
-import React from 'react';
 import { Button } from '@/components/ui/button';
-import ProductCard from '../productCard/ProductCard';
+import { Card, CardContent } from '../ui/card';
+import { Skeleton } from '../ui/skeleton';
 
 const FlashSales = () => {
   // Mock flash sale items data
@@ -118,12 +118,68 @@ const FlashSales = () => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-        {flashSaleItems.map((item) => (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-            {flashSaleItems.map((item) => (
-              <ProductCard key={item.id} item={item} />
-            ))}
-          </div>
+        {flashSaleItems.map((product) => (
+          <Card key={product.id} className="border border-gray-200">
+            <div className="relative">
+              <div className="absolute top-2 right-2 flex space-x-1">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 bg-white rounded-full p-1"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="lucide lucide-heart"
+                  >
+                    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+                  </svg>
+                </Button>
+              </div>
+              <div className="p-0">
+                {' '}
+                {/* Reduced padding here */}
+                <Skeleton className="w-full h-40 rounded-md" />
+              </div>
+            </div>
+            <CardContent className="p-4">
+              <h3 className="font-semibold mb-2">{product.name}</h3>
+              <div className="flex items-center">
+                <span className="font-semibold text-red-500">
+                  {product.salePrice}
+                </span>
+              </div>
+              <div className="flex items-center mt-2">
+                {[...Array(5)].map((_, index) => (
+                  <svg
+                    key={index}
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill={index < product.rating ? 'gold' : 'none'}
+                    stroke="gold"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="lucide lucide-star"
+                  >
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                  </svg>
+                ))}
+                <span className="ml-2 text-sm text-gray-500">
+                  ({product.rating})
+                </span>
+              </div>
+            </CardContent>
+          </Card>
         ))}
       </div>
 

@@ -1,6 +1,6 @@
 const AnnouncementBar = () => {
   return (
-    <div className="bg-black text-white py-3 px-4 flex justify-center items-center">
+    <div className="bg-primary text-secondary py-3 px-4 flex justify-center items-center">
       <div className="flex items-center justify-between w-full max-w-7xl">
         {/* Text that truncates on mobile */}
         <div className="flex-1 text-center">

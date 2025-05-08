@@ -1,5 +1,5 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 
 const HeroBanner = () => {
   return (
@@ -10,10 +10,7 @@ const HeroBanner = () => {
             <h2 className="text-3xl md:text-5xl font-bold">
               Up to 10% <br /> off Voucher
             </h2>
-            <Button
-              variant="outline"
-              className="border-white text-white hover:bg-white hover:text-black"
-            >
+            <Button variant="outline" className="border-white text-primary">
               Shop Now
             </Button>
           </div>

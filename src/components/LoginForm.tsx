@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import ReusableForm from './ReusableForm'; // Adjust the import path as needed
 
 interface LoginFormData {
   emailOrPhone: string;
@@ -10,22 +10,27 @@ interface LoginFormProps {
 }
 
 const LoginForm = ({ onSubmit }: LoginFormProps) => {
-  const [formData, setFormData] = useState<LoginFormData>({
-    emailOrPhone: '',
-    password: '',
-  });
+  const formFields = [
+    {
+      name: 'emailOrPhone',
+      type: 'text',
+      placeholder: 'Email or Phone Number',
+      required: true,
+      pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$|^[0-9]{10}$',
+      title: 'Please enter a valid email or 10-digit phone number',
+    },
+    {
+      name: 'password',
+      type: 'password',
+      placeholder: 'Password',
+      required: true,
+      minLength: 6,
+      title: 'Password must be at least 6 characters',
+    },
+  ];
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSubmit(formData);
+  const handleSubmit = (formData: Record<string, string>) => {
+    onSubmit(formData as unknown as LoginFormData);
   };
 
   return (
@@ -33,50 +38,23 @@ const LoginForm = ({ onSubmit }: LoginFormProps) => {
       <h1 className="heading-1 mb-4">Log in</h1>
       <p className="text-base mb-6">Enter your credentials below</p>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <input
-            type="text"
-            name="emailOrPhone"
-            value={formData.emailOrPhone}
-            onChange={handleChange}
-            placeholder="Email or Phone Number"
-            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-400"
-            required
-          />
-        </div>
+      <ReusableForm
+        fields={formFields}
+        onSubmit={handleSubmit}
+        submitLabel="Log In"
+      />
 
-        <div>
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            placeholder="Password"
-            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-400"
-            required
-          />
-        </div>
-
-        <button
-          type="submit"
-          className="w-full py-3 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
-        >
-          Log In
-        </button>
-
-        <button
-          type="button"
-          className="w-full py-3 flex items-center justify-center gap-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
-        >
-          <img
-            src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"
-            alt="Google Logo"
-            className="w-5 h-5"
-          />
-          Log in with Google
-        </button>
-      </form>
+      <button
+        type="button"
+        className="w-full mt-4 py-3 flex items-center justify-center gap-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+      >
+        <img
+          src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"
+          alt="Google Logo"
+          className="w-5 h-5"
+        />
+        Log in with Google
+      </button>
 
       <div className="mt-6 text-center">
         <p>
