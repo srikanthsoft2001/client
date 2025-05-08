@@ -1,11 +1,11 @@
-import HeroBanner from "@/components/home/HeroBanner";
-import FlashSales from "@/components/home/FlashSales";
-import CategoryBrowser from "@/components/home/CategoryBrowser";
-import BestSelling from "@/components/home/BestSelling";
-import MusicBanner from "@/components/home/MusicBanner";
-import ExploreProducts from "@/components/home/ExploreProducts";
-import NewArrivals from "@/components/home/NewArrivals";
-import ServiceFeatures from "@/components/home/ServiceFeatures";
+import HeroBanner from '@/components/home/HeroBanner';
+import FlashSales from '@/components/home/FlashSales';
+import CategoryBrowser from '@/components/home/CategoryBrowser';
+import BestSelling from '@/components/home/BestSelling';
+import MusicBanner from '@/components/home/MusicBanner';
+import ExploreProducts from '@/components/home/ExploreProducts';
+import NewArrivals from '@/components/home/NewArrivals';
+import ServiceFeatures from '@/components/home/ServiceFeatures';
 
 const Home = () => {
   return (

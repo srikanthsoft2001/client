@@ -1,11 +1,11 @@
-import LoginForm from "../components/LoginForm";
+import LoginForm from '../components/LoginForm';
 
 const Login = () => {
   const handleSubmit = (formData: {
     emailOrPhone: string;
     password: string;
   }) => {
-    console.log("Form submitted:", formData);
+    console.log('Form submitted:', formData);
   };
 
   return (

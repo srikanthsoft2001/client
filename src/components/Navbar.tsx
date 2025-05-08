@@ -64,17 +64,26 @@ const Navbar = () => {
                <Search size={20} />
               </Button>
             </div>
-
-            <Button variant="ghost" size="icon" className="sm:inline-flex">
+            <Link
+              to="/wishlist"
+              className="text-black font-medium hover:text-primary"
+            >
+              <Button variant="ghost" size="icon" className="sm:inline-flex">
               <Heart size={24} />
             </Button>
-
+            </Link> 
+             
+            <Link
+              to="/cart"
+              className="text-black font-medium hover:text-primary"
+            >
             <Button variant="ghost" size="icon" className="relative">
               <ShoppingCart size={24} />
               <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                 3
               </span>
             </Button>
+            </Link>
 
             <Button variant="ghost" size="icon">
               <User size={24} />
@@ -144,6 +153,19 @@ const Navbar = () => {
               >
                 Login
               </Link>
+              <Link
+              to="/wishlist"
+              className="text-black font-medium hover:text-primary"
+            >
+              <Button variant="ghost" size="icon" className="sm:inline-flex">
+              <Heart size={24} />
+            </Button>
+            </Link> 
+             
+            <Link
+              to="/cart"
+              className="text-black font-medium hover:text-primary"
+            ></Link>
             </div>
           </div>
         )}

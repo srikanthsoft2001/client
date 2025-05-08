@@ -5,11 +5,11 @@ const AnnouncementBar = () => {
         {/* Text that truncates on mobile */}
         <div className="flex-1 text-center">
           <span className="hidden md:inline">
-            Summer Sale For All Swim Suits And Free Express Delivery - OFF 50%!{" "}
+            Summer Sale For All Swim Suits And Free Express Delivery - OFF 50%!{' '}
             <span className="font-semibold">ShopNow</span>
           </span>
           <span className="md:hidden max-w-[200px] truncate inline-block">
-            Summer Sale - OFF 50%!{" "}
+            Summer Sale - OFF 50%!{' '}
             <span className="font-semibold">ShopNow</span>
           </span>
         </div>

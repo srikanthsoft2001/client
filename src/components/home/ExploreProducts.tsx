@@ -1,71 +1,71 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const ExploreProducts = () => {
   // Mock products
   const products = [
     {
       id: 1,
-      name: "Breed Dry Dog Food",
-      price: "$100",
-      image: "https://placehold.co/200x200/purple/white?text=DogFood",
+      name: 'Breed Dry Dog Food',
+      price: '$100',
+      image: 'https://placehold.co/200x200/purple/white?text=DogFood',
       rating: 3,
       reviews: 35,
     },
     {
       id: 2,
-      name: "CANON EOS DSLR Camera",
-      price: "$360",
-      image: "https://placehold.co/200x200/black/white?text=Camera",
+      name: 'CANON EOS DSLR Camera',
+      price: '$360',
+      image: 'https://placehold.co/200x200/black/white?text=Camera',
       rating: 4,
       reviews: 95,
     },
     {
       id: 3,
-      name: "ASUS FHD Gaming Laptop",
-      price: "$700",
-      image: "https://placehold.co/200x200/gray/white?text=Laptop",
+      name: 'ASUS FHD Gaming Laptop',
+      price: '$700',
+      image: 'https://placehold.co/200x200/gray/white?text=Laptop',
       rating: 5,
       reviews: 325,
     },
     {
       id: 4,
-      name: "Curology Product Set",
-      price: "$500",
-      image: "https://placehold.co/200x200/purple/white?text=Skincare",
+      name: 'Curology Product Set',
+      price: '$500',
+      image: 'https://placehold.co/200x200/purple/white?text=Skincare',
       rating: 4,
       reviews: 145,
     },
     {
       id: 5,
-      name: "Kids Electric Car",
-      price: "$960",
-      image: "https://placehold.co/200x200/red/white?text=ToyCar",
+      name: 'Kids Electric Car',
+      price: '$960',
+      image: 'https://placehold.co/200x200/red/white?text=ToyCar',
       rating: 5,
       reviews: 65,
     },
     {
       id: 6,
-      name: "Jr. Zoom Soccer Cleats",
-      price: "$1160",
-      image: "https://placehold.co/200x200/green/white?text=Cleats",
+      name: 'Jr. Zoom Soccer Cleats',
+      price: '$1160',
+      image: 'https://placehold.co/200x200/green/white?text=Cleats',
       rating: 5,
       reviews: 35,
     },
     {
       id: 7,
-      name: "GP11 Shooter USB Gamepad",
-      price: "$660",
-      image: "https://placehold.co/200x200/black/white?text=Gamepad",
+      name: 'GP11 Shooter USB Gamepad',
+      price: '$660',
+      image: 'https://placehold.co/200x200/black/white?text=Gamepad',
       rating: 4,
       reviews: 55,
     },
     {
       id: 8,
-      name: "Quilted Satin Jacket",
-      price: "$660",
-      image: "https://placehold.co/200x200/green/white?text=Jacket",
+      name: 'Quilted Satin Jacket',
+      price: '$660',
+      image: 'https://placehold.co/200x200/green/white?text=Jacket',
       rating: 4,
       reviews: 55,
     },
@@ -140,7 +140,9 @@ const ExploreProducts = () => {
                   </svg>
                 </Button>
               </div>
-              <div className="p-4">
+              <div className="p-0">
+                {' '}
+                {/* Reduced padding here */}
                 <Skeleton className="w-full h-40 rounded-md" />
               </div>
             </div>
@@ -159,7 +161,7 @@ const ExploreProducts = () => {
                     width="16"
                     height="16"
                     viewBox="0 0 24 24"
-                    fill={index < product.rating ? "gold" : "none"}
+                    fill={index < product.rating ? 'gold' : 'none'}
                     stroke="gold"
                     strokeWidth="2"
                     strokeLinecap="round"
@@ -177,7 +179,6 @@ const ExploreProducts = () => {
           </Card>
         ))}
       </div>
-
       <div className="flex justify-center mt-10">
         <Button className="bg-red-500 hover:bg-red-600 text-white">
           View All Products

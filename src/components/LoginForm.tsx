@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 
 interface LoginFormData {
   emailOrPhone: string;
@@ -11,8 +11,8 @@ interface LoginFormProps {
 
 const LoginForm = ({ onSubmit }: LoginFormProps) => {
   const [formData, setFormData] = useState<LoginFormData>({
-    emailOrPhone: "",
-    password: "",
+    emailOrPhone: '',
+    password: '',
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -32,7 +32,7 @@ const LoginForm = ({ onSubmit }: LoginFormProps) => {
     <div className="max-w-md mx-auto w-full">
       <h1 className="heading-1 mb-4">Log in</h1>
       <p className="text-base mb-6">Enter your credentials below</p>
-      
+
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <input
@@ -45,7 +45,7 @@ const LoginForm = ({ onSubmit }: LoginFormProps) => {
             required
           />
         </div>
-        
+
         <div>
           <input
             type="password"
@@ -57,14 +57,14 @@ const LoginForm = ({ onSubmit }: LoginFormProps) => {
             required
           />
         </div>
-        
+
         <button
           type="submit"
           className="w-full py-3 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
         >
           Log In
         </button>
-        
+
         <button
           type="button"
           className="w-full py-3 flex items-center justify-center gap-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
@@ -77,10 +77,10 @@ const LoginForm = ({ onSubmit }: LoginFormProps) => {
           Log in with Google
         </button>
       </form>
-      
+
       <div className="mt-6 text-center">
         <p>
-          Don't have an account?{" "}
+          Don't have an account?{' '}
           <a href="/signup" className="text-blue-600 hover:underline">
             Sign up
           </a>
