@@ -1,4 +1,3 @@
-import React from 'react';
 import { Button } from '@/components/ui/button';
 import ProductCard from '../productCard/ProductCard';
 
@@ -118,13 +117,13 @@ const FlashSales = () => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-        {flashSaleItems.map((item) => (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-            {flashSaleItems.map((item) => (
-              <ProductCard key={item.id} item={item} />
-            ))}
-          </div>
-        ))}
+        {/* {flashSaleItems.map(() => ( */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+          {flashSaleItems.map((item) => (
+            <ProductCard key={item.id} item={item} />
+          ))}
+        </div>
+        {/* // ))} */}
       </div>
 
       <div className="flex justify-center mt-10">
