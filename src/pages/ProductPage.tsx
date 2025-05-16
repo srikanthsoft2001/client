@@ -1,16 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { MinusIcon, PlusIcon, Heart, Truck, ArrowLeft } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
-import { cn } from '@/lib/utils';
 import { getProduct } from '@/api';
 import ProductImages from '@/components/product/ProductImages';
 import ProductInfo from '@/components/product/ProductInfo';
 import ProductVariants from '@/components/product/ProductVariants';
 import QuantitySelector from '@/components/product/QuantitySelector';
-import ShippingInfo from '@/components/product/ShippingInfo';
 import RelatedProducts from '@/components/product/RelatedProducts';
+import ShippingInfo from '@/components/product/ShippingInfo';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft, Heart } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 interface Color {
   name: string;
@@ -106,63 +104,62 @@ const ProductPage: React.FC = () => {
 
   return (
     <main className="container mx-auto px-4 py-8">
-  {/* Product Content */}
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
-    <ProductImages images={productData.images} name={productData.name} />
+      {/* Product Content */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+        <ProductImages images={productData.images} name={productData.name} />
 
-    <div className="space-y-6">
-      <ProductInfo
-        name={productData?.name}
-        price={productData?.price}
-        originalPrice={productData?.originalPrice}
-        rating={productData?.rating}
-        reviewCount={productData?.reviewCount}
-        inStock={productData?.inStock}
-        description={productData?.description}
-      />
+        <div className="space-y-6">
+          <ProductInfo
+            name={productData?.name}
+            price={productData?.price}
+            originalPrice={productData?.originalPrice}
+            rating={productData?.rating}
+            reviewCount={productData?.reviewCount}
+            inStock={productData?.inStock}
+            description={productData?.description}
+          />
 
-      {productData.colors?.length > 0 && (
-        <ProductVariants
-          type="color"
-          variants={productData.colors}
-          selectedVariant={selectedColor}
-          onSelect={setSelectedColor}
-        />
-      )}
+          {productData.colors?.length > 0 && (
+            <ProductVariants
+              type="color"
+              variants={productData.colors}
+              selectedVariant={selectedColor}
+              onSelect={setSelectedColor}
+            />
+          )}
 
-      {productData.sizes?.length > 0 && (
-        <ProductVariants
-          type="size"
-          variants={productData.sizes}
-          selectedVariant={selectedSize}
-          onSelect={setSelectedSize}
-        />
-      )}
+          {productData.sizes?.length > 0 && (
+            <ProductVariants
+              type="size"
+              variants={productData.sizes}
+              selectedVariant={selectedSize}
+              onSelect={setSelectedSize}
+            />
+          )}
 
-      <div className="pt-4 border-t flex items-center space-x-4">
-        <QuantitySelector
-          quantity={quantity}
-          onIncrement={() => setQuantity(quantity + 1)}
-          onDecrement={() => setQuantity(Math.max(1, quantity - 1))}
-        />
+          <div className="pt-4 border-t flex items-center space-x-4">
+            <QuantitySelector
+              quantity={quantity}
+              onIncrement={() => setQuantity(quantity + 1)}
+              onDecrement={() => setQuantity(Math.max(1, quantity - 1))}
+            />
 
-        <Button className="bg-sale-red hover:bg-red-700 text-white flex-1">
-          Buy Now
-        </Button>
+            <Button className="bg-sale-red hover:bg-red-700 text-white flex-1">
+              Buy Now
+            </Button>
 
-        <Button variant="outline" size="icon" className="shrink-0">
-          <Heart className="h-5 w-5" />
-        </Button>
+            <Button variant="outline" size="icon" className="shrink-0">
+              <Heart className="h-5 w-5" />
+            </Button>
+          </div>
+
+          <ShippingInfo />
+        </div>
       </div>
 
-      <ShippingInfo />
-    </div>
-  </div>
-
-  {/* Related Products */}
-  <RelatedProducts currentProductId={productData.id} />
-</main>
-
+      {/* Related Products */}
+      <RelatedProducts currentProductId={productData.id} />
+    </main>
   );
 };
 

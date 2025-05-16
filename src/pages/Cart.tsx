@@ -49,9 +49,9 @@ const Cart: React.FC = () => {
     console.log('Applying coupon:', couponCode);
   };
 
-  const proceedToCheckout = () => {
-    console.log('Proceeding to checkout with items:', products);
-  };
+  // const proceedToCheckout = () => {
+  //   console.log('Proceeding to checkout with items:', products);
+  // };
 
   return (
     <div className="container mx-auto px-4 py-12 max-w-6xl">
@@ -102,7 +102,8 @@ const Cart: React.FC = () => {
           </div>
         </div>
         <div className="lg:col-span-1">
-          <CartSummary subtotal={subtotal} onCheckout={proceedToCheckout} />
+          <CartSummary subtotal={subtotal} />
+          {/* <CartSummary subtotal={subtotal} onCheckout={proceedToCheckout} /> */}
         </div>
       </div>
     </div>
