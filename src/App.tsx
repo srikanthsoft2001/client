@@ -10,6 +10,8 @@ import About from './pages/About';
 import WishlistPage from './pages/WishlistPage';
 import Contact from './pages/Contact';
 import Cart from './pages/Cart';
+import CheckoutLayout from './pages/CheckoutLayout';
+import ProductPage from './pages/ProductPage';
 
 const queryClient = new QueryClient();
 
@@ -27,6 +29,8 @@ const App = () => (
             <Route path="/contact" element={<Contact />} />
             <Route path="/wishlist" element={<WishlistPage />} />
             <Route path="/cart" element={<Cart />} />
+            <Route path="/checkout" element={<CheckoutLayout />} />
+            <Route path="/products/:id" element={<ProductPage />} />
           </Route>
         </Routes>
       </BrowserRouter>

@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
-import WishlistItemCard from '@/components/Wishlist/WishlistItemCard';
+import ProductCard from '@/components/product/ProductCard'; 
 
-interface Product {
+interface WishlistItem {
   id: number;
   name: string;
   image: string;
@@ -15,11 +15,11 @@ interface Product {
 }
 
 const WishlistPage = () => {
-  const [wishlistItems, setWishlistItems] = useState<Product[]>([
+  const [wishlistItems, setWishlistItems] = useState<WishlistItem[]>([
     {
       id: 1,
       name: 'Gucci duffle bag',
-      image: '/images/gucci-bag.jpg', // replace with actual image paths
+      image: '/images/gucci-bag.jpg',
       price: 960,
       originalPrice: 1160,
       discount: 35,
@@ -84,8 +84,14 @@ const WishlistPage = () => {
     toast.success('All items moved to bag!');
   };
 
+  const handleDeleteItem = (id: number) => {
+    setWishlistItems(wishlistItems.filter(item => item.id !== id));
+    toast.success('Item removed from wishlist');
+  };
+
   return (
     <section className="py-10 px-4 sm:px-6 lg:px-8">
+      {/* Wishlist Header */}
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center">
           <div className="w-4 h-8 bg-red-500 mr-2"></div>
@@ -102,16 +108,24 @@ const WishlistPage = () => {
         </Button>
       </div>
 
+      {/* Wishlist Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-        {wishlistItems.map((item) => (
-          <WishlistItemCard
-            key={item.id}
-            item={item}
-            onAddToCart={handleAddToCart}
+        {wishlistItems.map((product) => (
+          <ProductCard
+              key={product.id}
+              item={{
+                ...product,
+                salePrice: String(product.salePrice),
+                mainImageUrl: product.mainImageUrl,
+                rating: product.rating,
+            }}
+            isWishlist={true}
+            onDelete={handleDeleteItem}
           />
         ))}
       </div>
 
+      {/* Just For You Header */}
       <div className="mt-16 mb-8">
         <div className="flex justify-between items-center">
           <div className="flex items-center">
@@ -127,12 +141,20 @@ const WishlistPage = () => {
         </div>
       </div>
 
+      {/* Just For You Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
         {wishlistItems.slice(4, 8).map((item) => (
-          <WishlistItemCard
+          <ProductCard
             key={item.id}
-            item={item}
-            onAddToCart={handleAddToCart}
+            item={{
+              id: item.id,
+              name: item.name,
+              salePrice: String(item.price),
+              originalPrice: item.originalPrice ,
+              discountPercentage: item.discount ,
+              mainImageUrl: item.image,
+              rating: item.rating,
+            }}
           />
         ))}
       </div>

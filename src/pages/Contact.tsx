@@ -1,6 +1,6 @@
 import ReusableForm from '../components/ReusableForm';
 
-const Contact = () => {
+const Contact: React.FC = () => {
   const fields = [
     {
       name: 'name',

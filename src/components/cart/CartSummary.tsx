@@ -1,18 +1,22 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 
 interface CartSummaryProps {
   subtotal: number;
   shipping?: number;
-  onCheckout: () => void;
 }
 
 const CartSummary: React.FC<CartSummaryProps> = ({
   subtotal,
   shipping = 0,
-  onCheckout,
 }) => {
   const total = subtotal + shipping;
+  const navigate = useNavigate();
+
+  const handleCheckout = () => {
+    navigate('/checkout');
+  };
 
   return (
     <div className="border rounded-md p-6">
@@ -34,8 +38,8 @@ const CartSummary: React.FC<CartSummaryProps> = ({
         </div>
       </div>
       <Button
-        onClick={onCheckout}
-        className="bg-red-500 hover:bg-red-600 text-white flex-1 px-4 py-2"
+        onClick={handleCheckout}
+        className="bg-red-500 hover:bg-red-600 text-white flex-1 px-4 py-2 mt-4"
       >
         Process to checkout
       </Button>
