@@ -7,7 +7,7 @@ import ExploreProducts from '@/components/home/ExploreProducts';
 import NewArrivals from '@/components/home/NewArrivals';
 import ServiceFeatures from '@/components/home/ServiceFeatures';
 
-const Home = () => {
+const Home: React.FC = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <div className="flex-grow">

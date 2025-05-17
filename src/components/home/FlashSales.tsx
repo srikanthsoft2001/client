@@ -1,54 +1,67 @@
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
+<<<<<<< HEAD
 import ProductCard from '../productCard/ProductCard';
+=======
+import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import { fetchFlashSales, ProductItem } from '@/api/api';
+import ProductCard from '../product/ProductCard';
+>>>>>>> 3e24103a9a41771fcf11af04fa87883d8c7bd610
 
-const FlashSales = () => {
-  // Mock flash sale items data
-  const flashSaleItems = [
-    {
-      id: 1,
-      name: 'HAVIT HV-G92 Gamepad',
-      originalPrice: '$160',
-      salePrice: '$120',
-      discountPercentage: '-25%',
-      image: 'https://placehold.co/200x200/black/white?text=Gamepad',
-      rating: 5,
-    },
-    {
-      id: 2,
-      name: 'RGB Keyboard',
-      originalPrice: '$160',
-      salePrice: '$100',
-      discountPercentage: '-35%',
-      image: 'https://placehold.co/200x200/black/white?text=Keyboard',
-      rating: 4,
-    },
-    {
-      id: 3,
-      name: 'LCD Monitor',
-      originalPrice: '$400',
-      salePrice: '$300',
-      discountPercentage: '-25%',
-      image: 'https://placehold.co/200x200/black/white?text=Monitor',
-      rating: 5,
-    },
-    {
-      id: 4,
-      name: 'Chair',
-      originalPrice: '$150',
-      salePrice: '$100',
-      discountPercentage: '-30%',
-      image: 'https://placehold.co/200x200/black/white?text=Chair',
-      rating: 4,
-    },
-  ];
+const FlashSales: React.FC = () => {
+  const [state, setState] = useState({
+    allItems: [] as ProductItem[],
+    filteredItems: [] as ProductItem[],
+    loading: true,
+    error: null as string | null,
+  });
 
-  // Time remaining for flash sale (hours, minutes, seconds)
+  const saleType = 'Flash';
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setState((prev) => ({ ...prev, loading: true, error: null }));
+
+        const data = await fetchFlashSales();
+        const filtered = data.filter(
+          (item) => item.saleType?.toLowerCase() === saleType.toLowerCase()
+        );
+
+        setState({
+          allItems: data,
+          filteredItems: filtered,
+          loading: false,
+          error: null,
+        });
+      } catch (err) {
+        setState((prev) => ({
+          ...prev,
+          loading: false,
+          error: 'Failed to fetch flash sales data',
+        }));
+        console.error(err);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const { loading, error, filteredItems } = state;
   const timeRemaining = {
     days: '03',
     hours: '23',
     minutes: '19',
     seconds: '56',
   };
+
+  if (loading) {
+    return <div>Loading flash sales...</div>;
+  }
+
+  if (error) {
+    return <div className="text-red-500">{error}</div>;
+  }
 
   return (
     <section className="py-10">
@@ -59,63 +72,30 @@ const FlashSales = () => {
         </div>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
-            <div className="text-center">
-              <div className="text-sm">Days</div>
-              <div className="font-bold">{timeRemaining.days}</div>
-            </div>
-            <span>:</span>
-            <div className="text-center">
-              <div className="text-sm">Hours</div>
-              <div className="font-bold">{timeRemaining.hours}</div>
-            </div>
-            <span>:</span>
-            <div className="text-center">
-              <div className="text-sm">Minutes</div>
-              <div className="font-bold">{timeRemaining.minutes}</div>
-            </div>
-            <span>:</span>
-            <div className="text-center">
-              <div className="text-sm">Seconds</div>
-              <div className="font-bold">{timeRemaining.seconds}</div>
-            </div>
+            {['Days', 'Hours', 'Minutes', 'Seconds'].map((label, i) => (
+              <div key={label} className="flex items-center">
+                <div className="text-center">
+                  <div className="text-sm">{label}</div>
+                  <div className="font-bold">
+                    {Object.values(timeRemaining)[i]}
+                  </div>
+                </div>
+                {i < 3 && <span className="mx-1">:</span>}
+              </div>
+            ))}
           </div>
           <div className="flex gap-2">
             <Button variant="outline" size="icon" className="rounded-full">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="lucide lucide-chevron-left"
-              >
-                <path d="m15 18-6-6 6-6" />
-              </svg>
+              <FiChevronLeft size={16} />
             </Button>
             <Button variant="outline" size="icon" className="rounded-full">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="lucide lucide-chevron-right"
-              >
-                <path d="m9 18 6-6-6-6" />
-              </svg>
+              <FiChevronRight size={16} />
             </Button>
           </div>
         </div>
       </div>
 
+<<<<<<< HEAD
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
         {/* {flashSaleItems.map(() => ( */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
@@ -125,6 +105,27 @@ const FlashSales = () => {
         </div>
         {/* // ))} */}
       </div>
+=======
+      {filteredItems.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+          {filteredItems.map((product) => (
+            <ProductCard
+              key={product.id}
+              item={{
+                ...product,
+                salePrice: String(product.salePrice),
+                mainImageUrl: product.mainImageUrl,
+                rating: product.rating,
+              }}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-10">
+          No flash sale items found. Please check back later.
+        </div>
+      )}
+>>>>>>> 3e24103a9a41771fcf11af04fa87883d8c7bd610
 
       <div className="flex justify-center mt-10">
         <Button className="bg-red-500 hover:bg-red-600 text-white">
