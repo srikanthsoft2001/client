@@ -20,10 +20,10 @@ interface Size {
   value: string;
 }
 
-export interface ProductVariant {
+export interface productData {
   id: number;
   name: string;
-  price: number;
+  saleprice: number;
   originalPrice?: number;
   discount?: number;
   rating: number;
@@ -33,12 +33,13 @@ export interface ProductVariant {
   sizes: Size[];
   description: string;
   images: string[];
+  mainImageUrl?: string;
 }
 
 const ProductPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [productData, setProductData] = useState<ProductVariant | null>(null);
+  const [productData, setProductData] = useState<productData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [selectedColor, setSelectedColor] = useState<string>('');
   const [selectedSize, setSelectedSize] = useState<string>('');
@@ -54,26 +55,23 @@ const ProductPage: React.FC = () => {
     const fetchProduct = async () => {
       setIsLoading(true);
       try {
-        if (!id) {
-          throw new Error('Product ID is missing');
-        }
+        if (!id) throw new Error('Product ID is missing');
 
         const product = await getProduct(id);
-        if (!product) {
-          throw new Error('Product not found');
-        }
+        if (!product) throw new Error('Product not found');
 
-        // Create a stable object with proper defaults
-        const validatedProduct: ProductVariant = {
+        const validatedProduct: productData = {
           ...product,
-          price: Number(product.price) || 0,
+          saleprice: product.salePrice ? Number(product.salePrice) : 0,
           originalPrice: product.originalPrice
             ? Number(product.originalPrice)
             : undefined,
           rating: Number(product.rating) || 0,
           reviewCount: Number(product.reviewCount) || 0,
-          // Create new array reference for images
-          images: product.images?.length ? [...product.images] : [],
+          images: [
+            ...(product.mainImageUrl ? [product.mainImageUrl] : []),
+            ...(product.images?.length ? product.images : []),
+          ],
           colors: product.colors || [],
           sizes: product.sizes || [],
           description: product.description || '',
@@ -81,6 +79,7 @@ const ProductPage: React.FC = () => {
         };
 
         setProductData(validatedProduct);
+
         if (validatedProduct.colors?.length) {
           setSelectedColor(validatedProduct.colors[0].value);
         }
@@ -138,7 +137,6 @@ const ProductPage: React.FC = () => {
   return (
     <main className="container mx-auto px-4 py-8">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
-        {/* Product Images - now with stable props */}
         <ProductImages
           images={stableProductData.images}
           name={stableProductData.name}
@@ -148,7 +146,7 @@ const ProductPage: React.FC = () => {
         <div className="space-y-6">
           <ProductInfo
             name={stableProductData.name}
-            price={stableProductData.price}
+            salePrice={stableProductData.saleprice}
             originalPrice={stableProductData.originalPrice}
             rating={stableProductData.rating}
             reviewCount={stableProductData.reviewCount}
@@ -182,7 +180,7 @@ const ProductPage: React.FC = () => {
             />
 
             <Button
-              className="bg-sale-red hover:bg-red-700 text-primary flex-1"
+              className="bg-red-500 hover:bg-red-600 text-white flex-1 px-4 py-2"
               onClick={handleBuyNow}
             >
               Buy Now
