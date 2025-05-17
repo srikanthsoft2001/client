@@ -1,4 +1,4 @@
-import { fetchExploreProducts, ProductItem } from '@/api';
+import { fetchExploreProducts, ProductItem } from '@/api/api';
 import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
 import ProductCard from '../product/ProductCard';

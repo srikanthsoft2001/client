@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import ProductCard from '../product/ProductCard';
-import { fetchBestSelling, ProductItem } from '@/api';
+import { fetchBestSelling, ProductItem } from '@/api/api';
 
 const BestSelling = () => {
   const [state, setState] = useState({

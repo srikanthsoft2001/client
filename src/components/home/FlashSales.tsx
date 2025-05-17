@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
-import { fetchFlashSales, ProductItem } from '@/api';
+import { fetchFlashSales, ProductItem } from '@/api/api';
 import ProductCard from '../product/ProductCard';
 
 const FlashSales: React.FC = () => {
