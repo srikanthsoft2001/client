@@ -1,28 +1,21 @@
-// ProductImages.tsx
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { ImageOff } from 'lucide-react';
 
 interface ProductImagesProps {
-  images?: string[];
+  images: string[];
   name: string;
 }
 
 const ProductImages: React.FC<ProductImagesProps> = ({ images = [], name }) => {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
-  const [erroredImages, setErroredImages] = useState<Record<number, boolean>>(
-    {}
-  );
+  const [erroredImages, setErroredImages] = useState<Record<number, boolean>>({});
 
   const handleImageError = (index: number) => {
     setErroredImages((prev) => ({ ...prev, [index]: true }));
   };
 
-  if (
-    !images ||
-    images.length === 0 ||
-    images.every((_, i) => erroredImages[i])
-  ) {
+  if (!images.length || images.every((_, i) => erroredImages[i])) {
     return (
       <div className="space-y-4">
         <div className="bg-gray-50 rounded-lg overflow-hidden h-96 flex items-center justify-center">
@@ -35,10 +28,9 @@ const ProductImages: React.FC<ProductImagesProps> = ({ images = [], name }) => {
     );
   }
 
-  // Filter out images that have errored
+  // Filter out errored images
   const validImages = images.filter((_, i) => !erroredImages[i]);
-  const activeImage =
-    validImages[Math.min(activeImageIndex, validImages.length - 1)];
+  const activeImage = validImages[Math.min(activeImageIndex, validImages.length - 1)];
 
   return (
     <div className="space-y-4">
@@ -49,6 +41,9 @@ const ProductImages: React.FC<ProductImagesProps> = ({ images = [], name }) => {
             alt={name}
             className="max-h-full max-w-full object-contain"
             onError={() => handleImageError(activeImageIndex)}
+            onLoad={() => {
+              setErroredImages((prev) => ({ ...prev, [activeImageIndex]: false }));
+            }}
           />
         ) : (
           <div className="flex flex-col items-center text-gray-400">
@@ -74,6 +69,9 @@ const ProductImages: React.FC<ProductImagesProps> = ({ images = [], name }) => {
                 alt={`Thumbnail ${index + 1}`}
                 className="max-h-full max-w-full object-contain"
                 onError={() => handleImageError(index)}
+                onLoad={() => {
+                  setErroredImages((prev) => ({ ...prev, [index]: false }));
+                }}
               />
             </div>
           ))}
