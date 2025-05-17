@@ -1,13 +1,29 @@
+import { loginUser } from '@/api/auth';
 import LoginForm from '../components/LoginForm';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
-  const handleSubmit = (formData: {
+  const navigate = useNavigate();
+
+  const handleSubmit = async (formData: {
     emailOrPhone: string;
     password: string;
   }) => {
-    console.log('Form submitted:', formData);
-  };
+    try {
+      const credentials = {
+        email: formData.emailOrPhone, // assuming your backend expects "email"
+        password: formData.password,
+      };
 
+      const response = await loginUser(credentials);
+      console.log('Login successful:', response);
+
+navigate('/'); // or wherever you want to go after login
+} catch (error) {
+  console.error('Login failed:', error);
+  // Optionally display an error to the user
+}
+};
   return (
     <div className="flex flex-col min-h-screen">
       <main className="flex-grow py-10">

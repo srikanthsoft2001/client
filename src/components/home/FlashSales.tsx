@@ -1,12 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
-<<<<<<< HEAD
-import ProductCard from '../productCard/ProductCard';
-=======
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import { fetchFlashSales, ProductItem } from '@/api/api';
 import ProductCard from '../product/ProductCard';
->>>>>>> 3e24103a9a41771fcf11af04fa87883d8c7bd610
 
 const FlashSales: React.FC = () => {
   const [state, setState] = useState({
@@ -95,17 +91,6 @@ const FlashSales: React.FC = () => {
         </div>
       </div>
 
-<<<<<<< HEAD
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-        {/* {flashSaleItems.map(() => ( */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-          {flashSaleItems.map((item) => (
-            <ProductCard key={item.id} item={item} />
-          ))}
-        </div>
-        {/* // ))} */}
-      </div>
-=======
       {filteredItems.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
           {filteredItems.map((product) => (
@@ -125,7 +110,6 @@ const FlashSales: React.FC = () => {
           No flash sale items found. Please check back later.
         </div>
       )}
->>>>>>> 3e24103a9a41771fcf11af04fa87883d8c7bd610
 
       <div className="flex justify-center mt-10">
         <Button className="bg-red-500 hover:bg-red-600 text-white">
