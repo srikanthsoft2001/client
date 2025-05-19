@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
-import ProductCard from '@/components/product/ProductCard'; 
+import WishlistItemCard from '@/components/Wishlist/WishlistItemCard';
 
 interface WishlistItem {
   id: number;
@@ -75,7 +75,7 @@ const WishlistPage = () => {
     },
   ]);
 
-  const handleAddToCart = (id: number) => {
+  const handleAddToCart = (_id: number) => {
     toast.success('Added to cart successfully!');
   };
 
@@ -85,7 +85,7 @@ const WishlistPage = () => {
   };
 
   const handleDeleteItem = (id: number) => {
-    setWishlistItems(wishlistItems.filter(item => item.id !== id));
+    setWishlistItems(wishlistItems.filter((item) => item.id !== id));
     toast.success('Item removed from wishlist');
   };
 
@@ -111,15 +111,10 @@ const WishlistPage = () => {
       {/* Wishlist Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
         {wishlistItems.map((product) => (
-          <ProductCard
-              key={product.id}
-              item={{
-                ...product,
-                salePrice: String(product.salePrice),
-                mainImageUrl: product.mainImageUrl,
-                rating: product.rating,
-            }}
-            isWishlist={true}
+          <WishlistItemCard
+            key={product.id}
+            item={product}
+            onAddToCart={handleAddToCart}
             onDelete={handleDeleteItem}
           />
         ))}
@@ -144,17 +139,10 @@ const WishlistPage = () => {
       {/* Just For You Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
         {wishlistItems.slice(4, 8).map((item) => (
-          <ProductCard
+          <WishlistItemCard
             key={item.id}
-            item={{
-              id: item.id,
-              name: item.name,
-              salePrice: String(item.price),
-              originalPrice: item.originalPrice ,
-              discountPercentage: item.discount ,
-              mainImageUrl: item.image,
-              rating: item.rating,
-            }}
+            item={item}
+            onAddToCart={handleAddToCart}
           />
         ))}
       </div>

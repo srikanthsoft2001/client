@@ -10,7 +10,7 @@ interface OrderItem {
 }
 
 const OrderSummary = () => {
-  const [paymentMethod, setPaymentMethod] = useState<string>('bank');
+  const [paymentMethod] = useState<string>('bank');
   const [couponCode, setCouponCode] = useState<string>('');
 
   const orderItems: OrderItem[] = [

@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { ShoppingCart, Trash } from 'lucide-react';
-import { toast } from 'sonner';
+
 
 interface Product {
   id: number;

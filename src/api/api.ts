@@ -56,7 +56,7 @@ export const getProduct = async (id: string) => {
   }
 };
 
-export const getRelatedProducts = async (productId: string) => {
-  const response = await axios.get(`http://localhost:3000/products`);
-  return response.data;
-};
+// export const getRelatedProducts = async (productId: string) => {
+//   const response = await axios.get(`http://localhost:3000/products`);
+//   return response.data;
+// };
