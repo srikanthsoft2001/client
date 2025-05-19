@@ -40,23 +40,23 @@ export const fetchBestSelling = async (): Promise<ProductItem[]> => {
   return fetchProducts();
 };
 
-export const  fetchExploreProducts = async (): Promise<ProductItem[]> => {
+export const fetchExploreProducts = async (): Promise<ProductItem[]> => {
   return fetchProducts();
 };
 
-
 export const getProduct = async (id: string) => {
   try {
-    if (!id) throw new Error("Product ID is required");
+    if (!id) throw new Error('Product ID is required');
     const response = await axios.get(`http://localhost:3000/products/${id}`);
     return response.data;
   } catch (error) {
-    console.error("Error fetching product:", error);
+    console.error('Error fetching product:', error);
     throw error;
   }
 };
 
-export const getRelatedProducts = async (productId: string) => {
+// export const getRelatedProducts = async (productId: string) => {
+export const getRelatedProducts = async () => {
   const response = await axios.get(`http://localhost:3000/products`);
   return response.data;
 };

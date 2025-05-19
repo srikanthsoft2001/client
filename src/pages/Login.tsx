@@ -18,12 +18,12 @@ const Login = () => {
       const response = await loginUser(credentials);
       console.log('Login successful:', response);
 
-navigate('/'); // or wherever you want to go after login
-} catch (error) {
-  console.error('Login failed:', error);
-  // Optionally display an error to the user
-}
-};
+      navigate('/'); // or wherever you want to go after login
+    } catch (error) {
+      console.error('Login failed:', error);
+      // Optionally display an error to the user
+    }
+  };
   return (
     <div className="flex flex-col min-h-screen">
       <main className="flex-grow py-10">

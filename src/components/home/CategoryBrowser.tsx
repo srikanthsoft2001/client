@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Smartphone,
   Monitor,
@@ -8,20 +8,20 @@ import {
   Gamepad2,
   ChevronLeft,
   ChevronRight,
-} from "lucide-react";
-import { useState, useRef } from "react";
+} from 'lucide-react';
+import { useState, useRef } from 'react';
 
 const CategoryBrowser = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const sliderRef = useRef<HTMLDivElement>(null);
 
   const categories = [
-    { id: 1, name: "Phones", icon: <Smartphone size={24} /> },
-    { id: 2, name: "Computers", icon: <Monitor size={24} /> },
-    { id: 3, name: "SmartWatch", icon: <Watch size={24} /> },
-    { id: 4, name: "Camera", icon: <Camera size={24} /> },
-    { id: 5, name: "Headphones", icon: <Headphones size={24} /> },
-    { id: 6, name: "Gaming", icon: <Gamepad2 size={24} /> },
+    { id: 1, name: 'Phones', icon: <Smartphone size={24} /> },
+    { id: 2, name: 'Computers', icon: <Monitor size={24} /> },
+    { id: 3, name: 'SmartWatch', icon: <Watch size={24} /> },
+    { id: 4, name: 'Camera', icon: <Camera size={24} /> },
+    { id: 5, name: 'Headphones', icon: <Headphones size={24} /> },
+    { id: 6, name: 'Gaming', icon: <Gamepad2 size={24} /> },
   ];
 
   const nextSlide = () => {

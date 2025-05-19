@@ -1,5 +1,5 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 const NewArrivals = () => {
   return (
@@ -24,7 +24,7 @@ const NewArrivals = () => {
               variant="link"
               className="text-white p-0 flex items-center mt-4"
             >
-              Shop Now{" "}
+              Shop Now{' '}
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
@@ -56,7 +56,7 @@ const NewArrivals = () => {
               variant="link"
               className="text-white p-0 flex items-center mt-4"
             >
-              Shop Now{" "}
+              Shop Now{' '}
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
@@ -88,7 +88,7 @@ const NewArrivals = () => {
               variant="link"
               className="text-white p-0 flex items-center mt-4"
             >
-              Shop Now{" "}
+              Shop Now{' '}
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
@@ -120,7 +120,7 @@ const NewArrivals = () => {
               variant="link"
               className="text-white p-0 flex items-center mt-4"
             >
-              Shop Now{" "}
+              Shop Now{' '}
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"

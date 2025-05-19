@@ -1,11 +1,11 @@
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from '@/components/ui/card';
 
 const ServiceFeatures = () => {
   const features = [
     {
       id: 1,
-      title: "FREE AND FAST DELIVERY",
-      description: "Free delivery for all orders over $140",
+      title: 'FREE AND FAST DELIVERY',
+      description: 'Free delivery for all orders over $140',
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -28,8 +28,8 @@ const ServiceFeatures = () => {
     },
     {
       id: 2,
-      title: "24/7 CUSTOMER SERVICE",
-      description: "Friendly 24/7 customer support",
+      title: '24/7 CUSTOMER SERVICE',
+      description: 'Friendly 24/7 customer support',
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -50,8 +50,8 @@ const ServiceFeatures = () => {
     },
     {
       id: 3,
-      title: "MONEY BACK GUARANTEE",
-      description: "We return money within 30 days",
+      title: 'MONEY BACK GUARANTEE',
+      description: 'We return money within 30 days',
       icon: (
         <svg
           xmlns="http://www.w3.org/2000/svg"

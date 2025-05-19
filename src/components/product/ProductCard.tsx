@@ -22,7 +22,11 @@ type ProductCardProps = {
   onDelete?: (id: string) => void;
 };
 
-const ProductCard: React.FC<ProductCardProps> = ({ item, isWishlist = false, onDelete }) => {
+const ProductCard: React.FC<ProductCardProps> = ({
+  item,
+  isWishlist = false,
+  onDelete,
+}) => {
   const navigate = useNavigate(); // Hook to programmatically navigate
 
   const handleCardClick = () => {
@@ -53,10 +57,18 @@ const ProductCard: React.FC<ProductCardProps> = ({ item, isWishlist = false, onD
             </Button>
           ) : (
             <>
-              <Button variant="ghost" size="icon" className="h-8 w-8 bg-white rounded-full p-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 bg-white rounded-full p-1"
+              >
                 <FiHeart size={16} />
               </Button>
-              <Button variant="ghost" size="icon" className="h-8 w-8 bg-white rounded-full p-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 bg-white rounded-full p-1"
+              >
                 <FiEye size={16} />
               </Button>
             </>
@@ -77,14 +89,18 @@ const ProductCard: React.FC<ProductCardProps> = ({ item, isWishlist = false, onD
         <h3 className="font-semibold mb-2">{item.name}</h3>
         <div className="flex items-center gap-3">
           <span className="font-semibold text-red-500">${item.salePrice}</span>
-          <span className="text-gray-400 line-through">${item.originalPrice}</span>
+          <span className="text-gray-400 line-through">
+            ${item.originalPrice}
+          </span>
         </div>
         <div className="flex items-center mt-2">
           {[...Array(5)].map((_, index) => (
             <FiStar
               key={index}
               size={16}
-              className={index < item.rating ? 'text-yellow-400' : 'text-gray-300'}
+              className={
+                index < item.rating ? 'text-yellow-400' : 'text-gray-300'
+              }
               fill={index < item.rating ? 'currentColor' : 'none'}
             />
           ))}
