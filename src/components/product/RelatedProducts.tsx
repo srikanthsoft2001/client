@@ -1,14 +1,7 @@
-<<<<<<< HEAD
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Heart } from 'lucide-react';
-=======
-import React from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Heart, ChevronLeft, ChevronRight } from "lucide-react";
->>>>>>> b124c97441782773c90c46b68806a315c36ffba6
+import { Heart, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface RelatedProductsProps {
   currentProductId: number;
@@ -78,56 +71,40 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({
         </div>
       </div>
 
-<<<<<<< HEAD
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {relatedProducts.map((product) => (
-          <Card key={product.id} className="overflow-hidden">
-=======
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-        {relatedProducts.map(product => (
-          <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-shadow">
->>>>>>> b124c97441782773c90c46b68806a315c36ffba6
+        {relatedProducts.map((product) => (
+          <Card
+            key={product.id}
+            className="overflow-hidden hover:shadow-lg transition-shadow"
+          >
             <div className="relative">
               <span className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 text-xs rounded">
                 -{product.discount}
               </span>
-<<<<<<< HEAD
               <Button
                 variant="ghost"
                 size="icon"
-                className="absolute top-2 right-2 bg-white rounded-full h-8 w-8 flex items-center justify-center shadow-md"
+                className="absolute top-2 right-2 bg-white rounded-full h-8 w-8 flex items-center justify-center shadow-md hover:bg-gray-100"
               >
                 <Heart className="h-4 w-4" />
               </Button>
               <img
                 src={product.image}
                 alt={product.name}
-                className="w-full h-48 object-cover"
-=======
-              <Button variant="ghost" size="icon" className="absolute top-2 right-2 bg-white rounded-full h-8 w-8 flex items-center justify-center shadow-md hover:bg-gray-100">
-                <Heart className="h-4 w-4" />
-              </Button>
-              <img 
-                src={product.image} 
-                alt={product.name} 
-                className="w-full h-48 object-cover hover:scale-105 transition-transform duration-300" 
->>>>>>> b124c97441782773c90c46b68806a315c36ffba6
+                className="w-full h-48 object-cover hover:scale-105 transition-transform duration-300"
               />
             </div>
             <CardContent className="p-4">
-              <h3 className="font-semibold mb-1 hover:text-red-500 transition-colors cursor-pointer">{product.name}</h3>
+              <h3 className="font-semibold mb-1 hover:text-red-500 transition-colors cursor-pointer">
+                {product.name}
+              </h3>
               <div className="flex items-center mb-2">
-<<<<<<< HEAD
-                <span className="text-sale-red font-semibold mr-2">
+                <span className="text-red-500 font-semibold mr-2">
                   ${product.price.toFixed(2)}
                 </span>
                 <span className="text-gray-400 text-sm line-through">
                   ${product.originalPrice?.toFixed(2)}
                 </span>
-=======
-                <span className="text-red-500 font-semibold mr-2">${product.price.toFixed(2)}</span>
-                <span className="text-gray-400 text-sm line-through">${product.originalPrice?.toFixed(2)}</span>
->>>>>>> b124c97441782773c90c46b68806a315c36ffba6
               </div>
               <div className="flex items-center">
                 {[...Array(5)].map((_, i) => (

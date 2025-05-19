@@ -1,10 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { ShoppingCart, Trash } from 'lucide-react';
-<<<<<<< HEAD
-=======
-
->>>>>>> b124c97441782773c90c46b68806a315c36ffba6
 
 interface Product {
   id: number;

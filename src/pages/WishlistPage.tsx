@@ -1,18 +1,14 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
-<<<<<<< HEAD
-import ProductCard from '@/components/product/ProductCard';
-=======
 import WishlistItemCard from '@/components/Wishlist/WishlistItemCard';
->>>>>>> b124c97441782773c90c46b68806a315c36ffba6
 
 interface Product {
-  id: string;
+  id: number;
   name: string;
   image: string;
-  price: string;
-  originalPrice?: string;
+  price: number;
+  originalPrice?: number;
   discount?: number;
   rating?: number;
   isNew?: boolean;
@@ -21,71 +17,66 @@ interface Product {
 const WishlistPage = () => {
   const [wishlistItems, setWishlistItems] = useState<Product[]>([
     {
-      id: '1',
+      id: 1,
       name: 'Gucci duffle bag',
       image: '/images/gucci-bag.jpg',
-      price: '960',
-      originalPrice: '1160',
+      price: 960,
+      originalPrice: 1160,
       discount: 35,
     },
     {
-      id: '2',
+      id: 2,
       name: 'RGB liquid CPU Cooler',
       image: '/images/rgb-cooler.jpg',
-      price: '1960',
+      price: 1960,
     },
     {
-      id: '3',
+      id: 3,
       name: 'GP11 Shooter USB Gamepad',
       image: '/images/gp11-gamepad.jpg',
-      price: '550',
+      price: 550,
     },
     {
-      id: '4',
+      id: 4,
       name: 'Quilted Satin Jacket',
       image: '/images/satin-jacket.jpg',
-      price: '750',
+      price: 750,
     },
     {
-      id: '5',
+      id: 5,
       name: 'ASUS FHD Gaming Laptop',
       image: '/images/asus-laptop.jpg',
-      price: '960',
-      originalPrice: '1160',
+      price: 960,
+      originalPrice: 1160,
       discount: 35,
       rating: 5,
     },
     {
-      id: '6',
+      id: 6,
       name: 'IPS LCD Gaming Monitor',
       image: '/images/ips-monitor.jpg',
-      price: '1160',
+      price: 1160,
       rating: 5,
     },
     {
-      id: '7',
+      id: 7,
       name: 'HAVIT HV-G92 Gamepad',
       image: '/images/havit-gamepad.jpg',
-      price: '560',
+      price: 560,
       isNew: true,
       rating: 5,
     },
     {
-      id: '8',
+      id: 8,
       name: 'AK-900 Wired Keyboard',
       image: '/images/ak-900-keyboard.jpg',
-      price: '200',
+      price: 200,
       rating: 5,
     },
   ]);
 
-<<<<<<< HEAD
-  const handleAddToCart = (id: string) => {
+  const handleAddToCart = (id: number) => {
     toast.success('Added to cart successfully!', { id });
-=======
-  const handleAddToCart = (_id: number) => {
-    toast.success('Added to cart successfully!');
->>>>>>> b124c97441782773c90c46b68806a315c36ffba6
   };
 
   const handleMoveAllToBag = () => {
@@ -93,13 +84,8 @@ const WishlistPage = () => {
     toast.success('All items moved to bag!');
   };
 
-<<<<<<< HEAD
-  const handleDeleteItem = (id: string) => {
-    setWishlistItems((items) => items.filter((item) => item.id !== id));
-=======
   const handleDeleteItem = (id: number) => {
-    setWishlistItems(wishlistItems.filter((item) => item.id !== id));
->>>>>>> b124c97441782773c90c46b68806a315c36ffba6
+    setWishlistItems((items) => items.filter((item) => item.id !== id));
     toast.success('Item removed from wishlist');
   };
 
@@ -125,26 +111,10 @@ const WishlistPage = () => {
       {/* Wishlist Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
         {wishlistItems.map((product) => (
-<<<<<<< HEAD
-          <ProductCard
-            key={product.id}
-            item={{
-              id: product.id,
-              name: product.name,
-              salePrice: product.price,
-              originalPrice: product.originalPrice ?? '',
-              discountPercentage: product.discount?.toString() ?? '0',
-              mainImageUrl: product.image,
-              rating: product.rating ?? 0,
-              saleType: 'regular', // or another appropriate default/type
-            }}
-            isWishlist={true}
-=======
           <WishlistItemCard
             key={product.id}
             item={product}
             onAddToCart={handleAddToCart}
->>>>>>> b124c97441782773c90c46b68806a315c36ffba6
             onDelete={handleDeleteItem}
           />
         ))}
@@ -171,21 +141,9 @@ const WishlistPage = () => {
         {wishlistItems.slice(4, 8).map((item) => (
           <WishlistItemCard
             key={item.id}
-<<<<<<< HEAD
-            item={{
-              id: item.id,
-              name: item.name,
-              salePrice: item.price,
-              originalPrice: item.originalPrice ?? '',
-              discountPercentage: item.discount?.toString() ?? '0',
-              mainImageUrl: item.image,
-              rating: item.rating ?? 0,
-              saleType: 'regular', // or another appropriate default/type
-            }}
-=======
             item={item}
             onAddToCart={handleAddToCart}
->>>>>>> b124c97441782773c90c46b68806a315c36ffba6
+            onDelete={handleDeleteItem}
           />
         ))}
       </div>

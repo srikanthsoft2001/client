@@ -11,13 +11,8 @@ interface ProductInfoProps {
 }
 
 const ProductInfo: React.FC<ProductInfoProps> = ({
-<<<<<<< HEAD
   name = 'Product Name Not Available',
-  price = 0,
-=======
-  name = "Product Name Not Available",
-  salePrice = 0, 
->>>>>>> b124c97441782773c90c46b68806a315c36ffba6
+  salePrice = 0,
   originalPrice,
   rating = 0,
   // reviewCount = 0,
@@ -31,7 +26,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({
     return priceInDollars.toLocaleString('en-US', {
       style: 'decimal',
       minimumFractionDigits: 2,
-      maximumFractionDigits: 2
+      maximumFractionDigits: 2,
     });
   };
 
@@ -71,9 +66,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({
       </div>
 
       <div className="flex items-center gap-3">
-        <span className="text-2xl font-bold">
-          ${formatPrice(salePrice)}
-        </span>
+        <span className="text-2xl font-bold">${formatPrice(salePrice)}</span>
         {originalPrice && originalPrice > 0 && (
           <span className="text-gray-400 text-sm line-through">
             ${formatPrice(originalPrice)}
