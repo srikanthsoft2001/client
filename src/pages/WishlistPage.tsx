@@ -1,7 +1,11 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
+<<<<<<< HEAD
 import ProductCard from '@/components/product/ProductCard';
+=======
+import WishlistItemCard from '@/components/Wishlist/WishlistItemCard';
+>>>>>>> b124c97441782773c90c46b68806a315c36ffba6
 
 interface Product {
   id: string;
@@ -75,8 +79,13 @@ const WishlistPage = () => {
     },
   ]);
 
+<<<<<<< HEAD
   const handleAddToCart = (id: string) => {
     toast.success('Added to cart successfully!', { id });
+=======
+  const handleAddToCart = (_id: number) => {
+    toast.success('Added to cart successfully!');
+>>>>>>> b124c97441782773c90c46b68806a315c36ffba6
   };
 
   const handleMoveAllToBag = () => {
@@ -84,8 +93,13 @@ const WishlistPage = () => {
     toast.success('All items moved to bag!');
   };
 
+<<<<<<< HEAD
   const handleDeleteItem = (id: string) => {
     setWishlistItems((items) => items.filter((item) => item.id !== id));
+=======
+  const handleDeleteItem = (id: number) => {
+    setWishlistItems(wishlistItems.filter((item) => item.id !== id));
+>>>>>>> b124c97441782773c90c46b68806a315c36ffba6
     toast.success('Item removed from wishlist');
   };
 
@@ -111,6 +125,7 @@ const WishlistPage = () => {
       {/* Wishlist Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
         {wishlistItems.map((product) => (
+<<<<<<< HEAD
           <ProductCard
             key={product.id}
             item={{
@@ -124,6 +139,12 @@ const WishlistPage = () => {
               saleType: 'regular', // or another appropriate default/type
             }}
             isWishlist={true}
+=======
+          <WishlistItemCard
+            key={product.id}
+            item={product}
+            onAddToCart={handleAddToCart}
+>>>>>>> b124c97441782773c90c46b68806a315c36ffba6
             onDelete={handleDeleteItem}
           />
         ))}
@@ -148,8 +169,9 @@ const WishlistPage = () => {
       {/* Just For You Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
         {wishlistItems.slice(4, 8).map((item) => (
-          <ProductCard
+          <WishlistItemCard
             key={item.id}
+<<<<<<< HEAD
             item={{
               id: item.id,
               name: item.name,
@@ -160,6 +182,10 @@ const WishlistPage = () => {
               rating: item.rating ?? 0,
               saleType: 'regular', // or another appropriate default/type
             }}
+=======
+            item={item}
+            onAddToCart={handleAddToCart}
+>>>>>>> b124c97441782773c90c46b68806a315c36ffba6
           />
         ))}
       </div>

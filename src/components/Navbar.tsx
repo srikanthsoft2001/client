@@ -45,7 +45,7 @@ const Navbar = () => {
                 {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
               </Button>
               <Link to="/" className="font-bold text-xl">
-                Exclusive
+                Bliveus
               </Link>
             </div>
 

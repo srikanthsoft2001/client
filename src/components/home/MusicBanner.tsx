@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+=======
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+>>>>>>> b124c97441782773c90c46b68806a315c36ffba6
 
 const MusicBanner = () => {
   return (
