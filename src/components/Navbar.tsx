@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
@@ -15,8 +15,15 @@ import {
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCategoryHovered, setIsCategoryHovered] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const navigate = useNavigate();
 
-  // Sample categories data
+  const handleSearch = () => {
+    if (searchTerm.trim()) {
+      navigate(`/search?query=${encodeURIComponent(searchTerm)}`);
+    }
+  };
+
   const categories = [
     { name: 'Electronics', subcategories: ['Phones', 'Laptops', 'Cameras'] },
     { name: 'Clothing', subcategories: ['Men', 'Women', 'Kids'] },
@@ -31,10 +38,11 @@ const Navbar = () => {
 
   return (
     <>
+      {/* Top Navbar */}
       <nav className="sticky top-0 z-50 bg-primary text-secondary border-b border-gray-800 shadow-sm">
         <div className="max-w-12xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            {/* Left side - Hamburger and Logo */}
+            {/* Left - Logo & Hamburger */}
             <div className="flex items-center">
               <Button
                 variant="ghost"
@@ -49,7 +57,7 @@ const Navbar = () => {
               </Link>
             </div>
 
-            {/* Center - Desktop Navigation */}
+            {/* Center - Links */}
             <div className="hidden md:flex space-x-8">
               <Link to="/" className="font-medium hover:text-gray-300">
                 Home
@@ -62,21 +70,26 @@ const Navbar = () => {
               </Link>
             </div>
 
-            {/* Right side - Icons */}
+            {/* Right - Search & Icons */}
             <div className="flex items-center space-x-4">
               <div className="hidden sm:flex items-center relative rounded-md">
                 <Input
                   placeholder="What are you looking for?"
                   className="w-64 pr-10 bg-gray-100 text-black"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                 />
                 <Button
                   size="icon"
                   variant="ghost"
                   className="absolute right-0 top-0 h-full text-primary"
+                  onClick={handleSearch}
                 >
                   <Search size={20} />
                 </Button>
               </div>
+
               <Link to="/wishlist">
                 <Button
                   variant="ghost"
@@ -99,7 +112,8 @@ const Navbar = () => {
                   </span>
                 </Button>
               </Link>
-              <Link to="/login" className="font-medium hover:text-gray-300">
+
+              <Link to="/login">
                 <Button
                   variant="ghost"
                   size="icon"
@@ -113,52 +127,35 @@ const Navbar = () => {
 
           {/* Mobile Menu */}
           {isMenuOpen && (
-            <div className="md:hidden bg-black pb-4 space-y-4">
-              <div className="flex items-center relative rounded-md px-2">
-                <Input
-                  placeholder="Search..."
-                  className="w-full pr-10 bg-gray-100 text-black"
-                />
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  className="absolute right-2 top-0 h-full text-primary"
-                >
-                  <Search size={20} />
-                </Button>
-              </div>
-
-              <div className="flex flex-col space-y-3 px-2">
-                <Link
-                  to="/"
-                  className="text-white font-medium hover:text-gray-300 py-2 px-4 rounded hover:bg-gray-800"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Home
-                </Link>
-                <Link
-                  to="/contact"
-                  className="text-white font-medium hover:text-gray-300 py-2 px-4 rounded hover:bg-gray-800"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Contact
-                </Link>
-                <Link
-                  to="/about"
-                  className="text-white font-medium hover:text-gray-300 py-2 px-4 rounded hover:bg-gray-800"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  About
-                </Link>
-
-                <Link
-                  to="/login"
-                  className="text-white font-medium hover:text-gray-300 py-2 px-4 rounded hover:bg-gray-800"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Login
-                </Link>
-              </div>
+            <div className="md:hidden bg-black pb-4 space-y-4 px-2">
+              <Link
+                to="/"
+                className="text-white font-medium hover:text-gray-300 py-2 px-4 rounded hover:bg-gray-800"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Home
+              </Link>
+              <Link
+                to="/contact"
+                className="text-white font-medium hover:text-gray-300 py-2 px-4 rounded hover:bg-gray-800"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Contact
+              </Link>
+              <Link
+                to="/about"
+                className="text-white font-medium hover:text-gray-300 py-2 px-4 rounded hover:bg-gray-800"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                About
+              </Link>
+              <Link
+                to="/login"
+                className="text-white font-medium hover:text-gray-300 py-2 px-4 rounded hover:bg-gray-800"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Login
+              </Link>
             </div>
           )}
         </div>
@@ -175,8 +172,6 @@ const Navbar = () => {
             >
               <span className="font-medium">All Categories</span>
               <ChevronDown size={16} className="ml-2" />
-
-              {/* Category Dropdown */}
               {isCategoryHovered && (
                 <div className="absolute top-full left-0 w-64 bg-white text-black shadow-lg z-50">
                   {categories.map((category, index) => (
@@ -205,7 +200,7 @@ const Navbar = () => {
               )}
             </div>
 
-            <div className=" hidden md:flex space-x-6 ml-6">
+            <div className="hidden md:flex space-x-6 ml-6">
               {categories.map((category, index) => (
                 <Link
                   key={index}

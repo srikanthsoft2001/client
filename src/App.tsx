@@ -12,6 +12,7 @@ import Contact from './pages/Contact';
 import Cart from './pages/Cart';
 import CheckoutLayout from './pages/CheckoutLayout';
 import ProductPage from './pages/ProductPage';
+import ProductSearch from './components/ProductSearch';
 
 const queryClient = new QueryClient();
 
@@ -22,6 +23,10 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route element={<Layout />}>
+            {/* Remove <Search /> icon route */}
+            {/* Use ProductSearch for /search route */}
+            <Route path="/search" element={<ProductSearch />} />
+
             <Route path="/" element={<Home />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/login" element={<Login />} />
