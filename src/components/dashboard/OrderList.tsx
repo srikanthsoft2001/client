@@ -1,27 +1,75 @@
 // src/components/OrderList.tsx
-import { Card } from '../ui/card';
-import { OrderItem } from './OrderItem';
 import { useState } from 'react';
 import { Button } from '../ui/button';
-import Footer from '../Footer';
+import { Card } from '../ui/card';
+import { OrderItem } from './OrderItem';
 
 type Order = {
   id: number;
   productName: string;
   date: string;
   customerName: string;
-  status: "Delivered" | "Canceled";
+  status: 'Delivered' | 'Canceled';
   amount: string;
 };
 
 const orders: Order[] = [
-  { id: 25426, productName: "Lorem Ipsum", date: "2023-05-15", customerName: "John Doe", status: "Delivered", amount: "¥200.00" },
-  { id: 25425, productName: "Lorem Ipsum", date: "2023-05-14", customerName: "Jane Smith", status: "Canceled", amount: "¥200.00" },
-  { id: 25424, productName: "Lorem Ipsum", date: "2023-05-13", customerName: "Bob Johnson", status: "Delivered", amount: "¥200.00" },
-  { id: 25423, productName: "Lorem Ipsum", date: "2023-05-12", customerName: "Alice Brown", status: "Canceled", amount: "¥200.00" },
-  { id: 25422, productName: "Lorem Ipsum", date: "2023-05-11", customerName: "Charlie Wilson", status: "Delivered", amount: "¥200.00" },
-  { id: 25421, productName: "Lorem Ipsum", date: "2023-05-10", customerName: "Diana Miller", status: "Delivered", amount: "¥200.00" },
-  { id: 25420, productName: "Lorem Ipsum", date: "2023-05-09", customerName: "Evan Davis", status: "Delivered", amount: "¥200.00" },
+  {
+    id: 25426,
+    productName: 'Lorem Ipsum',
+    date: '2023-05-15',
+    customerName: 'John Doe',
+    status: 'Delivered',
+    amount: '¥200.00',
+  },
+  {
+    id: 25425,
+    productName: 'Lorem Ipsum',
+    date: '2023-05-14',
+    customerName: 'Jane Smith',
+    status: 'Canceled',
+    amount: '¥200.00',
+  },
+  {
+    id: 25424,
+    productName: 'Lorem Ipsum',
+    date: '2023-05-13',
+    customerName: 'Bob Johnson',
+    status: 'Delivered',
+    amount: '¥200.00',
+  },
+  {
+    id: 25423,
+    productName: 'Lorem Ipsum',
+    date: '2023-05-12',
+    customerName: 'Alice Brown',
+    status: 'Canceled',
+    amount: '¥200.00',
+  },
+  {
+    id: 25422,
+    productName: 'Lorem Ipsum',
+    date: '2023-05-11',
+    customerName: 'Charlie Wilson',
+    status: 'Delivered',
+    amount: '¥200.00',
+  },
+  {
+    id: 25421,
+    productName: 'Lorem Ipsum',
+    date: '2023-05-10',
+    customerName: 'Diana Miller',
+    status: 'Delivered',
+    amount: '¥200.00',
+  },
+  {
+    id: 25420,
+    productName: 'Lorem Ipsum',
+    date: '2023-05-09',
+    customerName: 'Evan Davis',
+    status: 'Delivered',
+    amount: '¥200.00',
+  },
 ];
 
 export const OrderList = () => {
@@ -29,7 +77,7 @@ export const OrderList = () => {
   const [selectAll, setSelectAll] = useState(false);
 
   const handleOrderSelect = (orderId: string, isSelected: boolean) => {
-    setSelectedOrders(prev => {
+    setSelectedOrders((prev) => {
       const newSet = new Set(prev);
       isSelected ? newSet.add(orderId) : newSet.delete(orderId);
       return newSet;
@@ -41,7 +89,7 @@ export const OrderList = () => {
     if (selectAll) {
       setSelectedOrders(new Set());
     } else {
-      setSelectedOrders(new Set(orders.map(order => order.id.toString())));
+      setSelectedOrders(new Set(orders.map((order) => order.id.toString())));
     }
     setSelectAll(!selectAll);
   };
@@ -67,7 +115,7 @@ export const OrderList = () => {
           <div className="text-right">Amount</div>
         </div>
       </Card>
-      
+
       {/* Order Items */}
       <div className="space-y-2">
         {orders.map((order) => (
@@ -80,25 +128,35 @@ export const OrderList = () => {
             status={order.status}
             amount={order.amount}
             isSelected={selectedOrders.has(order.id.toString())}
-            onSelectChange={(isSelected) => handleOrderSelect(order.id.toString(), isSelected)}
+            onSelectChange={(isSelected) =>
+              handleOrderSelect(order.id.toString(), isSelected)
+            }
           />
         ))}
       </div>
 
       {/* Pagination */}
       <div className="flex justify-center mt-6 gap-2">
-        <Button variant="outline" size="sm">1</Button>
-        <Button variant="outline" size="sm">2</Button>
-        <Button variant="outline" size="sm">3</Button>
-        <Button variant="outline" size="sm">4</Button>
+        <Button variant="outline" size="sm">
+          1
+        </Button>
+        <Button variant="outline" size="sm">
+          2
+        </Button>
+        <Button variant="outline" size="sm">
+          3
+        </Button>
+        <Button variant="outline" size="sm">
+          4
+        </Button>
         <span className="px-4 flex items-center">...</span>
-        <Button variant="outline" size="sm">10</Button>
-        <Button variant="outline" size="sm">NEXT &gt;</Button>
+        <Button variant="outline" size="sm">
+          10
+        </Button>
+        <Button variant="outline" size="sm">
+          NEXT &gt;
+        </Button>
       </div>
-
-      {/* Footer */}
-      
-      <Footer/>
     </div>
   );
 };
