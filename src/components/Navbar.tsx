@@ -15,7 +15,14 @@ import {
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCategoryHovered, setIsCategoryHovered] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
+
+  const handleSearch = () => {
+    if (searchTerm.trim()) {
+      navigate(`/search?query=${encodeURIComponent(searchTerm)}`);
+    }
+  };
 
   const categories = [
     { name: 'Food', subcategories: ['Fruits', 'Vegetables', 'Grains'] },
@@ -35,10 +42,11 @@ const Navbar = () => {
 
   return (
     <>
+      {/* Top Navbar */}
       <nav className="sticky top-0 z-50 bg-primary text-secondary border-b border-gray-800 shadow-sm">
         <div className="max-w-12xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            {/* Logo */}
+            {/* Left - Logo & Hamburger */}
             <div className="flex items-center">
               <Link to="/" className="font-bold text-xl">
                 Bliveus
@@ -64,15 +72,20 @@ const Navbar = () => {
                 <Input
                   placeholder="What are you looking for?"
                   className="w-64 pr-10 bg-gray-100 text-black"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                 />
                 <Button
                   size="icon"
                   variant="ghost"
                   className="absolute right-0 top-0 h-full text-primary"
+                  onClick={handleSearch}
                 >
                   <Search size={20} />
                 </Button>
               </div>
+
 
               <Link to="/wishlist">
                 <Button

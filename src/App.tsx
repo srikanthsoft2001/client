@@ -21,6 +21,7 @@ import ElectronicsPage from './pages/ProductPages/ElectronicsPage';
 import RealEstatePage from './pages/ProductPages/RealEstatePage';
 import MedicalPage from './pages/ProductPages/MedicalPage';
 import CategoryProducts from './components/product/CategoryProducts';
+import ProductSearch from './components/ProductSearch';
 
 const queryClient = new QueryClient();
 
@@ -42,6 +43,9 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route element={<Layout />}>
+            {/* Remove <Search /> icon route */}
+            {/* Use ProductSearch for /search route */}
+            <Route path="/search" element={<ProductSearch />} />
             <Route path="/" element={<Home />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/login" element={<Login />} />

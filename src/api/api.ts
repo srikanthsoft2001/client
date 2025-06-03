@@ -1,8 +1,16 @@
+// src/api/api.ts
 import axios from 'axios';
 
+// Use VITE_ prefix for environment variable in Vite
 const API_BASE_URL =
-  import.meta.env.REACT_APP_API_URL || 'http://localhost:3000';
+  import.meta.env.VITE_REACT_APP_API_URL || 'http://localhost:3000';
 
+const api = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
 export interface ProductItem {
   id: string;
   name: string;
@@ -15,25 +23,34 @@ export interface ProductItem {
   category: string;
 }
 
-// Create axios instance with baseURL
-const api = axios.create({
-  baseURL: API_BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
+const normalizeSalePrice = (
+  salePrice: ProductItem['salePrice']
+): number | string =>
+  typeof salePrice === 'object' && '$numberDecimal' in salePrice
+    ? parseFloat(salePrice.$numberDecimal)
+    : salePrice;
+export const searchProducts = async (query: string): Promise<ProductItem[]> => {
+  if (!query.trim()) return [];
+  try {
+    const response = await api.get<ProductItem[]>('/products/search', {
+      params: { query },
+    });
+    return response.data.map((item) => ({
+      ...item,
+      salePrice: normalizeSalePrice(item.salePrice),
+    }));
+  } catch (error) {
+    console.error('Error searching products:', error);
+    return [];
+  }
+};
 
-// Generic fetch function for products
 const fetchProducts = async (): Promise<ProductItem[]> => {
   try {
     const response = await api.get<ProductItem[]>('/products');
-
     return response.data.map((item) => ({
       ...item,
-      salePrice:
-        typeof item.salePrice === 'object' && '$numberDecimal' in item.salePrice
-          ? parseFloat(item.salePrice.$numberDecimal)
-          : item.salePrice,
+      salePrice: normalizeSalePrice(item.salePrice),
     }));
   } catch (error) {
     console.error('Error fetching products:', error);
@@ -41,27 +58,22 @@ const fetchProducts = async (): Promise<ProductItem[]> => {
   }
 };
 
-export const fetchAllProducts = async (): Promise<ProductItem[]> => {
-  return fetchProducts();
-};
+export const fetchFlashSales = fetchProducts;
+export const fetchBestSelling = fetchProducts;
+export const fetchExploreProducts = fetchProducts;
 
-export const getProduct = async (id: string) => {
+export const getProduct = async (id: string): Promise<ProductItem | null> => {
   try {
     if (!id) throw new Error('Product ID is required');
-    const response = await api.get(`/products/${id}`);
-    return response.data;
+    const response = await api.get<ProductItem>(`/products/${id}`);
+    return {
+      ...response.data,
+      salePrice: normalizeSalePrice(response.data.salePrice),
+    };
   } catch (error) {
     console.error('Error fetching product:', error);
-    throw error;
+    return null;
   }
 };
 
-export const getRelatedProducts = async () => {
-  try {
-    const response = await api.get('/products');
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching related products:', error);
-    return [];
-  }
-};
+export const getRelatedProducts = fetchProducts;
