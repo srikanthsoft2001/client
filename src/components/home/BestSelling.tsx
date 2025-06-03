@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import ProductCard from '../product/ProductCard';
-import { fetchBestSelling, ProductItem } from '@/api/api';
+import { fetchAllProducts, ProductItem } from '@/api/api';
 
 const BestSelling = () => {
   const [state, setState] = useState({
@@ -16,7 +16,7 @@ const BestSelling = () => {
       try {
         setState((prev) => ({ ...prev, loading: true, error: null }));
 
-        const data = await fetchBestSelling();
+        const data = await fetchAllProducts();
         const filtered = data.filter(
           (item) => item.saleType?.toLowerCase() === 'best'
         );

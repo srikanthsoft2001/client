@@ -12,6 +12,7 @@ export interface ProductItem {
   mainImageUrl: string;
   rating: number;
   saleType: string;
+  category: string;
 }
 
 // Create axios instance with baseURL
@@ -40,16 +41,7 @@ const fetchProducts = async (): Promise<ProductItem[]> => {
   }
 };
 
-// Specific functions call generic fetchProducts
-export const fetchFlashSales = async (): Promise<ProductItem[]> => {
-  return fetchProducts();
-};
-
-export const fetchBestSelling = async (): Promise<ProductItem[]> => {
-  return fetchProducts();
-};
-
-export const fetchExploreProducts = async (): Promise<ProductItem[]> => {
+export const fetchAllProducts = async (): Promise<ProductItem[]> => {
   return fetchProducts();
 };
 

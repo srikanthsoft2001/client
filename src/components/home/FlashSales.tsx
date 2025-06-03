@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
-import { fetchFlashSales, ProductItem } from '@/api/api';
+import { fetchAllProducts, ProductItem } from '@/api/api';
 import ProductCard from '../product/ProductCard';
 
 const FlashSales: React.FC = () => {
@@ -19,7 +19,7 @@ const FlashSales: React.FC = () => {
       try {
         setState((prev) => ({ ...prev, loading: true, error: null }));
 
-        const data = await fetchFlashSales();
+        const data = await fetchAllProducts();
         const filtered = data.filter(
           (item) => item.saleType?.toLowerCase() === saleType.toLowerCase()
         );

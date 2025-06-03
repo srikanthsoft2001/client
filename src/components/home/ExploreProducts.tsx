@@ -1,4 +1,4 @@
-import { fetchExploreProducts, ProductItem } from '@/api/api';
+import { fetchAllProducts, ProductItem } from '@/api/api';
 import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
 import ProductCard from '../product/ProductCard';
@@ -16,7 +16,7 @@ const ExploreProducts = () => {
       try {
         setState((prev) => ({ ...prev, loading: true, error: null }));
 
-        const data = await fetchExploreProducts();
+        const data = await fetchAllProducts();
         const filtered = data.filter(
           (item) => item.saleType?.toLowerCase() === 'none'
         );

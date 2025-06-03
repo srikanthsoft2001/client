@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
@@ -15,41 +15,37 @@ import {
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCategoryHovered, setIsCategoryHovered] = useState(false);
+  const navigate = useNavigate();
 
-  // Sample categories data
   const categories = [
-    { name: 'Electronics', subcategories: ['Phones', 'Laptops', 'Cameras'] },
-    { name: 'Clothing', subcategories: ['Men', 'Women', 'Kids'] },
+    { name: 'Food', subcategories: ['Fruits', 'Vegetables', 'Grains'] },
     {
-      name: 'Home & Kitchen',
-      subcategories: ['Furniture', 'Appliances', 'Cookware'],
+      name: 'Electronics',
+      subcategories: ['IoT Based', 'Digital', 'Electronic'],
     },
-    { name: 'Books', subcategories: ['Fiction', 'Non-Fiction', 'Educational'] },
-    { name: 'Sports', subcategories: ['Fitness', 'Outdoor', 'Team Sports'] },
-    { name: 'Beauty', subcategories: ['Skincare', 'Makeup', 'Haircare'] },
+    { name: 'Realestate', subcategories: ['Material', 'Goods and Services'] },
+    {
+      name: 'Medical & Para Medical',
+      subcategories: ['Lab Equipment', 'Instruments'],
+    },
   ];
+
+  const slugify = (text: string) =>
+    text.toLowerCase().trim().replace(/\s+/g, '-').replace(/&/g, 'and');
 
   return (
     <>
       <nav className="sticky top-0 z-50 bg-primary text-secondary border-b border-gray-800 shadow-sm">
         <div className="max-w-12xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            {/* Left side - Hamburger and Logo */}
+            {/* Logo */}
             <div className="flex items-center">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="md:hidden mr-2 text-white hover:text-primary"
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-              >
-                {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-              </Button>
               <Link to="/" className="font-bold text-xl">
                 Bliveus
               </Link>
             </div>
 
-            {/* Center - Desktop Navigation */}
+            {/* Desktop Navigation */}
             <div className="hidden md:flex space-x-8">
               <Link to="/" className="font-medium hover:text-gray-300">
                 Home
@@ -62,7 +58,7 @@ const Navbar = () => {
               </Link>
             </div>
 
-            {/* Right side - Icons */}
+            {/* Right Side Icons */}
             <div className="flex items-center space-x-4">
               <div className="hidden sm:flex items-center relative rounded-md">
                 <Input
@@ -77,6 +73,7 @@ const Navbar = () => {
                   <Search size={20} />
                 </Button>
               </div>
+
               <Link to="/wishlist">
                 <Button
                   variant="ghost"
@@ -99,7 +96,8 @@ const Navbar = () => {
                   </span>
                 </Button>
               </Link>
-              <Link to="/login" className="font-medium hover:text-gray-300">
+
+              <Link to="/login">
                 <Button
                   variant="ghost"
                   size="icon"
@@ -129,35 +127,20 @@ const Navbar = () => {
               </div>
 
               <div className="flex flex-col space-y-3 px-2">
-                <Link
-                  to="/"
-                  className="text-white font-medium hover:text-gray-300 py-2 px-4 rounded hover:bg-gray-800"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Home
-                </Link>
-                <Link
-                  to="/contact"
-                  className="text-white font-medium hover:text-gray-300 py-2 px-4 rounded hover:bg-gray-800"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Contact
-                </Link>
-                <Link
-                  to="/about"
-                  className="text-white font-medium hover:text-gray-300 py-2 px-4 rounded hover:bg-gray-800"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  About
-                </Link>
-
-                <Link
-                  to="/login"
-                  className="text-white font-medium hover:text-gray-300 py-2 px-4 rounded hover:bg-gray-800"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Login
-                </Link>
+                {['/', '/contact', '/about', '/dashboard', '/login'].map(
+                  (path, i) => (
+                    <Link
+                      key={i}
+                      to={path}
+                      className="text-white font-medium hover:text-gray-300 py-2 px-4 rounded hover:bg-gray-800"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      {path === '/'
+                        ? 'Home'
+                        : path.replace('/', '').replace('-', ' ')}
+                    </Link>
+                  )
+                )}
               </div>
             </div>
           )}
@@ -168,6 +151,28 @@ const Navbar = () => {
       <div className="bg-navy-600 text-secondary bg-primary shadow-md">
         <div className="max-w-12xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center h-10">
+            {/* Dashboard + Menu (Mobile) */}
+            <div className="flex items-center mr-4">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-white hover:text-primary"
+                onClick={() => navigate('/dashboard')}
+              >
+                <Menu size={24} />
+              </Button>
+
+              <Button
+                variant="ghost"
+                size="icon"
+                className="md:hidden text-white hover:text-primary"
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+              >
+                {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              </Button>
+            </div>
+
+            {/* All Categories Dropdown */}
             <div
               className="relative flex items-center px-4 py-2 bg-navy-700 hover:bg-navy-800 cursor-pointer"
               onMouseEnter={() => setIsCategoryHovered(true)}
@@ -176,7 +181,6 @@ const Navbar = () => {
               <span className="font-medium">All Categories</span>
               <ChevronDown size={16} className="ml-2" />
 
-              {/* Category Dropdown */}
               {isCategoryHovered && (
                 <div className="absolute top-full left-0 w-64 bg-white text-black shadow-lg z-50">
                   {categories.map((category, index) => (
@@ -192,7 +196,9 @@ const Navbar = () => {
                         {category.subcategories.map((subcat, subIndex) => (
                           <Link
                             key={subIndex}
-                            to={`/category/${category.name.toLowerCase()}/${subcat.toLowerCase()}`}
+                            to={`/category/${slugify(category.name)}/${slugify(
+                              subcat
+                            )}`}
                             className="block px-4 py-2 hover:bg-gray-100"
                           >
                             {subcat}
@@ -205,11 +211,12 @@ const Navbar = () => {
               )}
             </div>
 
-            <div className=" hidden md:flex space-x-6 ml-6">
+            {/* Category Links (Desktop) */}
+            <div className="hidden md:flex space-x-6 ml-6">
               {categories.map((category, index) => (
                 <Link
                   key={index}
-                  to={`/category/${category.name.toLowerCase()}`}
+                  to={`/category/${slugify(category.name)}`}
                   className="text-secondary transition-colors"
                 >
                   {category.name}
