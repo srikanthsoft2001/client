@@ -1,7 +1,5 @@
-// src/api/api.ts
 import axios from 'axios';
 
-// Use VITE_ prefix for environment variable in Vite
 const API_BASE_URL =
   import.meta.env.VITE_REACT_APP_API_URL || 'http://localhost:3000';
 
@@ -11,6 +9,7 @@ const api = axios.create({
     'Content-Type': 'application/json',
   },
 });
+
 export interface ProductItem {
   id: string;
   name: string;
@@ -29,6 +28,7 @@ const normalizeSalePrice = (
   typeof salePrice === 'object' && '$numberDecimal' in salePrice
     ? parseFloat(salePrice.$numberDecimal)
     : salePrice;
+
 export const searchProducts = async (query: string): Promise<ProductItem[]> => {
   if (!query.trim()) return [];
   try {
@@ -45,7 +45,7 @@ export const searchProducts = async (query: string): Promise<ProductItem[]> => {
   }
 };
 
-const fetchProducts = async (): Promise<ProductItem[]> => {
+export const fetchProducts = async (): Promise<ProductItem[]> => {
   try {
     const response = await api.get<ProductItem[]>('/products');
     return response.data.map((item) => ({
@@ -57,10 +57,6 @@ const fetchProducts = async (): Promise<ProductItem[]> => {
     return [];
   }
 };
-
-export const fetchFlashSales = fetchProducts;
-export const fetchBestSelling = fetchProducts;
-export const fetchExploreProducts = fetchProducts;
 
 export const getProduct = async (id: string): Promise<ProductItem | null> => {
   try {
@@ -75,5 +71,8 @@ export const getProduct = async (id: string): Promise<ProductItem | null> => {
     return null;
   }
 };
-
+export const fetchAllProducts = fetchProducts;
+export const fetchFlashSales = fetchProducts;
+export const fetchBestSelling = fetchProducts;
+export const fetchExploreProducts = fetchProducts;
 export const getRelatedProducts = fetchProducts;

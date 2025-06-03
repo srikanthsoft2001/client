@@ -43,8 +43,6 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route element={<Layout />}>
-            {/* Remove <Search /> icon route */}
-            {/* Use ProductSearch for /search route */}
             <Route path="/search" element={<ProductSearch />} />
             <Route path="/" element={<Home />} />
             <Route path="/signup" element={<SignUp />} />
