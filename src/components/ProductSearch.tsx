@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import queryString from 'query-string';
-import { searchProducts, ProductItem } from '../api/api'; // adjust path
+import { searchProducts, ProductItem } from '../api/api';
+import ProductCard from '../components/product/ProductCard';
 
 const ProductSearch = () => {
   const location = useLocation();
@@ -35,29 +36,17 @@ const ProductSearch = () => {
       {products.length === 0 ? (
         <p>No products found.</p>
       ) : (
-        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
           {products.map((product) => (
-            <div key={product.id} className="border p-4 rounded shadow">
-              {product.mainImageUrl && (
-                <img
-                  src={product.mainImageUrl}
-                  alt={product.name}
-                  className="w-full h-48 object-cover mb-2 rounded"
-                />
-              )}
-              <h3 className="font-semibold">{product.name}</h3>
-              <p>
-                Price: $
-                {typeof product.salePrice === 'number'
-                  ? product.salePrice.toFixed(2)
-                  : typeof product.salePrice === 'string'
-                  ? product.salePrice
-                  : 'N/A'}
-              </p>
-              <p>Discount: {product.discountPercentage}%</p>
-              <p>Rating: {product.rating}</p>
-              <p>Sale Type: {product.saleType}</p>
-            </div>
+            <ProductCard
+              key={product.id}
+              item={{
+                ...product,
+                salePrice: String(product.salePrice),
+                mainImageUrl: product.mainImageUrl,
+                rating: product.rating,
+              }}
+            />
           ))}
         </div>
       )}
