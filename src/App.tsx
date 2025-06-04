@@ -13,6 +13,7 @@ import Cart from './pages/Cart';
 import CheckoutLayout from './pages/CheckoutLayout';
 import ProductPage from './pages/ProductPage';
 import ProductSearch from './components/ProductSearch';
+import Category from './pages/Category';
 
 const queryClient = new QueryClient();
 
@@ -26,6 +27,11 @@ const App = () => (
             {/* Remove <Search /> icon route */}
             {/* Use ProductSearch for /search route */}
             <Route path="/search" element={<ProductSearch />} />
+            <Route path="/category/:categoryName" element={<Category />} />
+            <Route
+              path="/category/:categoryName/:subcategoryName"
+              element={<Category />}
+            />
 
             <Route path="/" element={<Home />} />
             <Route path="/signup" element={<SignUp />} />

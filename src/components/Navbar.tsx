@@ -127,7 +127,7 @@ const Navbar = () => {
 
           {/* Mobile Menu */}
           {isMenuOpen && (
-            <div className="md:hidden bg-black pb-4 space-y-4 px-2">
+            <div className="md:hidden bg-blue-50 pb-4 space-y-4 px-2">
               <Link
                 to="/"
                 className="text-white font-medium hover:text-gray-300 py-2 px-4 rounded hover:bg-gray-800"
@@ -187,7 +187,7 @@ const Navbar = () => {
                         {category.subcategories.map((subcat, subIndex) => (
                           <Link
                             key={subIndex}
-                            to={`/category/${category.name.toLowerCase()}/${subcat.toLowerCase()}`}
+                            to={`/category/${category.name}/${subcat}`}
                             className="block px-4 py-2 hover:bg-gray-100"
                           >
                             {subcat}
@@ -204,7 +204,7 @@ const Navbar = () => {
               {categories.map((category, index) => (
                 <Link
                   key={index}
-                  to={`/category/${category.name.toLowerCase()}`}
+                  to={`/category/${category.name}`}
                   className="text-secondary transition-colors"
                 >
                   {category.name}
