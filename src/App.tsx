@@ -22,6 +22,7 @@ import RealEstatePage from './pages/ProductPages/RealEstatePage';
 import MedicalPage from './pages/ProductPages/MedicalPage';
 import CategoryProducts from './components/product/CategoryProducts';
 import ProductSearch from './components/ProductSearch';
+import AccountLayout from './pages/AccountLayout';
 
 const queryClient = new QueryClient();
 
@@ -52,6 +53,7 @@ const App = () => (
             <Route path="/wishlist" element={<WishlistPage />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/checkout" element={<CheckoutLayout />} />
+            <Route path="/account" element={<AccountLayout />} />
             <Route path="/products/:id" element={<ProductPage />} />
             <Route path="/order-list" element={<OrderListPage />} />
             <Route path="/all-products" element={<AllProductsPage />} />
