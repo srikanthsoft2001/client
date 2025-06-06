@@ -1,3 +1,4 @@
+import React from 'react';
 import { loginUser } from '@/api/auth';
 import LoginForm from '../components/LoginForm';
 import { useNavigate } from 'react-router-dom';
@@ -10,20 +11,19 @@ const Login = () => {
     password: string;
   }) => {
     try {
-      const credentials = {
-        email: formData.emailOrPhone, // assuming your backend expects "email"
-        password: formData.password,
-      };
+      const { emailOrPhone, password } = formData;
+      const response = await loginUser(emailOrPhone, password);
+      console.log('Login response:', response);
 
-      const response = await loginUser(credentials);
-      console.log('Login successful:', response);
+      alert('Login successful: ' + (response.user?.name || 'User'));
 
-      navigate('/'); // or wherever you want to go after login
+      navigate('/'); // redirect after login
     } catch (error) {
       console.error('Login failed:', error);
-      // Optionally display an error to the user
+      alert('Login failed. Please check your credentials.');
     }
   };
+
   return (
     <div className="flex flex-col min-h-screen">
       <main className="flex-grow py-10">

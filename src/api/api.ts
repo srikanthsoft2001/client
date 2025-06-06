@@ -71,6 +71,38 @@ export const getProduct = async (id: string): Promise<ProductItem | null> => {
     return null;
   }
 };
+export const getCurrentUser = async () => {
+  const token = localStorage.getItem('authToken');
+  const response = await axios.get('http://localhost:3000/users/me', {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+};
+
+export const logoutUser = async () => {
+  // If you have an API endpoint to invalidate the token/session on server:
+  await axios.post(
+    `${API_BASE_URL}/auth/logout`,
+    {},
+    { withCredentials: true }
+  );
+
+  // Clear token/localStorage if you store tokens client-side:
+  localStorage.removeItem('token'); // or whatever key you use
+
+  // Optionally clear other user-related info in localStorage/sessionStorage
+};
+export const loginUser = async (email: string, password: string) => {
+  const response = await axios.post('http://localhost:3000/auth/login', {
+    email,
+    password,
+  });
+  const { token, user } = response.data;
+  localStorage.setItem('token', token); // save token here
+  return user;
+};
 export const fetchAllProducts = fetchProducts;
 export const fetchFlashSales = fetchProducts;
 export const fetchBestSelling = fetchProducts;
