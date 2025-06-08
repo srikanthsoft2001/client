@@ -25,16 +25,16 @@ const AccountLayout: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="max-w-12xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="flex">
         <main className="flex-1 p-6 lg:p-8">
           <div className="max-w-4xl">
             <div className="mb-6">
-              <div className="flex items-center text-sm text-muted-foreground mb-4">
+              {/* <div className="flex items-center text-sm text-muted-foreground mb-4">
                 <span>Home</span>
                 <span className="mx-2">/</span>
                 <span>My Account</span>
-              </div>
+              </div> */}
 
               <div className="flex items-center justify-between">
                 <h1 className="text-2xl font-semibold text-foreground">

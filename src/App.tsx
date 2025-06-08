@@ -62,13 +62,11 @@ const App = () => (
               <Route path="/dashboard" element={<DashboardLayout />}>
                 <Route index element={<DashboardPage />} />
               </Route>
-
               {/* Your existing category routes can stay or be removed if replaced */}
               <Route path="/food" element={<FoodPage />} />
               <Route path="/electronics" element={<ElectronicsPage />} />
               <Route path="/realestate" element={<RealEstatePage />} />
               <Route path="/Medical & Para Medical" element={<MedicalPage />} />
-
               {/* New dynamic category/subcategory route */}
               <Route
                 path="/category/:category"
@@ -78,8 +76,8 @@ const App = () => (
                 path="/category/:category/:subcategory"
                 element={<CategoryProductsWrapper />}
               />
+              <Route path="/account" element={<AccountLayout />} />{' '}
             </Route>
-            <Route path="/account" element={<AccountLayout />} />{' '}
           </Routes>
         </BrowserRouter>
       </AuthProvider>
