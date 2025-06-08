@@ -2,7 +2,7 @@ import ReusableForm from './ReusableForm'; // Adjust the import path as needed
 
 interface SignUpFormData {
   name: string;
-  emailOrPhone: string;
+  email: string;
   password: string;
 }
 
@@ -19,9 +19,9 @@ const SignUpForm = ({ onSubmit }: SignUpFormProps) => {
       required: true,
     },
     {
-      name: 'emailOrPhone',
+      name: 'email',
       type: 'text',
-      placeholder: 'Email or Phone Number',
+      placeholder: 'Email',
       required: true,
     },
     {

@@ -12,27 +12,15 @@ import {
   ChevronDown,
   LogOut,
 } from 'lucide-react';
-import { getCurrentUser, logoutUser } from '@/api/api'; // Your API functions
+import { useAuth } from '@/context/AuthContext';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCategoryHovered, setIsCategoryHovered] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [userName, setUserName] = useState('');
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const user = await getCurrentUser();
-        setUserName(user.name);
-      } catch (error) {
-        // User not logged in or token invalid
-        setUserName('');
-      }
-    };
-    fetchUser();
-  }, []);
+  const { user, logout } = useAuth();
 
   const handleSearch = () => {
     if (searchTerm.trim()) {
@@ -42,8 +30,7 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-      await logoutUser();
-      setUserName('');
+      await logout(); // calls AuthContext logout, which handles API + context
       navigate('/login');
     } catch (error) {
       console.error('Logout failed', error);
@@ -68,18 +55,15 @@ const Navbar = () => {
 
   return (
     <>
-      {/* Top Navbar */}
       <nav className="sticky top-0 z-50 bg-primary text-secondary border-b border-gray-800 shadow-sm">
         <div className="max-w-12xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            {/* Left - Logo */}
             <div className="flex items-center">
               <Link to="/" className="font-bold text-xl">
                 Bliveus
               </Link>
             </div>
 
-            {/* Desktop Navigation */}
             <div className="hidden md:flex space-x-8">
               <Link to="/" className="font-medium hover:text-gray-300">
                 Home
@@ -92,7 +76,6 @@ const Navbar = () => {
               </Link>
             </div>
 
-            {/* Right Icons */}
             <div className="flex items-center space-x-4">
               <div className="hidden sm:flex items-center relative rounded-md">
                 <Input
@@ -138,11 +121,10 @@ const Navbar = () => {
                 </Button>
               </Link>
 
-              {/* Conditional User Info or Login */}
-              {userName ? (
+              {user ? (
                 <>
                   <div className="text-white font-medium px-2">
-                    Welcome, {userName}
+                    Welcome, {user.name}
                   </div>
                   <Button
                     variant="ghost"
@@ -170,7 +152,6 @@ const Navbar = () => {
             </div>
           </div>
 
-          {/* Mobile Menu */}
           {isMenuOpen && (
             <div className="md:hidden bg-black pb-4 space-y-4">
               <div className="flex items-center relative rounded-md px-2">
@@ -213,7 +194,6 @@ const Navbar = () => {
         </div>
       </nav>
 
-      {/* Category Bar */}
       <div className="bg-primary shadow-md text-secondary">
         <div className="max-w-12xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center h-10">

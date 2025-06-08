@@ -94,15 +94,15 @@ export const logoutUser = async () => {
 
   // Optionally clear other user-related info in localStorage/sessionStorage
 };
-export const loginUser = async (email: string, password: string) => {
-  const response = await axios.post('http://localhost:3000/auth/login', {
-    email,
-    password,
-  });
-  const { token, user } = response.data;
-  localStorage.setItem('token', token); // save token here
-  return user;
+// Correct function signature
+export const loginUser = async (credentials: {
+  email: string;
+  password: string;
+}) => {
+  const response = await api.post('/auth/login', credentials);
+  return response.data; // should return { token, user }
 };
+
 export const fetchAllProducts = fetchProducts;
 export const fetchFlashSales = fetchProducts;
 export const fetchBestSelling = fetchProducts;

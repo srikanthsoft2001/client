@@ -1,7 +1,9 @@
-import ReusableForm from './ReusableForm'; // Adjust the import path as needed
+// ✅ 1. LoginForm.tsx
+import React from 'react';
+import ReusableForm from './ReusableForm';
 
 interface LoginFormData {
-  emailOrPhone: string;
+  email: string;
   password: string;
 }
 
@@ -12,9 +14,9 @@ interface LoginFormProps {
 const LoginForm = ({ onSubmit }: LoginFormProps) => {
   const formFields = [
     {
-      name: 'emailOrPhone',
+      name: 'email',
       type: 'text',
-      placeholder: 'Email or Phone Number',
+      placeholder: 'Email',
       required: true,
       pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$|^[0-9]{10}$',
       title: 'Please enter a valid email or 10-digit phone number',
@@ -30,12 +32,13 @@ const LoginForm = ({ onSubmit }: LoginFormProps) => {
   ];
 
   const handleSubmit = (formData: Record<string, string>) => {
-    onSubmit(formData as unknown as LoginFormData);
+    const { email, password } = formData;
+    onSubmit({ email, password });
   };
 
   return (
     <div className="max-w-md mx-auto w-full">
-      <h1 className="heading-1 mb-4">Log in</h1>
+      <h1 className="text-2xl font-bold mb-4">Log in</h1>
       <p className="text-base mb-6">Enter your credentials below</p>
 
       <ReusableForm

@@ -1,4 +1,6 @@
+// src/api/api.ts
 import axios from 'axios';
+import { json } from 'stream/consumers';
 
 const API_BASE_URL =
   import.meta.env.VITE_REACT_APP_API_URL || 'http://localhost:3000';
@@ -10,6 +12,8 @@ const api = axios.create({
   },
   withCredentials: true,
 });
+
+// =================== Product Types and Helpers ===================
 
 export interface ProductItem {
   id: string;
@@ -29,6 +33,8 @@ const normalizeSalePrice = (
   typeof salePrice === 'object' && '$numberDecimal' in salePrice
     ? parseFloat(salePrice.$numberDecimal)
     : salePrice;
+
+// =================== Product APIs ===================
 
 export const searchProducts = async (query: string): Promise<ProductItem[]> => {
   if (!query.trim()) return [];
@@ -73,14 +79,34 @@ export const getProduct = async (id: string): Promise<ProductItem | null> => {
   }
 };
 
-export const getCurrentUser = async () => {
-  const token = localStorage.getItem('token');
-  if (!token) throw new Error('No auth token found');
-  const response = await api.get('/users/me', {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+// =================== Auth APIs ===================
+// ✅ 3. auth.ts (API functions)
+
+interface LoginCredentials {
+  email: string;
+  password: string;
+}
+
+interface User {
+  _id: string;
+  name: string;
+  email: string;
+}
+
+interface LoginResponse {
+  token: string;
+  user: User;
+}
+
+export const loginUser = async ({
+  email,
+  password,
+}: LoginCredentials): Promise<LoginResponse> => {
+  const response = await api.post<LoginResponse>('/auth/login', {
+    email,
+    password,
   });
+  console.log('Logging in with:', email);
   return response.data;
 };
 
@@ -90,16 +116,6 @@ export const logoutUser = async () => {
   localStorage.removeItem('loginName');
 };
 
-export const loginUser = async (email: string, password: string) => {
-  const response = await api.post('/auth/login', { email, password });
-  const { token, user } = response.data;
-  localStorage.setItem('token', token);
-  localStorage.setItem('loginName', user.name);
-  return { token, user };
-};
-
-// In src/api/auth.ts
-
 export const signup = async (formData: {
   name: string;
   email: string;
@@ -107,9 +123,39 @@ export const signup = async (formData: {
 }) => {
   try {
     const response = await api.post('/users', formData);
+    console.log(response);
     return response.data;
   } catch (error) {
     console.error('Signup error:', error);
+    throw error;
+  }
+};
+
+export const getUserById = async (_id: string) => {
+  try {
+    console.log(_id);
+
+    const response = await axios.get(`/users/${_id}`);
+    console.log(response);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching user:', error);
+    throw error;
+  }
+};
+
+// src/api/auth.ts (or similar)
+
+export const updateUserById = async (_id: string, payload: any) => {
+  try {
+    console.log(payload);
+    const response = await axios.put(
+      `http://localhost:3000/users/${_id}`,
+      payload
+    ); // ✅ FULL URL
+    return response.data;
+  } catch (error) {
+    console.error('Error updating user:', error);
     throw error;
   }
 };
