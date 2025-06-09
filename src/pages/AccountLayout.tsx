@@ -28,7 +28,7 @@ const AccountLayout: React.FC = () => {
     <div className="max-w-12xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="flex">
         <main className="flex-1 p-6 lg:p-8">
-          <div className="max-w-4xl">
+          <div className="max-w-12xl">
             <div className="mb-6">
               {/* <div className="flex items-center text-sm text-muted-foreground mb-4">
                 <span>Home</span>
