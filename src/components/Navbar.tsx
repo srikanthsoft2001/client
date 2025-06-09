@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -124,7 +124,7 @@ const Navbar = () => {
               {user ? (
                 <>
                   <div className="text-white font-medium px-2">
-                    Welcome, {user.name}
+                    <Link to="/account">Welcome,{user.name}</Link>
                   </div>
                   <Button
                     variant="ghost"
