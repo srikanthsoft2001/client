@@ -103,8 +103,10 @@ export const loginUser = async (credentials: {
   return response.data; // should return { token, user }
 };
 
+export const getWishlistItems = async (userId: string) => {
+  const response = await axios.get(`${API_BASE_URL}/${userId}/wishlist`);
+  return response.data;
+};
+
 export const fetchAllProducts = fetchProducts;
-export const fetchFlashSales = fetchProducts;
-export const fetchBestSelling = fetchProducts;
-export const fetchExploreProducts = fetchProducts;
 export const getRelatedProducts = fetchProducts;
