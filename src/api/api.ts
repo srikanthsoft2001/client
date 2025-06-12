@@ -71,6 +71,7 @@ export const getProduct = async (id: string): Promise<ProductItem | null> => {
     return null;
   }
 };
+
 export const getCurrentUser = async () => {
   const token = localStorage.getItem('authToken');
   const response = await axios.get('http://localhost:3000/users/me', {

@@ -24,6 +24,7 @@ import CategoryProducts from './components/product/CategoryProducts';
 import ProductSearch from './components/ProductSearch';
 import AccountLayout from './pages/AccountLayout';
 import { AuthProvider } from './context/AuthContext';
+import { CartProvider } from './context/CartContext';
 //import PrivateRoute from './routes/PrivateRoute';
 
 const queryClient = new QueryClient();
@@ -45,41 +46,46 @@ const App = () => (
       <Sonner />
       <AuthProvider>
         <BrowserRouter>
-          <Routes>
-            <Route element={<Layout />}>
-              <Route path="/search" element={<ProductSearch />} />
-              <Route path="/" element={<Home />} />
-              <Route path="/signup" element={<SignUp />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/wishlist" element={<WishlistPage />} />
-              <Route path="/cart" element={<Cart />} />
-              <Route path="/checkout" element={<CheckoutLayout />} />
-              <Route path="/account" element={<AccountLayout />} />
-            <Route path="/products/:id" element={<ProductPage />} />
-              <Route path="/order-list" element={<OrderListPage />} />
-              <Route path="/all-products" element={<AllProductsPage />} />
-              <Route path="/dashboard" element={<DashboardLayout />}>
-                <Route index element={<DashboardPage />} />
+          <CartProvider>
+            <Routes>
+              <Route element={<Layout />}>
+                <Route path="/search" element={<ProductSearch />} />
+                <Route path="/" element={<Home />} />
+                <Route path="/signup" element={<SignUp />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/wishlist" element={<WishlistPage />} />
+                <Route path="/cart" element={<Cart />} />
+                <Route path="/checkout" element={<CheckoutLayout />} />
+                <Route path="/account" element={<AccountLayout />} />
+                <Route path="/products/:id" element={<ProductPage />} />
+                <Route path="/order-list" element={<OrderListPage />} />
+                <Route path="/all-products" element={<AllProductsPage />} />
+                <Route path="/dashboard" element={<DashboardLayout />}>
+                  <Route index element={<DashboardPage />} />
+                </Route>
+                {/* Your existing category routes can stay or be removed if replaced */}
+                <Route path="/food" element={<FoodPage />} />
+                <Route path="/electronics" element={<ElectronicsPage />} />
+                <Route path="/realestate" element={<RealEstatePage />} />
+                <Route
+                  path="/Medical & Para Medical"
+                  element={<MedicalPage />}
+                />
+                {/* New dynamic category/subcategory route */}
+                <Route
+                  path="/category/:category"
+                  element={<CategoryProductsWrapper />}
+                />
+                <Route
+                  path="/category/:category/:subcategory"
+                  element={<CategoryProductsWrapper />}
+                />
+                <Route path="/account" element={<AccountLayout />} />{' '}
               </Route>
-              {/* Your existing category routes can stay or be removed if replaced */}
-              <Route path="/food" element={<FoodPage />} />
-              <Route path="/electronics" element={<ElectronicsPage />} />
-              <Route path="/realestate" element={<RealEstatePage />} />
-              <Route path="/Medical & Para Medical" element={<MedicalPage />} />
-              {/* New dynamic category/subcategory route */}
-              <Route
-                path="/category/:category"
-                element={<CategoryProductsWrapper />}
-              />
-              <Route
-                path="/category/:category/:subcategory"
-                element={<CategoryProductsWrapper />}
-              />
-              <Route path="/account" element={<AccountLayout />} />{' '}
-            </Route>
-          </Routes>
+            </Routes>
+          </CartProvider>
         </BrowserRouter>
       </AuthProvider>
     </TooltipProvider>
