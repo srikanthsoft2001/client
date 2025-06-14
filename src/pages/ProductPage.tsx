@@ -62,6 +62,7 @@ const ProductPage: React.FC = () => {
 
         const validatedProduct: productData = {
           ...product,
+          id: Number(product.id),
           saleprice: product.salePrice ? Number(product.salePrice) : 0,
           originalPrice: product.originalPrice
             ? Number(product.originalPrice)

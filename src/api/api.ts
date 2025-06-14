@@ -11,6 +11,12 @@ const api = axios.create({
 });
 
 export interface ProductItem {
+  reviewCount(reviewCount: any): number;
+  images: any;
+  colors: never[];
+  sizes: never[];
+  description: string;
+  inStock(inStock: any): boolean;
   id: string;
   name: string;
   originalPrice: string;
