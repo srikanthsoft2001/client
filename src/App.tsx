@@ -24,11 +24,12 @@ import CategoryProducts from './components/product/CategoryProducts';
 import ProductSearch from './components/ProductSearch';
 import AccountLayout from './pages/AccountLayout';
 import { AuthProvider } from './context/AuthContext';
-//import PrivateRoute from './routes/PrivateRoute';
+// Redux imports
+import { Provider as ReduxProvider } from 'react-redux';
+import { store } from '@/store';
 
 const queryClient = new QueryClient();
 
-// Wrapper component to extract params and pass to CategoryProducts
 const CategoryProductsWrapper = () => {
   const { category, subcategory } = useParams<{
     category: string;
@@ -40,50 +41,50 @@ const CategoryProductsWrapper = () => {
 };
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Sonner />
-      <AuthProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route element={<Layout />}>
-              <Route path="/search" element={<ProductSearch />} />
-              <Route path="/" element={<Home />} />
-              <Route path="/signup" element={<SignUp />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/wishlist" element={<WishlistPage />} />
-              <Route path="/cart" element={<Cart />} />
-              <Route path="/checkout" element={<CheckoutLayout />} />
-              <Route path="/account" element={<AccountLayout />} />
-              <Route path="/products/:id" element={<ProductPage />} />
-              <Route path="/order-list" element={<OrderListPage />} />
-              <Route path="/all-products" element={<AllProductsPage />} />
-              <Route path="/dashboard" element={<DashboardLayout />}>
-                <Route index element={<DashboardPage />} />
+  <ReduxProvider store={store}>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Sonner />
+        <AuthProvider>
+          <BrowserRouter>
+            <Routes>
+              <Route element={<Layout />}>
+                <Route path="/search" element={<ProductSearch />} />
+                <Route path="/" element={<Home />} />
+                <Route path="/signup" element={<SignUp />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/wishlist" element={<WishlistPage />} />
+                <Route path="/cart" element={<Cart />} />
+                <Route path="/checkout" element={<CheckoutLayout />} />
+                <Route path="/account" element={<AccountLayout />} />
+                <Route path="/products/:id" element={<ProductPage />} />
+                <Route path="/order-list" element={<OrderListPage />} />
+                <Route path="/all-products" element={<AllProductsPage />} />
+                <Route path="/dashboard" element={<DashboardLayout />}>
+                  <Route index element={<DashboardPage />} />
+                </Route>
+                <Route path="/food" element={<FoodPage />} />
+                <Route path="/electronics" element={<ElectronicsPage />} />
+                <Route path="/realestate" element={<RealEstatePage />} />
+                <Route path="/Medical & Para Medical" element={<MedicalPage />} />
+                <Route
+                  path="/category/:category"
+                  element={<CategoryProductsWrapper />}
+                />
+                <Route
+                  path="/category/:category/:subcategory"
+                  element={<CategoryProductsWrapper />}
+                />
+                <Route path="/account" element={<AccountLayout />} />
               </Route>
-              {/* Your existing category routes can stay or be removed if replaced */}
-              <Route path="/food" element={<FoodPage />} />
-              <Route path="/electronics" element={<ElectronicsPage />} />
-              <Route path="/realestate" element={<RealEstatePage />} />
-              <Route path="/Medical & Para Medical" element={<MedicalPage />} />
-              {/* New dynamic category/subcategory route */}
-              <Route
-                path="/category/:category"
-                element={<CategoryProductsWrapper />}
-              />
-              <Route
-                path="/category/:category/:subcategory"
-                element={<CategoryProductsWrapper />}
-              />
-              <Route path="/account" element={<AccountLayout />} />{' '}
-            </Route>
-          </Routes>
-        </BrowserRouter>
-      </AuthProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
+            </Routes>
+          </BrowserRouter>
+        </AuthProvider>
+      </TooltipProvider>
+    </QueryClientProvider>
+  </ReduxProvider>
 );
 
 export default App;

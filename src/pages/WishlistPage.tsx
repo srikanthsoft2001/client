@@ -1,54 +1,70 @@
 import { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import ProductCard from '@/components/product/ProductCard';
-import { getWishlistItems, ProductItem } from '@/api/api';
+import { RootState } from '@/store';
+import {
+  removeFromWishlist as removeFromLocalWishlist,
+  setWishlist,
+} from '@/slices/wishlistSlice';
+import { getWishlistItems, removeFromWishlist, ProductItem } from '@/api/api';
 import { useAuth } from '@/context/AuthContext';
 
-type AuthUser = {
-  id: string;
-  // Add other user properties you need
-};
-
 const WishlistPage = () => {
-  const [wishlistItems, setWishlistItems] = useState<ProductItem[]>([]);
+  const dispatch = useDispatch();
+  const { user } = useAuth();
+
+  const wishlistItems = useSelector(
+    (state: RootState) => state.wishlist.items
+  );
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { user } = useAuth() as { user: AuthUser | null };
 
   useEffect(() => {
     const fetchWishlist = async () => {
+      if (!user) {
+        setLoading(false);
+        return;
+      }
+
       try {
-        setLoading(true);
         setError(null);
-        
-        if (!user) {
-          return;
-        }
+        setLoading(true);
 
-        const data = await getWishlistItems(user.id);
-        
-        if (!Array.isArray(data)) {
-          throw new Error('Received invalid data format from server');
-        }
-
-        setWishlistItems(data);
+        const data = await getWishlistItems(user._id);
+        dispatch(setWishlist(data.wishlist));
       } catch (err) {
-        const message = err instanceof Error ? err.message : 'Failed to fetch wishlist items';
+        const message =
+          err instanceof Error ? err.message : 'Failed to fetch wishlist items';
         setError(message);
-        setWishlistItems([]);
       } finally {
         setLoading(false);
       }
     };
 
     fetchWishlist();
-  }, [user]);
+  }, [user, dispatch]);
+
+  const handleRemoveItem = async (productId: string) => {
+    dispatch(removeFromLocalWishlist(productId));
+
+    if (user) {
+      try {
+        await removeFromWishlist(user._id, productId);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to remove item');
+      }
+    }
+  };
 
   const formatProductForCard = (product: ProductItem) => ({
     id: product.id.toString(),
     name: product.name,
     originalPrice: product.originalPrice?.toString(),
     salePrice: product.salePrice.toString(),
-    discountPercentage: product.discountPercentage ? `-${product.discountPercentage}%` : '',
+    discountPercentage: product.discountPercentage
+      ? `-${product.discountPercentage}`
+      : '',
     mainImageUrl: product.mainImageUrl,
     rating: product.rating || 0,
     saleType: product.saleType,
@@ -101,6 +117,7 @@ const WishlistPage = () => {
               key={product.id}
               item={formatProductForCard(product)}
               isWishlist={true}
+              onDelete={handleRemoveItem}
             />
           ))}
         </div>
