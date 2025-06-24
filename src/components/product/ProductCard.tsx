@@ -1,11 +1,10 @@
-// export default ProductCard;
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { FiHeart, FiEye, FiStar, FiTrash2 } from 'react-icons/fi';
 import { FaShoppingCart } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-import { addToCart } from '@/api/cart';
+import { addToCart, useAppDispatch } from '@/Store/store';
 
 type Product = {
   id: string;
@@ -25,25 +24,38 @@ interface ProductCardProps {
   onDelete?: (id: string) => void;
 }
 
+// Helper to ensure fallback image
+const getImageUrl = (url?: string) => {
+  return url && url.trim() !== ''
+    ? url
+    : 'https://unblast.com/wp-content/uploads/2023/10/iphone-15-pro-max-mockup.jpg';
+};
+
 const ProductCard: React.FC<ProductCardProps> = ({
   item,
+  userId,
   isWishlist = false,
   onDelete,
 }) => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   const handleCardClick = () => {
-    // navigate(`/products/${item.id}`, { state: { product: item } });
-    navigate('/cart'); //goes to cart page with adding
+    navigate('/cart');
   };
 
   const handleAddToCart = async () => {
-    try {
-      const data = await addToCart(item.id, 1, Number(item.salePrice)); // ✅ pass price
-      console.log('Added to cart:', data);
-    } catch (error) {
-      console.error('Failed to add to cart:', error);
-    }
+    const cartItem = {
+      _id: item.id,
+      name: item.name,
+      mainImageUrl: item.mainImageUrl,
+      price: Number(item.salePrice),
+      quantity: 1,
+      subtotal: Number(item.salePrice),
+    };
+
+    // Add to Redux and localStorage
+    dispatch(addToCart(cartItem));
   };
 
   return (
@@ -88,10 +100,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           )}
         </div>
         <img
-          src={
-            item.mainImageUrl ||
-            'https://unblast.com/wp-content/uploads/2023/10/iphone-15-pro-max-mockup.jpg'
-          }
+          src={getImageUrl(item.mainImageUrl)}
           alt={item.name}
           className="w-full h-40 object-cover rounded-md"
         />
@@ -122,8 +131,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
         </div>
         <div className="flex space-x-4 mt-6">
           <Button
-            onClick={() => {
-              // e.stopPropagation();
+            onClick={(e) => {
+              e.stopPropagation();
               handleAddToCart();
             }}
             className="bg-red-500 hover:bg-red-600 text-white flex-1 flex items-center px-4 py-2"
@@ -135,7 +144,6 @@ const ProductCard: React.FC<ProductCardProps> = ({
             className="bg-red-500 hover:bg-red-600 text-white flex-1 px-4 py-2"
             onClick={(e) => {
               e.stopPropagation();
-              // Implement buy now logic here
               console.log('Buy now clicked');
             }}
           >
