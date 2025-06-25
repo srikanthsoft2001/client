@@ -150,9 +150,9 @@ export const updateUserById = async (_id: string, payload: any) => {
   try {
     console.log(payload);
     const response = await axios.put(
-      `http://localhost:3000/users/${_id}`,
+      `${API_BASE_URL}/users/${_id}`, // ✅ Using API_BASE_URL
       payload
-    ); // ✅ FULL URL
+    );
     return response.data;
   } catch (error) {
     console.error('Error updating user:', error);

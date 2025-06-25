@@ -79,7 +79,7 @@ export const getProduct = async (id: string): Promise<ProductItem | null> => {
 };
 export const getCurrentUser = async () => {
   const token = localStorage.getItem('authToken');
-  const response = await axios.get('http://localhost:3000/users/me', {
+  const response = await axios.get(`${API_BASE_URL}/users/me`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
