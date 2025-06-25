@@ -2,7 +2,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import CartItem from '@/components/cart/CartItem';
 import CartSummary from '@/components/cart/CartSummary';
 import { Button } from '@/components/ui/button';
-import { removeFromCart, RootState, updateQuantity } from '@/Store/store';
+import { removeFromCart, RootState, updateQuantity } from '@/store/store';
 
 const Cart: React.FC = () => {
   const products = useSelector((state: RootState) => state.cart);

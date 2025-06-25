@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import type { RootState } from '@/Store/store';
+import type { RootState } from '@/store/store';
 
 const ProtectedRoute: React.FC = () => {
   const { user, loading } = useSelector((state: RootState) => state.auth);

@@ -1,10 +1,6 @@
-import {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  ReactNode,
-} from 'react';
+import { createContext, useContext, ReactNode } from 'react';
+import { useSelector } from 'react-redux';
+import { useAppDispatch, RootState, loginSuccess, logout } from '@/store/store';
 
 interface User {
   _id: string;
@@ -23,32 +19,15 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(null);
-
-  useEffect(() => {
-    const userString = localStorage.getItem('user');
-    const token = localStorage.getItem('token');
-    const user = userString ? JSON.parse(userString) : null;
-
-    if (user && token) {
-      setUser(user);
-      setToken(token);
-    }
-  }, []);
+  const dispatch = useAppDispatch();
+  const { user, token } = useSelector((state: RootState) => state.auth);
 
   const login = (token: string, user: User) => {
-    setUser(user);
-    setToken(token);
-    localStorage.setItem('user', JSON.stringify(user));
-    localStorage.setItem('token', token);
+    dispatch(loginSuccess({ user, token }));
   };
 
-  const logout = () => {
-    setUser(null);
-    setToken(null);
-    localStorage.removeItem('user');
-    localStorage.removeItem('token');
+  const handleLogout = () => {
+    dispatch(logout());
   };
 
   return (
@@ -58,7 +37,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         token,
         userId: user?._id ?? null,
         login,
-        logout,
+        logout: handleLogout,
       }}
     >
       {children}
@@ -68,6 +47,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (!context) throw new Error('useAuth must be used within an AuthProvider');
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
   return context;
 };

@@ -6,7 +6,7 @@ import { FaShoppingCart } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { addToWishlist, removeFromWishlist } from '@/api/api';
-// import { addToCart, useAppDispatch } from '@/store/store';
+import { addToCart, useAppDispatch } from '@/store/store';
 
 type Product = {
   id: string;
@@ -17,6 +17,7 @@ type Product = {
   mainImageUrl: string;
   rating: number;
   saleType: string;
+  onDelete?: (id: string) => void;
 };
 
 interface ProductCardProps {
@@ -35,13 +36,14 @@ const getImageUrl = (url?: string) => {
 
 const ProductCard: React.FC<ProductCardProps> = ({
   item,
+  userId,
   isWishlist = false,
   onDelete,
   onWishlistUpdate,
 }) => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  // const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch();
 
   const handleCardClick = () => {
     navigate('/cart');
@@ -68,10 +70,18 @@ const ProductCard: React.FC<ProductCardProps> = ({
     }
   };
 
-  const handleAddToCart = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    e.preventDefault();
-    console.log('Add to cart clicked', item.id);
+  const handleAddToCart = async () => {
+    const cartItem = {
+      _id: item.id,
+      name: item.name,
+      mainImageUrl: item.mainImageUrl,
+      price: Number(item.salePrice),
+      quantity: 1,
+      subtotal: Number(item.salePrice),
+    };
+
+    // Add to Redux and localStorage
+    dispatch(addToCart(cartItem));
   };
 
   const handleBuyNow = (e: React.MouseEvent) => {

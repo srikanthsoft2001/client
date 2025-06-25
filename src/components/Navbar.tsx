@@ -13,8 +13,14 @@ import {
   LogOut,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
-
+import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store/store';
+import { toast } from 'react-toastify';
 const Navbar = () => {
+  const itemCount = useSelector((state: RootState) =>
+    state.cart.reduce((total, item) => total + item.quantity, 0)
+  );
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCategoryHovered, setIsCategoryHovered] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -31,6 +37,8 @@ const Navbar = () => {
   const handleLogout = async () => {
     try {
       await logout(); // calls AuthContext logout, which handles API + context
+      logout();
+      toast.success('Logged out successfully!');
       navigate('/login');
     } catch (error) {
       console.error('Logout failed', error);
@@ -59,7 +67,7 @@ const Navbar = () => {
         <div className="max-w-12xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <Link to="/" className="font-bold text-xl">
+              <Link to="/" className="font-bold text-xl text-white">
                 Bliveus
               </Link>
             </div>

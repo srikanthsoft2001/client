@@ -1,6 +1,6 @@
 // src/pages/OrderListPage.tsx
 import { useEffect, useState } from 'react';
-import { useAppSelector } from '@/Store/store';
+import { useAppSelector } from '@/store/store';
 import { Card } from '@/components/ui/card';
 import { fetchUserOrders } from '@/api/cart';
 

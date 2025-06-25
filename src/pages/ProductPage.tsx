@@ -68,7 +68,9 @@ const ProductPage: React.FC = () => {
             ? Number(product.originalPrice)
             : undefined,
           rating: Number(product.rating) || 0,
-          reviewCount: Number(product.reviewCount) || 0,
+          reviewCount: Number(
+            product.reviewsCount ?? product.reviewsCount ?? 0
+          ),
           images: [
             ...(product.mainImageUrl ? [product.mainImageUrl] : []),
             ...(product.images?.length ? product.images : []),

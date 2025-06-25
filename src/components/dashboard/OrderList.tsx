@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { fetchUserOrders } from '@/api/cart';
 import { useSelector } from 'react-redux';
-import { RootState } from '@/Store/store';
+import { RootState } from '@/store/store';
 
 interface OrderItem {
   productId: string;

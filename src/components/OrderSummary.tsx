@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import { RootState } from '@/Store/store';
+import { RootState } from '@/store/store';
 
 interface CartItem {
   _id: string;
