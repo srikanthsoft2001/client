@@ -1,6 +1,6 @@
 import React, { createContext, useContext, ReactNode } from 'react';
 import { useSelector } from 'react-redux';
-import { useAppDispatch, RootState, loginSuccess, logout } from '@/Store/store';
+import { useAppDispatch, RootState, loginSuccess, logout } from '@/store/store';
 
 interface User {
   _id: string;
