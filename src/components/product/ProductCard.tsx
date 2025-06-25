@@ -6,7 +6,7 @@ import { FaShoppingCart } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { addToWishlist, removeFromWishlist } from '@/api/api';
-import { addToCart, useAppDispatch } from '@/store/store';
+// import { addToCart, useAppDispatch } from '@/store/store';
 
 type Product = {
   id: string;
@@ -41,7 +41,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 }) => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const dispatch = useAppDispatch();
+  // const dispatch = useAppDispatch();
 
   const handleCardClick = () => {
     navigate('/cart');
