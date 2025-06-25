@@ -12,40 +12,22 @@ import {
   LogOut,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
-import { CartItemDto, getCart } from '@/api/cart';
 import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/Store/store';
+import { toast } from 'react-toastify';
 
 const Navbar = () => {
+  const itemCount = useSelector((state: RootState) =>
+    state.cart.reduce((total, item) => total + item.quantity, 0)
+  );
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCategoryHovered, setIsCategoryHovered] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [itemCount, setItemCount] = useState(0);
 
   const navigate = useNavigate();
   const { user, logout } = useAuth();
-
-  useEffect(() => {
-    const fetchCart = async () => {
-      try {
-        const data = await getCart();
-
-        if (data && Array.isArray(data.items)) {
-          const totalItems = data.items.reduce(
-            (acc: number, item: { quantity?: number }) =>
-              acc + (typeof item.quantity === 'number' ? item.quantity : 0),
-            0
-          );
-
-          setItemCount(totalItems);
-        }
-      } catch (err) {
-        console.error('Error fetching cart:', err);
-        setItemCount(0); // fallback
-      }
-    };
-
-    fetchCart();
-  }, []);
 
   const handleSearch = () => {
     if (searchTerm.trim()) {
@@ -55,7 +37,8 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-      await logout();
+      logout();
+      toast.success('Logged out successfully!');
       navigate('/login');
     } catch (err) {
       console.error('Logout error:', err);
@@ -85,7 +68,7 @@ const Navbar = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
             {/* Logo */}
-            <Link to="/" className="text-xl font-bold">
+            <Link to="/" className="text-xl font-bold text-white">
               Bliveus
             </Link>
 
@@ -207,7 +190,7 @@ const Navbar = () => {
       {/* Bottom Category Navigation */}
       <div className="bg-primary text-secondary shadow-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center h-10">
-          {/* Dashboard & Mobile Menu Button */}
+          {/* Dashboard Button */}
           <Button
             variant="ghost"
             size="icon"
