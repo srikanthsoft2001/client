@@ -64,10 +64,9 @@ export const fetchProducts = async (): Promise<ProductItem[]> => {
     return [];
   }
 };
-
 export const getProduct = async (id: string): Promise<ProductItem | null> => {
-  if (!id) throw new Error('Product ID is required');
   try {
+    if (!id) throw new Error('Product ID is required');
     const response = await api.get<ProductItem>(`/products/${id}`);
     return {
       ...response.data,

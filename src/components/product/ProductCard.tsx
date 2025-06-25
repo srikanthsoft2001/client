@@ -1,9 +1,11 @@
+// export default ProductCard;
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { FiHeart, FiEye, FiStar, FiTrash2 } from 'react-icons/fi';
 import { FaShoppingCart } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import { addToCart } from '@/api/cart';
 
 type Product = {
   id: string;
@@ -16,21 +18,32 @@ type Product = {
   saleType: string;
 };
 
-type ProductCardProps = {
+interface ProductCardProps {
   item: Product;
+  userId?: string;
   isWishlist?: boolean;
   onDelete?: (id: string) => void;
-};
+}
 
 const ProductCard: React.FC<ProductCardProps> = ({
   item,
   isWishlist = false,
   onDelete,
 }) => {
-  const navigate = useNavigate(); // Hook to programmatically navigate
+  const navigate = useNavigate();
 
   const handleCardClick = () => {
-    navigate(`/products/${item.id}`, { state: { product: item } });
+    // navigate(`/products/${item.id}`, { state: { product: item } });
+    navigate('/cart'); //goes to cart page with adding
+  };
+
+  const handleAddToCart = async () => {
+    try {
+      const data = await addToCart(item.id, 1, Number(item.salePrice)); // ✅ pass price
+      console.log('Added to cart:', data);
+    } catch (error) {
+      console.error('Failed to add to cart:', error);
+    }
   };
 
   return (
@@ -49,7 +62,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
               size="icon"
               className="h-8 w-8 bg-white rounded-full p-1"
               onClick={(e) => {
-                e.preventDefault();
+                e.stopPropagation();
                 onDelete?.(item.id);
               }}
             >
@@ -74,17 +87,16 @@ const ProductCard: React.FC<ProductCardProps> = ({
             </>
           )}
         </div>
-        <div className="p-0">
-          <img
-            src={
-              item.mainImageUrl ||
-              'https://unblast.com/wp-content/uploads/2023/10/iphone-15-pro-max-mockup.jpg'
-            }
-            alt={item.name}
-            className="w-full h-40 object-cover rounded-md"
-          />
-        </div>
+        <img
+          src={
+            item.mainImageUrl ||
+            'https://unblast.com/wp-content/uploads/2023/10/iphone-15-pro-max-mockup.jpg'
+          }
+          alt={item.name}
+          className="w-full h-40 object-cover rounded-md"
+        />
       </div>
+
       <CardContent className="p-4">
         <h3 className="font-semibold mb-2">{item.name}</h3>
         <div className="flex items-center gap-3">
@@ -109,11 +121,24 @@ const ProductCard: React.FC<ProductCardProps> = ({
           </span>
         </div>
         <div className="flex space-x-4 mt-6">
-          <Button className="bg-red-500 hover:bg-red-600 text-white flex-1 flex items-center px-4 py-2">
+          <Button
+            onClick={() => {
+              // e.stopPropagation();
+              handleAddToCart();
+            }}
+            className="bg-red-500 hover:bg-red-600 text-white flex-1 flex items-center px-4 py-2"
+          >
             <FaShoppingCart className="w-4 h-4 mr-2" />
             Add to Cart
           </Button>
-          <Button className="bg-red-500 hover:bg-red-600 text-white flex-1 px-4 py-2">
+          <Button
+            className="bg-red-500 hover:bg-red-600 text-white flex-1 px-4 py-2"
+            onClick={(e) => {
+              e.stopPropagation();
+              // Implement buy now logic here
+              console.log('Buy now clicked');
+            }}
+          >
             Buy Now
           </Button>
         </div>
