@@ -1,15 +1,15 @@
 import { ProductItem } from '@/api/api';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-
 interface WishlistState {
   items: ProductItem[];
 }
 
 const initialState: WishlistState = {
-  items: typeof window !== 'undefined' 
-    ? JSON.parse(localStorage.getItem('wishlist') || '[]') 
-    : [],
+  items:
+    typeof window !== 'undefined'
+      ? JSON.parse(localStorage.getItem('wishlist') || '[]')
+      : [],
 };
 
 const wishlistSlice = createSlice({
@@ -17,14 +17,14 @@ const wishlistSlice = createSlice({
   initialState,
   reducers: {
     addToWishlist: (state, action: PayloadAction<ProductItem>) => {
-      const exists = state.items.find(item => item.id === action.payload.id);
+      const exists = state.items.find((item) => item.id === action.payload.id);
       if (!exists) {
         state.items.push(action.payload);
         localStorage.setItem('wishlist', JSON.stringify(state.items));
       }
     },
     removeFromWishlist: (state, action: PayloadAction<string>) => {
-      state.items = state.items.filter(item => item.id !== action.payload);
+      state.items = state.items.filter((item) => item.id !== action.payload);
       localStorage.setItem('wishlist', JSON.stringify(state.items));
     },
     setWishlist: (state, action: PayloadAction<ProductItem[]>) => {
@@ -38,11 +38,7 @@ const wishlistSlice = createSlice({
   },
 });
 
-export const {
-  addToWishlist,
-  removeFromWishlist,
-  setWishlist,
-  clearWishlist,
-} = wishlistSlice.actions;
+export const { addToWishlist, removeFromWishlist, setWishlist, clearWishlist } =
+  wishlistSlice.actions;
 
 export default wishlistSlice.reducer;

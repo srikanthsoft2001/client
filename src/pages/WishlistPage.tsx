@@ -13,9 +13,7 @@ const WishlistPage = () => {
   const dispatch = useDispatch();
   const { user } = useAuth();
 
-  const wishlistItems = useSelector(
-    (state: RootState) => state.wishlist.items
-  );
+  const wishlistItems = useSelector((state: RootState) => state.wishlist.items);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

@@ -71,7 +71,6 @@ export const getProduct = async (id: string): Promise<ProductItem | null> => {
     return null;
   }
 };
-
 export const getCurrentUser = async () => {
   const token = localStorage.getItem('authToken');
   const response = await axios.get('http://localhost:3000/users/me', {
@@ -109,15 +108,12 @@ export const getWishlistItems = async (
 ): Promise<{ wishlist: ProductItem[] }> => {
   try {
     // const API_BASE_URL = process.env.API_BASE_URL || 'http://your-api-base-url'; // Make sure this is set
-    const response = await fetch(
-      `${API_BASE_URL}/users/${userId}/wishlist`,
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('authToken')}`,
-          Accept: 'application/json', // Explicitly ask for JSON
-        },
-      }
-    );
+    const response = await fetch(`${API_BASE_URL}/users/${userId}/wishlist`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+        Accept: 'application/json', // Explicitly ask for JSON
+      },
+    });
     console.log(response);
 
     if (!response.ok) {
@@ -139,20 +135,19 @@ export const getWishlistItems = async (
   }
 };
 
-
-export const addToWishlist = async (userId: string, productId: string): Promise<{ success: boolean }> => {
+export const addToWishlist = async (
+  userId: string,
+  productId: string
+): Promise<{ success: boolean }> => {
   try {
-    const response = await fetch(
-      `${API_BASE_URL}/users/${userId}/wishlist`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('authToken')}`,
-        },
-        body: JSON.stringify({ productId }),
-      }
-    );
+    const response = await fetch(`${API_BASE_URL}/users/${userId}/wishlist`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+      },
+      body: JSON.stringify({ productId }),
+    });
 
     if (!response.ok) {
       const errorData = await response.json();
@@ -166,7 +161,10 @@ export const addToWishlist = async (userId: string, productId: string): Promise<
   }
 };
 
-export const removeFromWishlist = async (userId: string, productId: string): Promise<{ success: boolean }> => {
+export const removeFromWishlist = async (
+  userId: string,
+  productId: string
+): Promise<{ success: boolean }> => {
   try {
     const response = await fetch(`${API_BASE_URL}/users/${userId}/wishlist`, {
       method: 'DELETE',
@@ -188,7 +186,6 @@ export const removeFromWishlist = async (userId: string, productId: string): Pro
     throw error;
   }
 };
-
 
 export const fetchAllProducts = fetchProducts;
 export const fetchFlashSales = fetchProducts;

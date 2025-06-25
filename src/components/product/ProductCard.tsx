@@ -4,12 +4,9 @@ import { Card, CardContent } from '@/components/ui/card';
 import { FiHeart, FiEye, FiStar, FiTrash2 } from 'react-icons/fi';
 import { FaShoppingCart } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-<<<<<<< HEAD
 import { useAuth } from '@/context/AuthContext';
 import { addToWishlist, removeFromWishlist } from '@/api/api';
-=======
-import { addToCart, useAppDispatch } from '@/Store/store';
->>>>>>> b7768ea3ed6aa27863981cbe0c044d66dd6f70a2
+import { addToCart, useAppDispatch } from '@/store/store';
 
 type Product = {
   id: string;
@@ -30,7 +27,6 @@ interface ProductCardProps {
   onWishlistUpdate?: () => void;
 }
 
-// Helper to ensure fallback image
 const getImageUrl = (url?: string) => {
   return url && url.trim() !== ''
     ? url
@@ -39,33 +35,20 @@ const getImageUrl = (url?: string) => {
 
 const ProductCard: React.FC<ProductCardProps> = ({
   item,
-  userId,
   isWishlist = false,
   onDelete,
   onWishlistUpdate,
 }) => {
   const navigate = useNavigate();
-<<<<<<< HEAD
   const { user } = useAuth();
-=======
   const dispatch = useAppDispatch();
->>>>>>> b7768ea3ed6aa27863981cbe0c044d66dd6f70a2
 
   const handleCardClick = () => {
     navigate('/cart');
   };
 
-<<<<<<< HEAD
-  // const handleAddToCart = async () => {
-  //   try {
-  //     const data = await addToCart(item.id, 1, Number(item.salePrice)); // ✅ pass price
-  //     console.log('Added to cart:', data);
-  //   } catch (error) {
-  //     console.error('Failed to add to cart:', error);
-  //   }
-  // };
-
   const handleWishlistClick = async (e: React.MouseEvent) => {
+    //Add commentMore actions
     e.stopPropagation();
     e.preventDefault();
 
@@ -83,20 +66,6 @@ const ProductCard: React.FC<ProductCardProps> = ({
     } catch (error) {
       console.error('Wishlist update failed:', error);
     }
-=======
-  const handleAddToCart = async () => {
-    const cartItem = {
-      _id: item.id,
-      name: item.name,
-      mainImageUrl: item.mainImageUrl,
-      price: Number(item.salePrice),
-      quantity: 1,
-      subtotal: Number(item.salePrice),
-    };
-
-    // Add to Redux and localStorage
-    dispatch(addToCart(cartItem));
->>>>>>> b7768ea3ed6aa27863981cbe0c044d66dd6f70a2
   };
 
   const handleAddToCart = (e: React.MouseEvent) => {
@@ -110,6 +79,33 @@ const ProductCard: React.FC<ProductCardProps> = ({
     e.preventDefault();
     console.log('Buy now clicked', item.id);
   };
+
+  // const handleWishlistClick = async (e: React.MouseEvent) => {
+  //   e.stopPropagation();
+  //   e.preventDefault();
+
+  //   if (!user) return;
+
+  //   try {
+  //     if (isWishlist) {
+  //       await removeFromWishlist(user._id, item.id);
+  //       onDelete?.(item.id);
+  //     } else {
+  //       await addToWishlist(user._id, item.id);
+  //     }
+
+  //     onWishlistUpdate?.();
+  //   } catch (error) {
+  //     console.error('Wishlist update failed:', error);
+  //   }
+  // };
+
+  // const handleBuyNow = (e: React.MouseEvent) => {
+  //   e.stopPropagation();
+  //   console.log('Buy now clicked', item.id);
+  //   // Could navigate to checkout page, e.g.:
+  //   // navigate('/checkout', { state: { item } });
+  // };
 
   return (
     <Card
@@ -153,6 +149,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 onClick={(e) => {
                   e.stopPropagation();
                   e.preventDefault();
+                  console.log('Preview clicked');
                 }}
               >
                 <FiEye size={16} />
@@ -192,13 +189,6 @@ const ProductCard: React.FC<ProductCardProps> = ({
         </div>
         <div className="flex space-x-4 mt-6">
           <Button
-<<<<<<< HEAD
-=======
-            onClick={(e) => {
-              e.stopPropagation();
-              handleAddToCart();
-            }}
->>>>>>> b7768ea3ed6aa27863981cbe0c044d66dd6f70a2
             className="bg-red-500 hover:bg-red-600 text-white flex-1 flex items-center px-4 py-2"
             onClick={handleAddToCart}
           >
@@ -207,14 +197,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           </Button>
           <Button
             className="bg-red-500 hover:bg-red-600 text-white flex-1 px-4 py-2"
-<<<<<<< HEAD
             onClick={handleBuyNow}
-=======
-            onClick={(e) => {
-              e.stopPropagation();
-              console.log('Buy now clicked');
-            }}
->>>>>>> b7768ea3ed6aa27863981cbe0c044d66dd6f70a2
           >
             Buy Now
           </Button>
