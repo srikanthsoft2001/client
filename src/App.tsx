@@ -24,12 +24,12 @@ import CategoryProducts from './components/product/CategoryProducts';
 import ProductSearch from './components/ProductSearch';
 import AccountLayout from './pages/AccountLayout';
 import { AuthProvider } from './context/AuthContext';
-import { CartProvider } from './context/CartContext';
-//import PrivateRoute from './routes/PrivateRoute';
+// Redux imports
+import { Provider as ReduxProvider } from 'react-redux';
+import { store } from '@/store';
 
 const queryClient = new QueryClient();
 
-// Wrapper component to extract params and pass to CategoryProducts
 const CategoryProductsWrapper = () => {
   const { category, subcategory } = useParams<{
     category: string;
@@ -41,12 +41,12 @@ const CategoryProductsWrapper = () => {
 };
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Sonner />
-      <AuthProvider>
-        <BrowserRouter>
-          <CartProvider>
+  <ReduxProvider store={store}>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Sonner />
+        <AuthProvider>
+          <BrowserRouter>
             <Routes>
               <Route element={<Layout />}>
                 <Route path="/search" element={<ProductSearch />} />
@@ -65,7 +65,6 @@ const App = () => (
                 <Route path="/dashboard" element={<DashboardLayout />}>
                   <Route index element={<DashboardPage />} />
                 </Route>
-                {/* Your existing category routes can stay or be removed if replaced */}
                 <Route path="/food" element={<FoodPage />} />
                 <Route path="/electronics" element={<ElectronicsPage />} />
                 <Route path="/realestate" element={<RealEstatePage />} />
@@ -73,7 +72,6 @@ const App = () => (
                   path="/Medical & Para Medical"
                   element={<MedicalPage />}
                 />
-                {/* New dynamic category/subcategory route */}
                 <Route
                   path="/category/:category"
                   element={<CategoryProductsWrapper />}
@@ -82,14 +80,14 @@ const App = () => (
                   path="/category/:category/:subcategory"
                   element={<CategoryProductsWrapper />}
                 />
-                <Route path="/account" element={<AccountLayout />} />{' '}
+                <Route path="/account" element={<AccountLayout />} />
               </Route>
             </Routes>
-          </CartProvider>
-        </BrowserRouter>
-      </AuthProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
+          </BrowserRouter>
+        </AuthProvider>
+      </TooltipProvider>
+    </QueryClientProvider>
+  </ReduxProvider>
 );
 
 export default App;
