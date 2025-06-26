@@ -36,7 +36,7 @@ const getImageUrl = (url?: string) => {
 
 const ProductCard: React.FC<ProductCardProps> = ({
   item,
-  userId,
+  // userId,
   isWishlist = false,
   onDelete,
   onWishlistUpdate,
@@ -46,7 +46,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const dispatch = useAppDispatch();
 
   const handleCardClick = () => {
-    navigate('/cart');
+    navigate(`/products/${item.id}`);
   };
 
   const handleWishlistClick = async (e: React.MouseEvent) => {

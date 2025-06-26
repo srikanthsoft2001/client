@@ -5,6 +5,7 @@ import {
   createAsyncThunk,
 } from '@reduxjs/toolkit';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
+import wishlistReducer from '@/slices/wishlistSlice';
 
 /* ------------------- Cart Slice ------------------- */
 interface CartItem {
@@ -239,6 +240,7 @@ export const store = configureStore({
     cart: cartSlice.reducer,
     orders: orderSlice.reducer,
     auth: authSlice.reducer,
+    wishlist: wishlistReducer,
   },
 });
 
