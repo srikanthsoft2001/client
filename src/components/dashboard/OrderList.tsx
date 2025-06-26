@@ -1,162 +1,81 @@
-// src/components/OrderList.tsx
-import { useState } from 'react';
-import { Button } from '../ui/button';
-import { Card } from '../ui/card';
-import { OrderItem } from './OrderItem';
+import React, { useEffect, useState } from 'react';
+import { fetchUserOrders } from '@/api/cart';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store/store';
 
-type Order = {
-  id: number;
-  productName: string;
-  date: string;
-  customerName: string;
-  status: 'Delivered' | 'Canceled';
-  amount: string;
-};
+interface OrderItem {
+  productId: string;
+  name: string;
+  quantity: number;
+  price: number;
+}
 
-const orders: Order[] = [
-  {
-    id: 25426,
-    productName: 'Lorem Ipsum',
-    date: '2023-05-15',
-    customerName: 'John Doe',
-    status: 'Delivered',
-    amount: '¥200.00',
-  },
-  {
-    id: 25425,
-    productName: 'Lorem Ipsum',
-    date: '2023-05-14',
-    customerName: 'Jane Smith',
-    status: 'Canceled',
-    amount: '¥200.00',
-  },
-  {
-    id: 25424,
-    productName: 'Lorem Ipsum',
-    date: '2023-05-13',
-    customerName: 'Bob Johnson',
-    status: 'Delivered',
-    amount: '¥200.00',
-  },
-  {
-    id: 25423,
-    productName: 'Lorem Ipsum',
-    date: '2023-05-12',
-    customerName: 'Alice Brown',
-    status: 'Canceled',
-    amount: '¥200.00',
-  },
-  {
-    id: 25422,
-    productName: 'Lorem Ipsum',
-    date: '2023-05-11',
-    customerName: 'Charlie Wilson',
-    status: 'Delivered',
-    amount: '¥200.00',
-  },
-  {
-    id: 25421,
-    productName: 'Lorem Ipsum',
-    date: '2023-05-10',
-    customerName: 'Diana Miller',
-    status: 'Delivered',
-    amount: '¥200.00',
-  },
-  {
-    id: 25420,
-    productName: 'Lorem Ipsum',
-    date: '2023-05-09',
-    customerName: 'Evan Davis',
-    status: 'Delivered',
-    amount: '¥200.00',
-  },
-];
+interface Order {
+  _id: string;
+  customerId: string;
+  items: OrderItem[];
+  totalPrice: number;
+  status: string;
+  createdAt?: string;
+}
 
-export const OrderList = () => {
-  const [selectedOrders, setSelectedOrders] = useState<Set<string>>(new Set());
-  const [selectAll, setSelectAll] = useState(false);
+const OrderListPage: React.FC = () => {
+  const user = useSelector((state: RootState) => state.auth.user);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleOrderSelect = (orderId: string, isSelected: boolean) => {
-    setSelectedOrders((prev) => {
-      const newSet = new Set(prev);
-      isSelected ? newSet.add(orderId) : newSet.delete(orderId);
-      return newSet;
-    });
-    setSelectAll(false);
-  };
+  useEffect(() => {
+    if (!user?._id) return;
 
-  const handleSelectAllChange = () => {
-    if (selectAll) {
-      setSelectedOrders(new Set());
-    } else {
-      setSelectedOrders(new Set(orders.map((order) => order.id.toString())));
-    }
-    setSelectAll(!selectAll);
-  };
+    fetchUserOrders(user._id)
+      .then((res) => {
+        setOrders(res);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error('Error fetching orders:', err);
+        setError('Failed to load orders');
+        setLoading(false);
+      });
+  }, [user]);
+
+  if (loading) return <p className="text-center mt-10">Loading orders...</p>;
+  if (error) return <p className="text-center text-red-500 mt-10">{error}</p>;
 
   return (
-    <div className="space-y-4">
-      {/* Header Card */}
-      <Card className="p-4 bg-gray-50 rounded-lg">
-        <div className="grid grid-cols-6 gap-4 font-medium text-gray-700">
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              checked={selectAll}
-              onChange={handleSelectAllChange}
-              className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-            />
-            <span className="ml-2">Product</span>
+    <div className="max-w-3xl mx-auto p-4">
+      <h2 className="text-2xl font-semibold mb-6">🛍️ My Orders</h2>
+
+      {orders.length === 0 ? (
+        <p>No orders found.</p>
+      ) : (
+        orders.map((order) => (
+          <div key={order._id} className="border p-4 rounded shadow-md mb-4">
+            <p>
+              <strong>Order ID:</strong> {order._id}
+            </p>
+            <p>
+              <strong>Total Price:</strong> ₹{order.totalPrice}
+            </p>
+            <p>
+              <strong>Status:</strong> {order.status}
+            </p>
+            <p>
+              <strong>Items:</strong>
+            </p>
+            <ul className="list-disc list-inside ml-2">
+              {order.items?.map((item, index) => (
+                <li key={index}>
+                  {item.name} × {item.quantity} (₹{item.price})
+                </li>
+              ))}
+            </ul>
           </div>
-          <div>Order ID</div>
-          <div>Date/Stock</div>
-          <div>Customer Name</div>
-          <div>Status</div>
-          <div className="text-right">Amount</div>
-        </div>
-      </Card>
-
-      {/* Order Items */}
-      <div className="space-y-2">
-        {orders.map((order) => (
-          <OrderItem
-            key={order.id}
-            productName={order.productName}
-            orderId={`#${order.id}`}
-            date={order.date}
-            customerName={order.customerName}
-            status={order.status}
-            amount={order.amount}
-            isSelected={selectedOrders.has(order.id.toString())}
-            onSelectChange={(isSelected) =>
-              handleOrderSelect(order.id.toString(), isSelected)
-            }
-          />
-        ))}
-      </div>
-
-      {/* Pagination */}
-      <div className="flex justify-center mt-6 gap-2">
-        <Button variant="outline" size="sm">
-          1
-        </Button>
-        <Button variant="outline" size="sm">
-          2
-        </Button>
-        <Button variant="outline" size="sm">
-          3
-        </Button>
-        <Button variant="outline" size="sm">
-          4
-        </Button>
-        <span className="px-4 flex items-center">...</span>
-        <Button variant="outline" size="sm">
-          10
-        </Button>
-        <Button variant="outline" size="sm">
-          NEXT &gt;
-        </Button>
-      </div>
+        ))
+      )}
     </div>
   );
 };
+
+export default OrderListPage;

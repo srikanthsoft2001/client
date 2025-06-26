@@ -11,12 +11,12 @@ const api = axios.create({
 });
 
 export interface ProductItem {
-  reviewCount(reviewCount: any): number;
-  images: any;
-  colors: never[];
-  sizes: never[];
-  description: string;
+  reviewsCount: any;
   inStock(inStock: any): boolean;
+  description: string;
+  sizes: never[];
+  colors: never[];
+  images: any;
   id: string;
   name: string;
   originalPrice: string;
@@ -107,6 +107,90 @@ export const loginUser = async (credentials: {
 }) => {
   const response = await api.post('/auth/login', credentials);
   return response.data; // should return { token, user }
+};
+
+export const getWishlistItems = async (
+  userId: string
+): Promise<{ wishlist: ProductItem[] }> => {
+  try {
+    // const API_BASE_URL = process.env.API_BASE_URL || 'http://your-api-base-url'; // Make sure this is set
+    const response = await fetch(`${API_BASE_URL}/users/${userId}/wishlist`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+        Accept: 'application/json', // Explicitly ask for JSON
+      },
+    });
+    console.log(response);
+
+    if (!response.ok) {
+      // Try to get error details if response is JSON
+      const contentType = response.headers.get('content-type');
+      if (contentType?.includes('application/json')) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to fetch wishlist');
+      } else {
+        const text = await response.text();
+        throw new Error(text || 'Failed to fetch wishlist');
+      }
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching wishlist:', error);
+    throw new Error('Failed to fetch wishlist. Please try again later.');
+  }
+};
+
+export const addToWishlist = async (
+  userId: string,
+  productId: string
+): Promise<{ success: boolean }> => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/users/${userId}/wishlist`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+      },
+      body: JSON.stringify({ productId }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to add to wishlist');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error adding to wishlist:', error);
+    throw error;
+  }
+};
+
+export const removeFromWishlist = async (
+  userId: string,
+  productId: string
+): Promise<{ success: boolean }> => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/users/${userId}/wishlist`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+      },
+      body: JSON.stringify({ productId }), // Pass productId in body
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to remove from wishlist');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error removing from wishlist:', error);
+    throw error;
+  }
 };
 
 export const fetchAllProducts = fetchProducts;
