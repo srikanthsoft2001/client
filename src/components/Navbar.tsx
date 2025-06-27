@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -13,19 +12,21 @@ import {
   LogOut,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
-import { useEffect } from 'react';
+import { useState } from 'react'; //useEffect was there
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
 import { toast } from 'react-toastify';
+
 const Navbar = () => {
   const itemCount = useSelector((state: RootState) =>
     state.cart.reduce((total, item) => total + item.quantity, 0)
   );
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCategoryHovered, setIsCategoryHovered] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const navigate = useNavigate();
 
+  const navigate = useNavigate();
   const { user, logout } = useAuth();
 
   const handleSearch = () => {
@@ -36,12 +37,11 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-      await logout(); // calls AuthContext logout, which handles API + context
       logout();
       toast.success('Logged out successfully!');
       navigate('/login');
-    } catch (error) {
-      console.error('Logout failed', error);
+    } catch (err) {
+      console.error('Logout error:', err);
     }
   };
 
@@ -63,219 +63,191 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="sticky top-0 z-50 bg-primary text-secondary border-b border-gray-800 shadow-sm">
-        <div className="max-w-12xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <Link to="/" className="font-bold text-xl text-white">
-                Bliveus
-              </Link>
-            </div>
+      {/* Top Navbar */}
+      <nav className="sticky top-0 z-50 bg-primary text-secondary shadow-sm border-b border-gray-700">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between h-16 items-center">
+            {/* Logo */}
+            <Link to="/" className="text-xl font-bold text-white">
+              Bliveus
+            </Link>
 
-            <div className="hidden md:flex space-x-8">
-              <Link to="/" className="font-medium hover:text-gray-300">
+            {/* Desktop Menu */}
+            <div className="hidden md:flex gap-6">
+              <Link to="/" className="hover:text-gray-300">
                 Home
               </Link>
-              <Link to="/contact" className="font-medium hover:text-gray-300">
+              <Link to="/contact" className="hover:text-gray-300">
                 Contact
               </Link>
-              <Link to="/about" className="font-medium hover:text-gray-300">
+              <Link to="/about" className="hover:text-gray-300">
                 About
               </Link>
             </div>
 
+            {/* Right Icons */}
             <div className="flex items-center space-x-4">
-              <div className="hidden sm:flex items-center relative rounded-md">
+              {/* Search */}
+              <div className="hidden sm:flex relative">
                 <Input
-                  placeholder="What are you looking for?"
                   className="w-64 pr-10 bg-gray-100 text-black"
+                  placeholder="Search..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                 />
                 <Button
-                  size="icon"
                   variant="ghost"
+                  size="icon"
                   className="absolute right-0 top-0 h-full text-primary"
                   onClick={handleSearch}
-                  aria-label="Search"
                 >
                   <Search size={20} />
                 </Button>
               </div>
 
+              {/* Wishlist */}
               <Link to="/wishlist">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="text-white hover:text-primary"
-                  aria-label="Wishlist"
-                >
+                <Button variant="ghost" size="icon" className="text-white">
                   <Heart size={24} />
                 </Button>
               </Link>
 
-              <Link to="/cart">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="relative text-white hover:text-primary"
-                  aria-label="Cart"
-                >
+              {/* Cart */}
+              <Link to="/cart" className="relative">
+                <Button variant="ghost" size="icon" className="text-white">
                   <ShoppingCart size={24} />
-                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                    3
-                  </span>
                 </Button>
+                {itemCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs h-5 w-5 rounded-full flex items-center justify-center z-10">
+                    {itemCount}
+                  </span>
+                )}
               </Link>
 
+              {/* Auth Buttons */}
               {user ? (
                 <>
-                  <div className="text-white font-medium px-2">
-                    <Link to="/account">Welcome,{user.name}</Link>
-                  </div>
+                  <Link to="/account" className="text-white font-medium">
+                    Welcome, {user.name}
+                  </Link>
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="text-white hover:text-primary"
+                    className="text-white"
                     onClick={handleLogout}
-                    title="Logout"
-                    aria-label="Logout"
                   >
                     <LogOut size={24} />
                   </Button>
                 </>
               ) : (
                 <Link to="/login">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="text-white hover:text-primary"
-                    aria-label="Login"
-                  >
+                  <Button variant="ghost" size="icon" className="text-white">
                     <User size={24} />
                   </Button>
                 </Link>
               )}
-            </div>
-          </div>
 
-          {isMenuOpen && (
-            <div className="md:hidden bg-black pb-4 space-y-4">
-              <div className="flex items-center relative rounded-md px-2">
-                <Input
-                  placeholder="Search..."
-                  className="w-full pr-10 bg-gray-100 text-black"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                />
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  className="absolute right-2 top-0 h-full text-primary"
-                  onClick={handleSearch}
-                  aria-label="Search"
-                >
-                  <Search size={20} />
-                </Button>
-              </div>
-
-              <div className="flex flex-col space-y-3 px-2">
-                {['/', '/contact', '/about', '/dashboard', '/login'].map(
-                  (path, i) => (
-                    <Link
-                      key={i}
-                      to={path}
-                      className="text-white font-medium hover:text-gray-300 py-2 px-4 rounded hover:bg-gray-800"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      {path === '/'
-                        ? 'Home'
-                        : path.replace('/', '').replace('-', ' ')}
-                    </Link>
-                  )
-                )}
-              </div>
-            </div>
-          )}
-        </div>
-      </nav>
-
-      <div className="bg-primary shadow-md text-secondary">
-        <div className="max-w-12xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center h-10">
-            <div className="flex items-center mr-4">
+              {/* Mobile Menu Toggle */}
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-white hover:text-primary"
-                onClick={() => navigate('/dashboard')}
-                aria-label="Dashboard"
-              >
-                <Menu size={24} />
-              </Button>
-
-              <Button
-                variant="ghost"
-                size="icon"
-                className="md:hidden text-white hover:text-primary"
+                className="md:hidden text-white"
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                aria-label="Toggle Menu"
               >
                 {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
               </Button>
             </div>
+          </div>
+        </div>
 
-            <div
-              className="relative flex items-center px-4 py-2 bg-navy-700 hover:bg-navy-800 cursor-pointer"
-              onMouseEnter={() => setIsCategoryHovered(true)}
-              onMouseLeave={() => setIsCategoryHovered(false)}
-            >
-              <span className="font-medium">All Categories</span>
-              <ChevronDown size={16} className="ml-2" />
-              {isCategoryHovered && (
-                <div className="absolute top-full left-0 w-64 bg-white text-black shadow-lg z-50">
-                  {categories.map((category, index) => (
-                    <div
-                      key={index}
-                      className="group relative border-b border-gray-200"
-                    >
-                      <div className="px-4 py-3 hover:bg-gray-100 flex justify-between items-center">
-                        <span>{category.name}</span>
-                        <ChevronDown size={16} className="text-gray-500" />
-                      </div>
-                      <div className="hidden group-hover:block absolute left-full top-0 w-64 bg-white shadow-lg">
-                        {category.subcategories.map((subcat, subIndex) => (
-                          <Link
-                            key={subIndex}
-                            to={`/category/${slugify(category.name)}/${slugify(
-                              subcat
-                            )}`}
-                            className="block px-4 py-2 hover:bg-gray-100"
-                            onClick={() => setIsCategoryHovered(false)}
-                          >
-                            {subcat}
-                          </Link>
-                        ))}
-                      </div>
+        {/* Mobile Menu Items */}
+        {isMenuOpen && (
+          <div className="md:hidden bg-black py-4 space-y-2 px-4">
+            {['/', '/contact', '/about'].map((path, i) => (
+              <Link
+                key={i}
+                to={path}
+                className="text-white block hover:bg-gray-800 p-2 rounded"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                {path === '/' ? 'Home' : path.replace('/', '').toUpperCase()}
+              </Link>
+            ))}
+            {!user && (
+              <Link
+                to="/login"
+                className="text-white block hover:bg-gray-800 p-2 rounded"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                LOGIN
+              </Link>
+            )}
+          </div>
+        )}
+      </nav>
+
+      {/* Bottom Category Navigation */}
+      <div className="bg-primary text-secondary shadow-md">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center h-10">
+          {/* Dashboard Button */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-white"
+            onClick={() => navigate('/dashboard')}
+          >
+            <Menu size={24} />
+          </Button>
+
+          {/* All Categories Dropdown */}
+          <div
+            className="relative ml-4 px-4 py-2 hover:bg-navy-800 cursor-pointer"
+            onMouseEnter={() => setIsCategoryHovered(true)}
+            onMouseLeave={() => setIsCategoryHovered(false)}
+          >
+            <span className="font-medium">All Categories</span>
+            <ChevronDown size={16} className="ml-2 inline" />
+            {isCategoryHovered && (
+              <div className="absolute left-0 top-full w-64 bg-white text-black shadow-lg z-50">
+                {categories.map((cat, idx) => (
+                  <div
+                    key={idx}
+                    className="group relative border-b border-gray-200"
+                  >
+                    <div className="flex justify-between px-4 py-3 hover:bg-gray-100">
+                      <span>{cat.name}</span>
+                      <ChevronDown size={14} />
                     </div>
-                  ))}
-                </div>
-              )}
-            </div>
+                    <div className="hidden group-hover:block absolute left-full top-0 w-64 bg-white shadow-lg">
+                      {cat.subcategories.map((sub, subIdx) => (
+                        <Link
+                          key={subIdx}
+                          to={`/category/${slugify(cat.name)}/${slugify(sub)}`}
+                          className="block px-4 py-2 hover:bg-gray-100"
+                          onClick={() => setIsCategoryHovered(false)}
+                        >
+                          {sub}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
 
-            <div className="hidden md:flex space-x-6 ml-6">
-              {categories.map((category, index) => (
-                <Link
-                  key={index}
-                  to={`/category/${slugify(category.name)}`}
-                  className="text-secondary transition-colors"
-                >
-                  {category.name}
-                </Link>
-              ))}
-            </div>
+          {/* Horizontal Categories */}
+          <div className="hidden md:flex ml-6 gap-6">
+            {categories.map((cat, idx) => (
+              <Link
+                key={idx}
+                to={`/category/${slugify(cat.name)}`}
+                className="hover:text-gray-300"
+              >
+                {cat.name}
+              </Link>
+            ))}
           </div>
         </div>
       </div>

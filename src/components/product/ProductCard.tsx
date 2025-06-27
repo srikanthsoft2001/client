@@ -70,7 +70,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
     }
   };
 
-  const handleAddToCart = async () => {
+  const handleAddToCart = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
     const cartItem = {
       _id: item.id,
       name: item.name,
@@ -82,6 +84,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
     // Add to Redux and localStorage
     dispatch(addToCart(cartItem));
+    navigate(`/cart`);
   };
 
   const handleBuyNow = (e: React.MouseEvent) => {
