@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { clearCart } from '@/Store/store';
-import { RootState } from '@/Store/store';
+import { clearCart } from '@/store/store';
+import { RootState } from '@/store/store';
 import { toast } from 'react-toastify';
 import { createOrder } from '@/api/cart';
 
