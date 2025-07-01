@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
-import { useNavigate, useLocation } from 'react-router-dom';
+// import { useNavigate, useLocation } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -40,7 +40,7 @@ const baseBillingFields: BillingField[] = [
     placeholder: 'Phone Number',
     required: true,
   },
-  { name: 'pincode', type: 'number', placeholder: 'Pincode' },
+  { name: 'pincode', type: 'text', placeholder: 'Pincode' }, // Changed to 'text'
   { name: 'state', type: 'text', placeholder: 'State' },
 ];
 
@@ -49,8 +49,7 @@ const ReusableForm: React.FC<{
   onSubmit: (formData: Record<string, string>) => void;
   defaultValues?: Record<string, string>;
 }> = ({ fields, onSubmit, defaultValues = {} }) => {
-  const [formData, setFormData] =
-    useState<Record<string, string>>(defaultValues);
+  const [formData, setFormData] = useState<Record<string, string>>(defaultValues);
 
   useEffect(() => {
     setFormData(defaultValues);
@@ -72,7 +71,7 @@ const ReusableForm: React.FC<{
 
   useEffect(() => {
     onSubmit(formData); // live update
-  }, [formData]);
+  }, [formData, onSubmit]); // ✅ Added onSubmit to dependency array
 
   return (
     <form className="space-y-4">
@@ -112,9 +111,9 @@ const ReusableForm: React.FC<{
 };
 
 const BillingForm: React.FC = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const total = location.state?.total;
+  // const navigate = useNavigate();
+  // const location = useLocation();
+  // const total = location.state?.total;
 
   const [latitude, setLatitude] = useState<number | null>(null);
   const [longitude, setLongitude] = useState<number | null>(null);
@@ -133,6 +132,10 @@ const BillingForm: React.FC = () => {
     pincode: '',
     state: '',
   });
+
+  const handleFormSubmit = useCallback((formData: Record<string, string>) => {
+    setFormValues(formData);
+  }, []);
 
   const handleFetchLocation = () => {
     if (!navigator.geolocation) {
@@ -153,19 +156,13 @@ const BillingForm: React.FC = () => {
 
         try {
           const res = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`,
           );
           const data = await res.json();
 
-          const fetchedStreet =
-            data.address.road || data.address.pedestrian || '';
-          const fetchedCity =
-            data.address.city ||
-            data.address.town ||
-            data.address.village ||
-            '';
-          const fetchedArea =
-            data.address.suburb || data.address.neighbourhood || '';
+          const fetchedStreet = data.address.road || data.address.pedestrian || '';
+          const fetchedCity = data.address.city || data.address.town || data.address.village || '';
+          const fetchedArea = data.address.suburb || data.address.neighbourhood || '';
           const fetchedPincode = data.address.postcode || '';
           const fetchedState = data.address.state || '';
 
@@ -179,7 +176,7 @@ const BillingForm: React.FC = () => {
           setAreaName(fetchedArea);
           setAutoFilled(true);
           toast.success(`📍 Area: ${fetchedArea}`);
-        } catch (err) {
+        } catch {
           toast.error('❌ Could not fetch address. Please enter manually.');
         } finally {
           setIsFetchingLocation(false);
@@ -189,26 +186,8 @@ const BillingForm: React.FC = () => {
         setIsFetchingLocation(false);
         setLocationError('❌ Failed to fetch location. Please enter manually.');
       },
-      { enableHighAccuracy: true, timeout: 10000 }
+      { enableHighAccuracy: true, timeout: 10000 },
     );
-  };
-
-  const handleContinue = () => {
-    if (!total) {
-      toast.error('❌ Total amount is missing.');
-      return;
-    }
-
-    const fullFormData = {
-      ...formValues,
-      latitude,
-      longitude,
-      areaName,
-    };
-
-    console.log('✅ Submitted Billing Form:', fullFormData);
-    toast.success('Billing info saved!');
-    navigate('/paymentmethod', { state: { total } });
   };
 
   return (
@@ -242,7 +221,7 @@ const BillingForm: React.FC = () => {
             ...f,
             required: autoFilled ? false : f.required,
           }))}
-          onSubmit={setFormValues}
+          onSubmit={handleFormSubmit}
           defaultValues={formValues}
         />
         <div className="flex items-center">
@@ -251,8 +230,7 @@ const BillingForm: React.FC = () => {
             Save this information for faster checkout next time
           </label>
         </div>
-
-        {/* ✅ Continue button */}
+        {/* Add a continue button here if needed */}
       </div>
     </div>
   );
