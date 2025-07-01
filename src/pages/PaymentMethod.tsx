@@ -68,14 +68,10 @@ const PaymentMethod: React.FC = () => {
         <>
           <div className="flex justify-between items-center border-b pb-4">
             <div>
-              <h2 className="text-lg font-semibold text-gray-800">
-                Order Total
-              </h2>
+              <h2 className="text-lg font-semibold text-gray-800">Order Total</h2>
               <p className="text-sm text-gray-500">Includes all taxes</p>
             </div>
-            <div className="text-2xl font-bold text-green-700">
-              ₹{totalAmount.toFixed(2)}
-            </div>
+            <div className="text-2xl font-bold text-green-700">₹{totalAmount.toFixed(2)}</div>
           </div>
 
           <div className="space-y-4">
@@ -91,11 +87,7 @@ const PaymentMethod: React.FC = () => {
               />
               <div>
                 <p className="font-medium">Credit/Debit Card</p>
-                <img
-                  src="https://i.imgur.com/Zl0sd2W.png"
-                  alt="Card logos"
-                  className="h-6 mt-1"
-                />
+                <img src="https://i.imgur.com/Zl0sd2W.png" alt="Card logos" className="h-6 mt-1" />
               </div>
             </label>
 
