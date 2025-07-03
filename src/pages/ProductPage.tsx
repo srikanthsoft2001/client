@@ -1,3 +1,4 @@
+// src/pages/ProductPage.tsx
 import { getProduct } from '@/api/api';
 import ProductImages from '@/components/product/ProductImages';
 import ProductInfo from '@/components/product/ProductInfo';
@@ -7,7 +8,7 @@ import RelatedProducts from '@/components/product/RelatedProducts';
 import ShippingInfo from '@/components/product/ShippingInfo';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Heart } from 'lucide-react';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 interface Color {
@@ -20,7 +21,7 @@ interface Size {
   value: string;
 }
 
-export interface productData {
+export interface ProductData {
   id: number;
   name: string;
   saleprice: number;
@@ -39,17 +40,13 @@ export interface productData {
 const ProductPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [productData, setProductData] = useState<productData | null>(null);
+
+  const [productData, setProductData] = useState<ProductData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [selectedColor, setSelectedColor] = useState<string>('');
   const [selectedSize, setSelectedSize] = useState<string>('');
   const [quantity, setQuantity] = useState<number>(1);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-
-  const stableProductData = useMemo(
-    () => productData,
-    [productData?.id, JSON.stringify(productData?.images), productData?.name]
-  );
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -60,23 +57,19 @@ const ProductPage: React.FC = () => {
         const product = await getProduct(id);
         if (!product) throw new Error('Product not found');
 
-        const validatedProduct: productData = {
+        const validatedProduct: ProductData = {
           ...product,
           id: Number(product.id),
           saleprice: product.salePrice ? Number(product.salePrice) : 0,
-          originalPrice: product.originalPrice
-            ? Number(product.originalPrice)
-            : undefined,
+          originalPrice: product.originalPrice ? Number(product.originalPrice) : undefined,
           rating: Number(product.rating) || 0,
-          reviewCount: Number(
-            product.reviewsCount ?? product.reviewsCount ?? 0
-          ),
+          reviewCount: Number(product.reviewsCount ?? 0),
           images: [
             ...(product.mainImageUrl ? [product.mainImageUrl] : []),
-            ...(product.images?.length ? product.images : []),
+            ...(Array.isArray(product.images) ? product.images : []),
           ],
-          colors: product.colors || [],
-          sizes: product.sizes || [],
+          colors: Array.isArray(product.colors) ? product.colors : [],
+          sizes: Array.isArray(product.sizes) ? product.sizes : [],
           description: product.description || '',
           inStock: Boolean(product.inStock),
         };
@@ -88,9 +81,7 @@ const ProductPage: React.FC = () => {
         }
         if (validatedProduct.sizes?.length) {
           setSelectedSize(
-            validatedProduct.sizes[
-              Math.floor(validatedProduct.sizes.length / 2)
-            ].value
+            validatedProduct.sizes[Math.floor(validatedProduct.sizes.length / 2)].value,
           );
         }
       } catch (err) {
@@ -119,7 +110,7 @@ const ProductPage: React.FC = () => {
     );
   }
 
-  if (error || !stableProductData) {
+  if (error || !productData) {
     return (
       <div className="container mx-auto px-4 py-8 min-h-screen flex flex-col items-center justify-center text-center">
         <h1 className="text-2xl font-bold mb-4">Product Not Found</h1>
@@ -141,35 +132,35 @@ const ProductPage: React.FC = () => {
     <main className="container mx-auto px-4 py-8">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
         <ProductImages
-          images={stableProductData.images}
-          name={stableProductData.name}
-          key={`images-${stableProductData.id}`}
+          images={productData.images}
+          name={productData.name}
+          key={`images-${productData.id}`}
         />
 
         <div className="space-y-6">
           <ProductInfo
-            name={stableProductData.name}
-            salePrice={stableProductData.saleprice}
-            originalPrice={stableProductData.originalPrice}
-            rating={stableProductData.rating}
-            reviewCount={stableProductData.reviewCount}
-            inStock={stableProductData.inStock}
-            description={stableProductData.description}
+            name={productData.name}
+            salePrice={productData.saleprice}
+            originalPrice={productData.originalPrice}
+            rating={productData.rating}
+            reviewCount={productData.reviewCount}
+            inStock={productData.inStock}
+            description={productData.description}
           />
 
-          {stableProductData.colors.length > 0 && (
+          {productData.colors.length > 0 && (
             <ProductVariants
               type="color"
-              variants={stableProductData.colors}
+              variants={productData.colors}
               selectedVariant={selectedColor}
               onSelect={setSelectedColor}
             />
           )}
 
-          {stableProductData.sizes.length > 0 && (
+          {productData.sizes.length > 0 && (
             <ProductVariants
               type="size"
-              variants={stableProductData.sizes}
+              variants={productData.sizes}
               selectedVariant={selectedSize}
               onSelect={setSelectedSize}
             />
@@ -203,7 +194,7 @@ const ProductPage: React.FC = () => {
         </div>
       </div>
 
-      <RelatedProducts currentProductId={stableProductData.id} />
+      <RelatedProducts currentProductId={productData.id} />
     </main>
   );
 };

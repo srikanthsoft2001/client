@@ -20,12 +20,9 @@ const OrderSummary: React.FC = () => {
   const [couponCode, setCouponCode] = useState('');
   const [appliedCoupon, setAppliedCoupon] = useState('');
   const [couponFixedDiscount, setCouponFixedDiscount] = useState(0);
-  const [couponPercentageDiscount, setCouponPercentageDiscount] = useState(0);
+  const [couponPercentageDiscount, setCouponPercentageDiscount] = useState(0); // Future-proof
 
-  const subtotal = cartItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  );
+  const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   const percentageDiscountAmount = subtotal * (couponPercentageDiscount / 100);
   const totalDiscount = percentageDiscountAmount + couponFixedDiscount;
@@ -37,7 +34,6 @@ const OrderSummary: React.FC = () => {
   const handleApplyCoupon = () => {
     const code = couponCode.trim().toUpperCase();
     let fixedDiscount = 0;
-    let percentage = 0;
     let message = '';
 
     if (code === 'PATAKHA300' && subtotal >= 900) {
@@ -56,7 +52,7 @@ const OrderSummary: React.FC = () => {
 
     setAppliedCoupon(message);
     setCouponFixedDiscount(fixedDiscount);
-    setCouponPercentageDiscount(percentage);
+    setCouponPercentageDiscount(0); // Optional: always zero for now
     setCouponCode('');
   };
 
@@ -68,20 +64,14 @@ const OrderSummary: React.FC = () => {
         cartItems.map((item) => (
           <div key={item._id} className="flex items-center gap-3">
             <div className="h-16 w-16 bg-gray-100 rounded flex items-center justify-center">
-              <img
-                src={item.mainImageUrl}
-                alt={item.name}
-                className="h-12 w-12 object-contain"
-              />
+              <img src={item.mainImageUrl} alt={item.name} className="h-12 w-12 object-contain" />
             </div>
             <div className="flex-1">
               <p className="text-sm">{item.name}</p>
               <p className="text-xs text-gray-500">Qty: {item.quantity}</p>
             </div>
             <div>
-              <p className="font-medium">
-                ₹{(item.price * item.quantity).toFixed(2)}
-              </p>
+              <p className="font-medium">₹{(item.price * item.quantity).toFixed(2)}</p>
             </div>
           </div>
         ))
@@ -120,9 +110,7 @@ const OrderSummary: React.FC = () => {
 
         <div className="flex justify-between">
           <p className="text-gray-600">Shipping:</p>
-          <p className="font-medium">
-            {shipping === 0 ? 'Free' : `₹${shipping.toFixed(2)}`}
-          </p>
+          <p className="font-medium">{shipping === 0 ? 'Free' : `₹${shipping.toFixed(2)}`}</p>
         </div>
 
         <div className="flex justify-between font-semibold text-lg pt-2">
@@ -139,10 +127,7 @@ const OrderSummary: React.FC = () => {
           onChange={(e) => setCouponCode(e.target.value)}
           className="flex-1"
         />
-        <Button
-          onClick={handleApplyCoupon}
-          className="bg-red-500 hover:bg-red-600 text-white"
-        >
+        <Button onClick={handleApplyCoupon} className="bg-red-500 hover:bg-red-600 text-white">
           Apply Coupon
         </Button>
       </div>
@@ -155,9 +140,7 @@ const OrderSummary: React.FC = () => {
 
       {/* Available coupons */}
       <div className="mt-6 border-t pt-4">
-        <h3 className="text-lg font-semibold mb-2 text-gray-700">
-          🎁 Available Coupons
-        </h3>
+        <h3 className="text-lg font-semibold mb-2 text-gray-700">🎁 Available Coupons</h3>
         <ul className="list-disc pl-5 text-sm text-gray-600 space-y-1">
           <li>
             <strong>PATAKHA300</strong>: ₹300 off on orders ≥ ₹900
@@ -170,6 +153,7 @@ const OrderSummary: React.FC = () => {
           </li>
         </ul>
       </div>
+
       {/* Proceed to Payment Button */}
       <div className="pt-6">
         <Button

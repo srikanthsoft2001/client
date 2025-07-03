@@ -1,5 +1,5 @@
-// src/context/AuthContext.ts
+// src/context/AuthContextInstance.ts
 import { createContext } from 'react';
-import { AuthContextType } from './authTypes'; // Ensure this is used!
+import { AuthContextType } from './authTypes';
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);

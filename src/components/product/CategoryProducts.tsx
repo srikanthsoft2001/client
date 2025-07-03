@@ -7,10 +7,7 @@ interface CategoryProductsProps {
   subcategory?: string;
 }
 
-const CategoryProducts: React.FC<CategoryProductsProps> = ({
-  category,
-  subcategory,
-}) => {
+const CategoryProducts: React.FC<CategoryProductsProps> = ({ category, subcategory }) => {
   const [products, setProducts] = useState<ProductItem[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<ProductItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -41,20 +38,18 @@ const CategoryProducts: React.FC<CategoryProductsProps> = ({
 
   useEffect(() => {
     if (products.length > 0) {
-      let filtered = products.filter(
-        (product) => slugify(product.category) === slugify(category)
+      const filtered = products.filter(
+        (product) => slugify(product.category) === slugify(category),
       );
-
       setFilteredProducts(filtered);
     }
   }, [products, category, subcategory]);
 
-  const formatTitle = (text: string) => {
-    return text
+  const formatTitle = (text: string) =>
+    text
       .replace(/-/g, ' ')
       .replace(/\b\w/g, (l) => l.toUpperCase())
       .replace(/ And /gi, ' & ');
-  };
 
   if (loading) {
     return <div className="text-center py-12">Loading products...</div>;
@@ -96,9 +91,7 @@ const CategoryProducts: React.FC<CategoryProductsProps> = ({
           </div>
         ) : (
           <div className="text-center py-10">
-            <p className="text-muted-foreground">
-              No products available in this category.
-            </p>
+            <p className="text-muted-foreground">No products available in this category.</p>
           </div>
         )}
       </div>
