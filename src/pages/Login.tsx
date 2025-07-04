@@ -50,16 +50,13 @@
 import { useNavigate } from 'react-router-dom';
 import LoginForm from '../components/LoginForm';
 import { loginUser } from '@/api/auth';
-import { useAuth } from '@/context/AuthContext'; // ✅ Import context
+import { useAuth } from '@/context/useAuth';
 
 const Login = () => {
   const navigate = useNavigate();
   const { login } = useAuth(); // ✅ Use login from context
 
-  const handleSubmit = async (formData: {
-    email: string;
-    password: string;
-  }) => {
+  const handleSubmit = async (formData: { email: string; password: string }) => {
     try {
       console.log(formData);
       const response = await loginUser(formData);

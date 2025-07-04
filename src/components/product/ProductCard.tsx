@@ -4,25 +4,23 @@ import { Card, CardContent } from '@/components/ui/card';
 import { FiHeart, FiEye, FiStar, FiTrash2 } from 'react-icons/fi';
 import { FaShoppingCart } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/context/AuthContext';
 import { addToWishlist, removeFromWishlist } from '@/api/api';
 import { addToCart, useAppDispatch } from '@/store/store';
+import { useAuth } from '@/context/useAuth';
 
 type Product = {
   id: string;
   name: string;
   originalPrice: string;
-  salePrice: string;
+  salePrice: string; // ✅ camelCase
   discountPercentage: string;
   mainImageUrl: string;
   rating: number;
   saleType: string;
-  onDelete?: (id: string) => void;
 };
 
 interface ProductCardProps {
   item: Product;
-  userId?: string;
   isWishlist?: boolean;
   onDelete?: (id: string) => void;
   onWishlistUpdate?: () => void;
@@ -36,7 +34,6 @@ const getImageUrl = (url?: string) => {
 
 const ProductCard: React.FC<ProductCardProps> = ({
   item,
-  // userId,
   isWishlist = false,
   onDelete,
   onWishlistUpdate,
@@ -50,27 +47,23 @@ const ProductCard: React.FC<ProductCardProps> = ({
   };
 
   const handleWishlistClick = async (e: React.MouseEvent) => {
-    //Add commentMore actions
     e.stopPropagation();
     e.preventDefault();
-
     if (!user) return;
-
     try {
       if (isWishlist) {
         await removeFromWishlist(user._id, item.id);
-        onDelete?.(item.id); // 🔄 Notify parent to update state
+        onDelete?.(item.id);
       } else {
         await addToWishlist(user._id, item.id);
       }
-
       onWishlistUpdate?.();
     } catch (error) {
       console.error('Wishlist update failed:', error);
     }
   };
 
-  const handleAddToCart = async (e: React.MouseEvent) => {
+  const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
     const cartItem = {
@@ -81,44 +74,30 @@ const ProductCard: React.FC<ProductCardProps> = ({
       quantity: 1,
       subtotal: Number(item.salePrice),
     };
-
-    // Add to Redux and localStorage
     dispatch(addToCart(cartItem));
-    navigate(`/cart`);
+    navigate('/cart');
   };
 
   const handleBuyNow = (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
-    console.log('Buy now clicked', item.id);
+    navigate('/checkout', {
+      state: {
+        productData: {
+          id: item.id,
+          name: item.name,
+          salePrice: Number(item.salePrice),
+          originalPrice: Number(item.originalPrice),
+          discount: item.discountPercentage,
+          mainImageUrl: item.mainImageUrl,
+          rating: item.rating,
+        },
+        quantity: 1,
+        selectedColor: null,
+        selectedSize: null,
+      },
+    });
   };
-
-  // const handleWishlistClick = async (e: React.MouseEvent) => {
-  //   e.stopPropagation();
-  //   e.preventDefault();
-
-  //   if (!user) return;
-
-  //   try {
-  //     if (isWishlist) {
-  //       await removeFromWishlist(user._id, item.id);
-  //       onDelete?.(item.id);
-  //     } else {
-  //       await addToWishlist(user._id, item.id);
-  //     }
-
-  //     onWishlistUpdate?.();
-  //   } catch (error) {
-  //     console.error('Wishlist update failed:', error);
-  //   }
-  // };
-
-  // const handleBuyNow = (e: React.MouseEvent) => {
-  //   e.stopPropagation();
-  //   console.log('Buy now clicked', item.id);
-  //   // Could navigate to checkout page, e.g.:
-  //   // navigate('/checkout', { state: { item } });
-  // };
 
   return (
     <Card
@@ -140,7 +119,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
               onClick={(e) => {
                 e.stopPropagation();
                 e.preventDefault();
-                onDelete?.(item.id); // 💥 Triggers removal in WishlistPage
+                onDelete?.(item.id);
               }}
             >
               <FiTrash2 size={16} />
@@ -162,7 +141,6 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 onClick={(e) => {
                   e.stopPropagation();
                   e.preventDefault();
-                  console.log('Preview clicked');
                 }}
               >
                 <FiEye size={16} />
@@ -181,18 +159,14 @@ const ProductCard: React.FC<ProductCardProps> = ({
         <h3 className="font-semibold mb-2">{item.name}</h3>
         <div className="flex items-center gap-3">
           <span className="font-semibold text-red-500">${item.salePrice}</span>
-          <span className="text-gray-400 line-through">
-            ${item.originalPrice}
-          </span>
+          <span className="text-gray-400 line-through">${item.originalPrice}</span>
         </div>
         <div className="flex items-center mt-2">
           {[...Array(5)].map((_, index) => (
             <FiStar
               key={index}
               size={16}
-              className={
-                index < item.rating ? 'text-yellow-400' : 'text-gray-300'
-              }
+              className={index < item.rating ? 'text-yellow-400' : 'text-gray-300'}
               fill={index < item.rating ? 'currentColor' : 'none'}
             />
           ))}

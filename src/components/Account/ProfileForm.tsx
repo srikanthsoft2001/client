@@ -3,7 +3,7 @@ import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { getUserById, updateUserById } from '@/api/auth';
 import AccountSidebar from './AccountSidebar';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/context/useAuth';
 
 interface User {
   name?: string;

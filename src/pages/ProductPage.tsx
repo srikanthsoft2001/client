@@ -1,30 +1,38 @@
-// src/pages/ProductPage.tsx
-import { getProduct } from '@/api/api';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { ArrowLeft } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { FaShoppingCart } from 'react-icons/fa';
+import { FiHeart } from 'react-icons/fi';
+
+import {
+  getProduct,
+  addToWishlist as apiAddToWishlist,
+  removeFromWishlist as apiRemoveFromWishlist,
+} from '@/api/api';
 import ProductImages from '@/components/product/ProductImages';
 import ProductInfo from '@/components/product/ProductInfo';
 import ProductVariants from '@/components/product/ProductVariants';
 import QuantitySelector from '@/components/product/QuantitySelector';
-import RelatedProducts from '@/components/product/RelatedProducts';
 import ShippingInfo from '@/components/product/ShippingInfo';
-import { Button } from '@/components/ui/button';
-import { ArrowLeft, Heart } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import RelatedProducts from '@/components/product/RelatedProducts';
+import { useAuth } from '@/context/useAuth';
+import { useAppDispatch, addToCart } from '@/store/store';
 
 interface Color {
   name: string;
   value: string;
 }
-
 interface Size {
   label: string;
   value: string;
 }
 
 export interface ProductData {
+  _id: string; // <-- MongoDB ID
   id: number;
   name: string;
-  saleprice: number;
+  salePrice: number;
   originalPrice?: number;
   discount?: number;
   rating: number;
@@ -40,6 +48,8 @@ export interface ProductData {
 const ProductPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const { user } = useAuth();
 
   const [productData, setProductData] = useState<ProductData | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -47,42 +57,50 @@ const ProductPage: React.FC = () => {
   const [selectedSize, setSelectedSize] = useState<string>('');
   const [quantity, setQuantity] = useState<number>(1);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isWishlisted, setIsWishlisted] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchProduct = async () => {
       setIsLoading(true);
       try {
         if (!id) throw new Error('Product ID is missing');
-
         const product = await getProduct(id);
         if (!product) throw new Error('Product not found');
 
         const validatedProduct: ProductData = {
           ...product,
+          _id: product.id, // must be a valid MongoDB ObjectId string
           id: Number(product.id),
-          saleprice: product.salePrice ? Number(product.salePrice) : 0,
+          salePrice: Number(product.salePrice) || 0,
           originalPrice: product.originalPrice ? Number(product.originalPrice) : undefined,
           rating: Number(product.rating) || 0,
-          reviewCount: Number(product.reviewsCount ?? 0),
+          reviewCount: Number(product.reviewsCount || 0),
           images: [
             ...(product.mainImageUrl ? [product.mainImageUrl] : []),
             ...(Array.isArray(product.images) ? product.images : []),
           ],
-          colors: Array.isArray(product.colors) ? product.colors : [],
-          sizes: Array.isArray(product.sizes) ? product.sizes : [],
+          colors: Array.isArray(product.colors)
+            ? product.colors.map((color: string) => ({
+                name: color,
+                value: color,
+              }))
+            : [],
+          sizes: Array.isArray(product.sizes)
+            ? product.sizes.map((size: string) => ({
+                label: size,
+                value: size,
+              }))
+            : [],
           description: product.description || '',
           inStock: Boolean(product.inStock),
+          mainImageUrl: product.mainImageUrl,
         };
 
         setProductData(validatedProduct);
-
-        if (validatedProduct.colors?.length) {
-          setSelectedColor(validatedProduct.colors[0].value);
-        }
-        if (validatedProduct.sizes?.length) {
-          setSelectedSize(
-            validatedProduct.sizes[Math.floor(validatedProduct.sizes.length / 2)].value,
-          );
+        if (validatedProduct.colors.length) setSelectedColor(validatedProduct.colors[0].value);
+        if (validatedProduct.sizes.length) {
+          const mid = Math.floor(validatedProduct.sizes.length / 2);
+          setSelectedSize(validatedProduct.sizes[mid].value);
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load product');
@@ -90,27 +108,70 @@ const ProductPage: React.FC = () => {
         setIsLoading(false);
       }
     };
-
     fetchProduct();
   }, [id]);
 
-  const handleAddToWishlist = () => {
-    console.log('Added to wishlist');
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!productData) return;
+
+    const variantKey = `${productData.id}-${selectedColor || 'default'}-${selectedSize || 'default'}`;
+    const cartItem = {
+      _id: String(productData._id),
+      variantId: variantKey,
+      name: productData.name,
+      mainImageUrl: productData.mainImageUrl || productData.images[0] || '',
+      price: productData.salePrice,
+      quantity,
+      subtotal: productData.salePrice * quantity,
+      selectedColor,
+      selectedSize,
+    };
+    dispatch(addToCart(cartItem));
+    navigate('/cart');
   };
 
-  const handleBuyNow = () => {
-    console.log('Buy now clicked');
+  const handleBuyNow = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!productData) return;
+    navigate('/checkout', {
+      state: { productData, quantity, selectedColor, selectedSize },
+    });
   };
 
-  if (isLoading) {
+  const handleWishlistClick = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+
+    if (!productData || !productData._id) return;
+
+    try {
+      if (isWishlisted) {
+        await apiRemoveFromWishlist(user._id, productData._id);
+      } else {
+        await apiAddToWishlist(user._id, productData._id);
+      }
+      setIsWishlisted(!isWishlisted);
+    } catch (error) {
+      console.error('Wishlist update failed:', error);
+    }
+  };
+
+  if (isLoading)
     return (
       <div className="container mx-auto px-4 py-8 min-h-screen flex items-center justify-center">
         <div className="animate-pulse">Loading product...</div>
       </div>
     );
-  }
 
-  if (error || !productData) {
+  if (error || !productData)
     return (
       <div className="container mx-auto px-4 py-8 min-h-screen flex flex-col items-center justify-center text-center">
         <h1 className="text-2xl font-bold mb-4">Product Not Found</h1>
@@ -119,14 +180,12 @@ const ProductPage: React.FC = () => {
         </p>
         <div className="flex gap-4">
           <Button variant="outline" onClick={() => navigate(-1)}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Go Back
+            <ArrowLeft className="mr-2 h-4 w-4" /> Go Back
           </Button>
           <Button onClick={() => navigate('/')}>Continue Shopping</Button>
         </div>
       </div>
     );
-  }
 
   return (
     <main className="container mx-auto px-4 py-8">
@@ -136,18 +195,16 @@ const ProductPage: React.FC = () => {
           name={productData.name}
           key={`images-${productData.id}`}
         />
-
         <div className="space-y-6">
           <ProductInfo
             name={productData.name}
-            salePrice={productData.saleprice}
+            salePrice={productData.salePrice}
             originalPrice={productData.originalPrice}
             rating={productData.rating}
             reviewCount={productData.reviewCount}
             inStock={productData.inStock}
             description={productData.description}
           />
-
           {productData.colors.length > 0 && (
             <ProductVariants
               type="color"
@@ -156,7 +213,6 @@ const ProductPage: React.FC = () => {
               onSelect={setSelectedColor}
             />
           )}
-
           {productData.sizes.length > 0 && (
             <ProductVariants
               type="size"
@@ -165,35 +221,40 @@ const ProductPage: React.FC = () => {
               onSelect={setSelectedSize}
             />
           )}
-
           <div className="pt-4 border-t flex items-center space-x-4">
             <QuantitySelector
               quantity={quantity}
-              onIncrement={() => setQuantity(quantity + 1)}
-              onDecrement={() => setQuantity(Math.max(1, quantity - 1))}
+              onIncrement={() => setQuantity((q) => q + 1)}
+              onDecrement={() => setQuantity((q) => Math.max(1, q - 1))}
             />
-
+            <Button
+              className="bg-red-500 hover:bg-red-600 text-white flex-1 flex items-center px-4 py-2"
+              onClick={handleAddToCart}
+            >
+              <FaShoppingCart className="w-4 h-4 mr-2" /> Add to Cart
+            </Button>
             <Button
               className="bg-red-500 hover:bg-red-600 text-white flex-1 px-4 py-2"
               onClick={handleBuyNow}
             >
               Buy Now
             </Button>
-
             <Button
-              variant="outline"
+              variant="ghost"
               size="icon"
-              className="shrink-0"
-              onClick={handleAddToWishlist}
+              className="h-8 w-8 bg-white rounded-full p-1 border border-gray-300"
+              onClick={handleWishlistClick}
             >
-              <Heart className="h-5 w-5" />
+              <FiHeart
+                size={16}
+                className={isWishlisted ? 'text-red-500' : 'text-gray-500'}
+                fill={isWishlisted ? 'currentColor' : 'none'}
+              />
             </Button>
           </div>
-
           <ShippingInfo />
         </div>
       </div>
-
       <RelatedProducts currentProductId={productData.id} />
     </main>
   );

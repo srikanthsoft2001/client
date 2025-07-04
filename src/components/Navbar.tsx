@@ -1,25 +1,17 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import {
-  Search,
-  Heart,
-  ShoppingCart,
-  User,
-  Menu,
-  X,
-  ChevronDown,
-  LogOut,
-} from 'lucide-react';
-import { useAuth } from '@/context/AuthContext';
+import { Search, Heart, ShoppingCart, User, Menu, X, ChevronDown, LogOut } from 'lucide-react';
+
 import { useState } from 'react'; //useEffect was there
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
 import { toast } from 'react-toastify';
+import { useAuth } from '@/context/useAuth';
 
 const Navbar = () => {
   const itemCount = useSelector((state: RootState) =>
-    state.cart.reduce((total, item) => total + item.quantity, 0)
+    state.cart.reduce((total, item) => total + item.quantity, 0),
   );
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -131,12 +123,7 @@ const Navbar = () => {
                   <Link to="/account" className="text-white font-medium">
                     Welcome, {user.name}
                   </Link>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="text-white"
-                    onClick={handleLogout}
-                  >
+                  <Button variant="ghost" size="icon" className="text-white" onClick={handleLogout}>
                     <LogOut size={24} />
                   </Button>
                 </>
@@ -211,10 +198,7 @@ const Navbar = () => {
             {isCategoryHovered && (
               <div className="absolute left-0 top-full w-64 bg-white text-black shadow-lg z-50">
                 {categories.map((cat, idx) => (
-                  <div
-                    key={idx}
-                    className="group relative border-b border-gray-200"
-                  >
+                  <div key={idx} className="group relative border-b border-gray-200">
                     <div className="flex justify-between px-4 py-3 hover:bg-gray-100">
                       <span>{cat.name}</span>
                       <ChevronDown size={14} />
@@ -240,11 +224,7 @@ const Navbar = () => {
           {/* Horizontal Categories */}
           <div className="hidden md:flex ml-6 gap-6">
             {categories.map((cat, idx) => (
-              <Link
-                key={idx}
-                to={`/category/${slugify(cat.name)}`}
-                className="hover:text-gray-300"
-              >
+              <Link key={idx} to={`/category/${slugify(cat.name)}`} className="hover:text-gray-300">
                 {cat.name}
               </Link>
             ))}

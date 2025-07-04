@@ -2,12 +2,9 @@ import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import ProductCard from '@/components/product/ProductCard';
 import { RootState } from '@/store';
-import {
-  removeFromWishlist as removeFromLocalWishlist,
-  setWishlist,
-} from '@/slices/wishlistSlice';
+import { removeFromWishlist as removeFromLocalWishlist, setWishlist } from '@/slices/wishlistSlice';
 import { getWishlistItems, removeFromWishlist, ProductItem } from '@/api/api';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/context/useAuth';
 
 const WishlistPage = () => {
   const dispatch = useDispatch();
@@ -32,8 +29,7 @@ const WishlistPage = () => {
         const data = await getWishlistItems(user._id);
         dispatch(setWishlist(data.wishlist));
       } catch (err) {
-        const message =
-          err instanceof Error ? err.message : 'Failed to fetch wishlist items';
+        const message = err instanceof Error ? err.message : 'Failed to fetch wishlist items';
         setError(message);
       } finally {
         setLoading(false);
@@ -60,9 +56,7 @@ const WishlistPage = () => {
     name: product.name,
     originalPrice: product.originalPrice?.toString(),
     salePrice: product.salePrice.toString(),
-    discountPercentage: product.discountPercentage
-      ? `-${product.discountPercentage}`
-      : '',
+    discountPercentage: product.discountPercentage ? `-${product.discountPercentage}` : '',
     mainImageUrl: product.mainImageUrl,
     rating: product.rating || 0,
     saleType: product.saleType,
@@ -98,9 +92,7 @@ const WishlistPage = () => {
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center">
           <div className="w-4 h-8 bg-red-500 mr-2"></div>
-          <h2 className="text-xl font-bold">
-            Wishlist ({wishlistItems.length})
-          </h2>
+          <h2 className="text-xl font-bold">Wishlist ({wishlistItems.length})</h2>
         </div>
       </div>
 
