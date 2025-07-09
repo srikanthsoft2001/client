@@ -12,6 +12,8 @@ const FlashSales: React.FC = () => {
     error: null as string | null,
   });
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 4; // show 4 items per page
   const saleType = 'Flash';
 
   useEffect(() => {
@@ -21,7 +23,7 @@ const FlashSales: React.FC = () => {
 
         const data = await fetchAllProducts();
         const filtered = data.filter(
-          (item) => item.saleType?.toLowerCase() === saleType.toLowerCase()
+          (item) => item.saleType?.toLowerCase() === saleType.toLowerCase(),
         );
 
         setState({
@@ -44,6 +46,13 @@ const FlashSales: React.FC = () => {
   }, []);
 
   const { loading, error, filteredItems } = state;
+  const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
+
+  const currentItems = filteredItems.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage,
+  );
+
   const timeRemaining = {
     days: '03',
     hours: '23',
@@ -51,13 +60,8 @@ const FlashSales: React.FC = () => {
     seconds: '56',
   };
 
-  if (loading) {
-    return <div>Loading flash sales...</div>;
-  }
-
-  if (error) {
-    return <div className="text-red-500">{error}</div>;
-  }
+  if (loading) return <div>Loading flash sales...</div>;
+  if (error) return <div className="text-red-500">{error}</div>;
 
   return (
     <section className="py-10">
@@ -72,28 +76,38 @@ const FlashSales: React.FC = () => {
               <div key={label} className="flex items-center">
                 <div className="text-center">
                   <div className="text-sm">{label}</div>
-                  <div className="font-bold">
-                    {Object.values(timeRemaining)[i]}
-                  </div>
+                  <div className="font-bold">{Object.values(timeRemaining)[i]}</div>
                 </div>
                 {i < 3 && <span className="mx-1">:</span>}
               </div>
             ))}
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" size="icon" className="rounded-full">
+            <Button
+              variant="outline"
+              size="icon"
+              className="rounded-full"
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+            >
               <FiChevronLeft size={16} />
             </Button>
-            <Button variant="outline" size="icon" className="rounded-full">
+            <Button
+              variant="outline"
+              size="icon"
+              className="rounded-full"
+              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+            >
               <FiChevronRight size={16} />
             </Button>
           </div>
         </div>
       </div>
 
-      {filteredItems.length > 0 ? (
+      {currentItems.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-          {filteredItems.map((product) => (
+          {currentItems.map((product) => (
             <ProductCard
               key={product.id}
               item={{
@@ -106,15 +120,11 @@ const FlashSales: React.FC = () => {
           ))}
         </div>
       ) : (
-        <div className="text-center py-10">
-          No flash sale items found. Please check back later.
-        </div>
+        <div className="text-center py-10">No flash sale items found. Please check back later.</div>
       )}
 
       <div className="flex justify-center mt-10">
-        <Button className="bg-red-500 hover:bg-red-600 text-white">
-          View All Products
-        </Button>
+        <Button className="bg-red-500 hover:bg-red-600 text-white">View All Products</Button>
       </div>
     </section>
   );
