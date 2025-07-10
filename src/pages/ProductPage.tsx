@@ -1,3 +1,4 @@
+// ProductPage.tsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
@@ -9,7 +10,9 @@ import {
   getProduct,
   addToWishlist as apiAddToWishlist,
   removeFromWishlist as apiRemoveFromWishlist,
+  getWishlistItems,
 } from '@/api/api';
+
 import ProductImages from '@/components/product/ProductImages';
 import ProductInfo from '@/components/product/ProductInfo';
 import ProductVariants from '@/components/product/ProductVariants';
@@ -27,14 +30,12 @@ interface Size {
   label: string;
   value: string;
 }
-
 export interface ProductData {
-  _id: string; // <-- MongoDB ID
+  _id: string;
   id: number;
   name: string;
   salePrice: number;
   originalPrice?: number;
-  discount?: number;
   rating: number;
   reviewCount: number;
   inStock: boolean;
@@ -60,16 +61,16 @@ const ProductPage: React.FC = () => {
   const [isWishlisted, setIsWishlisted] = useState<boolean>(false);
 
   useEffect(() => {
-    const fetchProduct = async () => {
+    const fetchProductAndWishlist = async () => {
       setIsLoading(true);
       try {
         if (!id) throw new Error('Product ID is missing');
         const product = await getProduct(id);
         if (!product) throw new Error('Product not found');
 
-        const validatedProduct: ProductData = {
+        const validated: ProductData = {
           ...product,
-          _id: product.id, // must be a valid MongoDB ObjectId string
+          _id: product.id,
           id: Number(product.id),
           salePrice: Number(product.salePrice) || 0,
           originalPrice: product.originalPrice ? Number(product.originalPrice) : undefined,
@@ -80,27 +81,26 @@ const ProductPage: React.FC = () => {
             ...(Array.isArray(product.images) ? product.images : []),
           ],
           colors: Array.isArray(product.colors)
-            ? product.colors.map((color: string) => ({
-                name: color,
-                value: color,
-              }))
+            ? product.colors.map((color: string) => ({ name: color, value: color }))
             : [],
           sizes: Array.isArray(product.sizes)
-            ? product.sizes.map((size: string) => ({
-                label: size,
-                value: size,
-              }))
+            ? product.sizes.map((size: string) => ({ label: size, value: size }))
             : [],
           description: product.description || '',
           inStock: Boolean(product.inStock),
           mainImageUrl: product.mainImageUrl,
         };
+        setProductData(validated);
+        if (validated.colors.length) setSelectedColor(validated.colors[0].value);
+        if (validated.sizes.length) {
+          const mid = Math.floor(validated.sizes.length / 2);
+          setSelectedSize(validated.sizes[mid].value);
+        }
 
-        setProductData(validatedProduct);
-        if (validatedProduct.colors.length) setSelectedColor(validatedProduct.colors[0].value);
-        if (validatedProduct.sizes.length) {
-          const mid = Math.floor(validatedProduct.sizes.length / 2);
-          setSelectedSize(validatedProduct.sizes[mid].value);
+        if (user) {
+          const wishlistRes = await getWishlistItems(user._id);
+          const found = wishlistRes.wishlist.some((item) => item.id.toString() === id);
+          setIsWishlisted(found);
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load product');
@@ -108,14 +108,13 @@ const ProductPage: React.FC = () => {
         setIsLoading(false);
       }
     };
-    fetchProduct();
-  }, [id]);
+    fetchProductAndWishlist();
+  }, [id, user]);
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     if (!productData) return;
-
     const variantKey = `${productData.id}-${selectedColor || 'default'}-${selectedSize || 'default'}`;
     const cartItem = {
       _id: String(productData._id),
@@ -137,41 +136,49 @@ const ProductPage: React.FC = () => {
     e.stopPropagation();
     if (!productData) return;
     navigate('/checkout', {
-      state: { productData, quantity, selectedColor, selectedSize },
+      state: {
+        productData: {
+          ...productData,
+          quantity,
+          selectedColor,
+          selectedSize,
+        },
+      },
     });
   };
 
   const handleWishlistClick = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-
     if (!user) {
       navigate('/login');
       return;
     }
-
-    if (!productData || !productData._id) return;
+    if (!productData?._id) return;
 
     try {
-      if (isWishlisted) {
-        await apiRemoveFromWishlist(user._id, productData._id);
-      } else {
+      const next = !isWishlisted;
+      setIsWishlisted(next);
+      if (next) {
         await apiAddToWishlist(user._id, productData._id);
+      } else {
+        await apiRemoveFromWishlist(user._id, productData._id);
       }
+    } catch (err) {
+      console.error('Wishlist update failed:', err);
       setIsWishlisted(!isWishlisted);
-    } catch (error) {
-      console.error('Wishlist update failed:', error);
     }
   };
 
-  if (isLoading)
+  if (isLoading) {
     return (
       <div className="container mx-auto px-4 py-8 min-h-screen flex items-center justify-center">
         <div className="animate-pulse">Loading product...</div>
       </div>
     );
+  }
 
-  if (error || !productData)
+  if (error || !productData) {
     return (
       <div className="container mx-auto px-4 py-8 min-h-screen flex flex-col items-center justify-center text-center">
         <h1 className="text-2xl font-bold mb-4">Product Not Found</h1>
@@ -186,6 +193,7 @@ const ProductPage: React.FC = () => {
         </div>
       </div>
     );
+  }
 
   return (
     <main className="container mx-auto px-4 py-8">
@@ -247,7 +255,7 @@ const ProductPage: React.FC = () => {
             >
               <FiHeart
                 size={16}
-                className={isWishlisted ? 'text-red-500' : 'text-gray-500'}
+                className={isWishlisted ? 'text-red-500 fill-red-500' : 'text-gray-500'}
                 fill={isWishlisted ? 'currentColor' : 'none'}
               />
             </Button>

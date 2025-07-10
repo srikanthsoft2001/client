@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { FiHeart, FiEye, FiStar, FiTrash2 } from 'react-icons/fi';
@@ -7,16 +7,19 @@ import { useNavigate } from 'react-router-dom';
 import { addToWishlist, removeFromWishlist } from '@/api/api';
 import { addToCart, useAppDispatch } from '@/store/store';
 import { useAuth } from '@/context/useAuth';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store';
 
 type Product = {
   id: string;
   name: string;
   originalPrice: string;
-  salePrice: string; // ✅ camelCase
+  salePrice: string;
   discountPercentage: string;
   mainImageUrl: string;
   rating: number;
   saleType: string;
+  category?: string;
 };
 
 interface ProductCardProps {
@@ -42,6 +45,16 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const { user } = useAuth();
   const dispatch = useAppDispatch();
 
+  const wishlistItems = useSelector((state: RootState) => state.wishlist.items);
+  const isInReduxWishlist = wishlistItems.some((p) => p.id.toString() === item.id.toString());
+
+  const [isWishlisted, setIsWishlisted] = useState(isInReduxWishlist);
+
+  useEffect(() => {
+    // Sync local state if wishlist updates externally
+    setIsWishlisted(isInReduxWishlist);
+  }, [isInReduxWishlist]);
+
   const handleCardClick = () => {
     navigate(`/products/${item.id}`);
   };
@@ -50,22 +63,36 @@ const ProductCard: React.FC<ProductCardProps> = ({
     e.stopPropagation();
     e.preventDefault();
     if (!user) return;
+
     try {
-      if (isWishlist) {
-        await removeFromWishlist(user._id, item.id);
-        onDelete?.(item.id);
-      } else {
+      const nextState = !isWishlisted;
+      setIsWishlisted(nextState); // Instant visual feedback
+
+      if (nextState) {
         await addToWishlist(user._id, item.id);
+      } else {
+        await removeFromWishlist(user._id, item.id);
+        onDelete?.(item.id); // for wishlist page
       }
-      onWishlistUpdate?.();
+
+      onWishlistUpdate?.(); // trigger refresh if needed
     } catch (error) {
       console.error('Wishlist update failed:', error);
+      // Revert state on error
+      setIsWishlisted(isWishlisted);
     }
   };
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
+
+    // Optionally check user before adding to cart
+    // if (!user) {
+    //   navigate('/login');
+    //   return;
+    // }
+
     const cartItem = {
       _id: item.id,
       name: item.name,
@@ -74,6 +101,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
       quantity: 1,
       subtotal: Number(item.salePrice),
     };
+
     dispatch(addToCart(cartItem));
     navigate('/cart');
   };
@@ -81,6 +109,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const handleBuyNow = (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
+
     navigate('/checkout', {
       state: {
         productData: {
@@ -99,6 +128,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
     });
   };
 
+  // Round rating for star display
+  const roundedRating = Math.round(item.rating);
+
   return (
     <Card
       onClick={handleCardClick}
@@ -115,7 +147,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 bg-white rounded-full p-1"
+              className="h-8 w-8 bg-white rounded-full p-1 text-red-500"
+              aria-label="Remove from wishlist"
               onClick={(e) => {
                 e.stopPropagation();
                 e.preventDefault();
@@ -130,14 +163,19 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 variant="ghost"
                 size="icon"
                 className="h-8 w-8 bg-white rounded-full p-1"
+                aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
                 onClick={handleWishlistClick}
               >
-                <FiHeart size={16} />
+                <FiHeart
+                  size={16}
+                  className={isWishlisted ? 'text-red-500 fill-red-500' : 'text-gray-500'}
+                />
               </Button>
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8 bg-white rounded-full p-1"
+                className="h-8 w-8 bg-white rounded-full p-1 text-gray-500"
+                aria-label="View product"
                 onClick={(e) => {
                   e.stopPropagation();
                   e.preventDefault();
@@ -166,12 +204,12 @@ const ProductCard: React.FC<ProductCardProps> = ({
             <FiStar
               key={index}
               size={16}
-              className={index < item.rating ? 'text-yellow-400' : 'text-gray-300'}
-              fill={index < item.rating ? 'currentColor' : 'none'}
+              className={index < roundedRating ? 'text-yellow-400' : 'text-gray-300'}
+              fill={index < roundedRating ? 'currentColor' : 'none'}
             />
           ))}
           <span className="ml-2 text-sm text-gray-500">
-            {item.rating ? `(${item.rating})` : '(No ratings)'}
+            {item.rating ? `(${item.rating.toFixed(1)})` : '(No ratings)'}
           </span>
         </div>
         <div className="flex space-x-4 mt-6">

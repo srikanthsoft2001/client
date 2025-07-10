@@ -31,25 +31,24 @@ const CartItem: React.FC<CartItemProps> = ({
           <Trash2 size={18} />
         </button>
         <div className="w-16 h-16 bg-muted rounded-md overflow-hidden">
-          <img
-            src={mainImageUrl}
-            alt={name}
-            className="w-full h-full object-cover"
-          />
+          <img src={mainImageUrl} alt={name} className="w-full h-full object-cover" />
         </div>
         <span className="font-medium">{name}</span>
       </div>
 
-      <div className="col-span-4 md:col-span-2 text-center">
-        ${price.toFixed(2)}
-      </div>
+      <div className="col-span-4 md:col-span-2 text-center">${price.toFixed(2)}</div>
 
       <div className="col-span-4 md:col-span-2 flex justify-center">
         <div className="flex items-center border rounded-md">
           <button
             className="px-2 py-1 hover:bg-muted"
-            onClick={() => onUpdateQuantity(_id, quantity - 1)}
-            disabled={quantity <= 1}
+            onClick={() => {
+              if (quantity <= 1) {
+                onRemove(_id);
+              } else {
+                onUpdateQuantity(_id, quantity - 1);
+              }
+            }}
           >
             <Minus size={16} />
           </button>
@@ -65,9 +64,7 @@ const CartItem: React.FC<CartItemProps> = ({
         </div>
       </div>
 
-      <div className="col-span-4 md:col-span-2 text-right">
-        ${(price * quantity).toFixed(2)}
-      </div>
+      <div className="col-span-4 md:col-span-2 text-right">${(price * quantity).toFixed(2)}</div>
     </div>
   );
 };
