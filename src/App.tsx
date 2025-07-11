@@ -39,12 +39,12 @@ const queryClient = new QueryClient();
 
 // Wrapper for dynamic category routes
 const CategoryProductsWrapper = () => {
-  const { category, subcategory } = useParams<{
+  const { category } = useParams<{
     category: string;
     subcategory?: string;
   }>();
   if (!category) return <div>Category not found</div>;
-  return <CategoryProducts category={category} subcategory={subcategory} />;
+  return <CategoryProducts category={category} />;
 };
 
 const AppContent = () => {
