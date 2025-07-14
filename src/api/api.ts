@@ -206,6 +206,11 @@ export const removeFromWishlist = async (
   }
 };
 
+export const sendChatMessage = async (message: string): Promise<string> => {
+  const response = await axios.post(`${API_BASE_URL}/chatbot/message`, { message });
+  return response.data.reply;
+};
+
 // ---------- Aliases ----------
 export const fetchAllProducts = fetchProducts;
 export const fetchFlashSales = fetchProducts;

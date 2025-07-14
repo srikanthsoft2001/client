@@ -34,6 +34,7 @@ import ElectronicsPage from './pages/ProductPages/ElectronicsPage';
 import RealEstatePage from './pages/ProductPages/RealEstatePage';
 import MedicalPage from './pages/ProductPages/MedicalPage';
 import { AuthProvider } from './context/AuthProvider';
+import Chatbot from './pages/Chatbot';
 
 const queryClient = new QueryClient();
 
@@ -99,6 +100,7 @@ const AppContent = () => {
                     <Route index element={<DashboardPage />} />
                     <Route path="order-list" element={<OrderListPage />} />
                   </Route>
+                  <Route path="/chat" element={<Chatbot />} />
                 </Route>
               </Route>
             </Routes>
