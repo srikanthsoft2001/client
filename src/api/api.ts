@@ -1,7 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL =
-  import.meta.env.VITE_REACT_APP_API_URL || 'http://localhost:3000';
+const API_BASE_URL = import.meta.env.VITE_REACT_APP_API_URL || 'http://localhost:3000';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -10,31 +9,59 @@ const api = axios.create({
   },
 });
 
+// ---------- Types ----------
+type SalePriceDecimal = { $numberDecimal: string };
+
 export interface ProductItem {
-  reviewsCount: any;
-  inStock(inStock: any): boolean;
+  reviewsCount: number;
+  inStock: boolean;
   description: string;
-  sizes: never[];
-  colors: never[];
-  images: any;
+  sizes: string[];
+  colors: string[];
+  images: string[]; // URLs
   id: string;
   name: string;
   originalPrice: string;
-  salePrice: string | number | { $numberDecimal: string };
+  salePrice: string | number | SalePriceDecimal;
   discountPercentage: string;
   mainImageUrl: string;
   rating: number;
   saleType: string;
   category: string;
 }
+// src/types/api.ts
+export interface APIError {
+  response?: {
+    data?: {
+      message?: string;
+    };
+  };
+}
 
-const normalizeSalePrice = (
-  salePrice: ProductItem['salePrice']
-): number | string =>
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  address?: string;
+}
+
+export interface LoginCredentials {
+  email: string;
+  password: string;
+}
+
+export interface LoginResponse {
+  token: string;
+  user: User;
+}
+
+// ---------- Helpers ----------
+const normalizeSalePrice = (salePrice: ProductItem['salePrice']): number | string =>
   typeof salePrice === 'object' && '$numberDecimal' in salePrice
     ? parseFloat(salePrice.$numberDecimal)
     : salePrice;
 
+// ---------- Product APIs ----------
 export const searchProducts = async (query: string): Promise<ProductItem[]> => {
   if (!query.trim()) return [];
   try {
@@ -77,9 +104,11 @@ export const getProduct = async (id: string): Promise<ProductItem | null> => {
     return null;
   }
 };
-export const getCurrentUser = async () => {
+
+// ---------- Auth APIs ----------
+export const getCurrentUser = async (): Promise<User> => {
   const token = localStorage.getItem('authToken');
-  const response = await axios.get(`${API_BASE_URL}/users/me`, {
+  const response = await axios.get<User>(`${API_BASE_URL}/users/me`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -87,43 +116,27 @@ export const getCurrentUser = async () => {
   return response.data;
 };
 
-export const logoutUser = async () => {
-  // If you have an API endpoint to invalidate the token/session on server:
-  await axios.post(
-    `${API_BASE_URL}/auth/logout`,
-    {},
-    { withCredentials: true }
-  );
-
-  // Clear token/localStorage if you store tokens client-side:
-  localStorage.removeItem('token'); // or whatever key you use
-
-  // Optionally clear other user-related info in localStorage/sessionStorage
-};
-// Correct function signature
-export const loginUser = async (credentials: {
-  email: string;
-  password: string;
-}) => {
-  const response = await api.post('/auth/login', credentials);
-  return response.data; // should return { token, user }
+export const logoutUser = async (): Promise<void> => {
+  await axios.post(`${API_BASE_URL}/auth/logout`, {}, { withCredentials: true });
+  localStorage.removeItem('token');
 };
 
-export const getWishlistItems = async (
-  userId: string
-): Promise<{ wishlist: ProductItem[] }> => {
+export const loginUser = async (credentials: LoginCredentials): Promise<LoginResponse> => {
+  const response = await api.post<LoginResponse>('/auth/login', credentials);
+  return response.data;
+};
+
+// ---------- Wishlist APIs ----------
+export const getWishlistItems = async (userId: string): Promise<{ wishlist: ProductItem[] }> => {
   try {
-    // const API_BASE_URL = process.env.API_BASE_URL || 'http://your-api-base-url'; // Make sure this is set
     const response = await fetch(`${API_BASE_URL}/users/${userId}/wishlist`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('authToken')}`,
-        Accept: 'application/json', // Explicitly ask for JSON
+        Accept: 'application/json',
       },
     });
-    console.log(response);
 
     if (!response.ok) {
-      // Try to get error details if response is JSON
       const contentType = response.headers.get('content-type');
       if (contentType?.includes('application/json')) {
         const errorData = await response.json();
@@ -143,7 +156,7 @@ export const getWishlistItems = async (
 
 export const addToWishlist = async (
   userId: string,
-  productId: string
+  productId: string,
 ): Promise<{ success: boolean }> => {
   try {
     const response = await fetch(`${API_BASE_URL}/users/${userId}/wishlist`, {
@@ -169,7 +182,7 @@ export const addToWishlist = async (
 
 export const removeFromWishlist = async (
   userId: string,
-  productId: string
+  productId: string,
 ): Promise<{ success: boolean }> => {
   try {
     const response = await fetch(`${API_BASE_URL}/users/${userId}/wishlist`, {
@@ -178,7 +191,7 @@ export const removeFromWishlist = async (
         'Content-Type': 'application/json',
         Authorization: `Bearer ${localStorage.getItem('authToken')}`,
       },
-      body: JSON.stringify({ productId }), // Pass productId in body
+      body: JSON.stringify({ productId }),
     });
 
     if (!response.ok) {
@@ -193,6 +206,7 @@ export const removeFromWishlist = async (
   }
 };
 
+// ---------- Aliases ----------
 export const fetchAllProducts = fetchProducts;
 export const fetchFlashSales = fetchProducts;
 export const fetchBestSelling = fetchProducts;

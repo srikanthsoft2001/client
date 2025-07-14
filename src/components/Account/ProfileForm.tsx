@@ -2,15 +2,39 @@ import React, { useEffect, useState } from 'react';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
 import { getUserById, updateUserById } from '@/api/auth';
-import { useAuth } from '@/context/AuthContext';
 import AccountSidebar from './AccountSidebar';
+import { useAuth } from '@/context/useAuth';
+
+interface User {
+  name?: string;
+  email?: string;
+  address?: string;
+}
+
+interface UserFormData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  address: string;
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}
+
+type APIError = {
+  response?: {
+    data?: {
+      message?: string;
+    };
+  };
+};
 
 const ProfileForm: React.FC = () => {
   const { userId } = useAuth();
   const [loading, setLoading] = useState(true);
-  const [initialData, setInitialData] = useState<any>(null); // for cancel reset
+  const [initialData, setInitialData] = useState<UserFormData | null>(null);
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<UserFormData>({
     firstName: '',
     lastName: '',
     email: '',
@@ -20,7 +44,6 @@ const ProfileForm: React.FC = () => {
     confirmPassword: '',
   });
 
-  // Fetch user data on mount
   useEffect(() => {
     if (!userId) {
       setLoading(false);
@@ -29,12 +52,12 @@ const ProfileForm: React.FC = () => {
 
     const fetchUser = async () => {
       try {
-        const user = await getUserById(userId);
+        const user: User = await getUserById(userId);
         const name = user.name || '';
         const [firstName, ...lastNameParts] = name.split(' ');
         const lastName = lastNameParts.join(' ');
 
-        const userFormData = {
+        const userFormData: UserFormData = {
           firstName,
           lastName,
           email: user.email || '',
@@ -57,7 +80,7 @@ const ProfileForm: React.FC = () => {
     fetchUser();
   }, [userId]);
 
-  const handleInputChange = (field: string, value: string) => {
+  const handleInputChange = (field: keyof UserFormData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -74,10 +97,7 @@ const ProfileForm: React.FC = () => {
       return;
     }
 
-    if (
-      formData.newPassword &&
-      formData.newPassword !== formData.confirmPassword
-    ) {
+    if (formData.newPassword && formData.newPassword !== formData.confirmPassword) {
       alert('New password and confirmation do not match.');
       return;
     }
@@ -89,7 +109,13 @@ const ProfileForm: React.FC = () => {
 
     try {
       const name = `${formData.firstName} ${formData.lastName}`;
-      const payload: any = {
+      const payload: {
+        name: string;
+        email: string;
+        address: string;
+        currentPassword?: string;
+        newPassword?: string;
+      } = {
         name,
         email: formData.email,
         address: formData.address,
@@ -114,9 +140,18 @@ const ProfileForm: React.FC = () => {
         newPassword: '',
         confirmPassword: '',
       }));
-    } catch (error: any) {
+    } catch (error: unknown) {
+      if (
+        typeof error === 'object' &&
+        error !== null &&
+        'response' in error &&
+        typeof (error as APIError).response?.data?.message === 'string'
+      ) {
+        alert((error as APIError).response?.data?.message);
+      } else {
+        alert('Failed to update profile.');
+      }
       console.error('Failed to update user:', error);
-      alert(error?.response?.data?.message || 'Failed to update profile.');
     }
   };
 
@@ -124,9 +159,7 @@ const ProfileForm: React.FC = () => {
 
   return (
     <div className="bg-card rounded-lg border border-border p-8">
-      <h2 className="text-xl font-semibold text-red-500 mb-6">
-        Edit Your Profile
-      </h2>
+      <h2 className="text-xl font-semibold text-red-500 mb-6">Edit Your Profile</h2>
 
       <div className="flex flex-col md:flex-row gap-6">
         <AccountSidebar />
@@ -134,9 +167,7 @@ const ProfileForm: React.FC = () => {
         <div className="flex-1 space-y-6">
           {/* Personal Info */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-foreground">
-              Personal Information
-            </h3>
+            <h3 className="text-lg font-semibold text-foreground">Personal Information</h3>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Input
@@ -167,18 +198,14 @@ const ProfileForm: React.FC = () => {
             </div>
           </div>
 
-          {/* Password Section */}
+          {/* Password */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-foreground">
-              Change Password
-            </h3>
+            <h3 className="text-lg font-semibold text-foreground">Change Password</h3>
             <Input
               type="password"
               placeholder="Current Password"
               value={formData.currentPassword}
-              onChange={(e) =>
-                handleInputChange('currentPassword', e.target.value)
-              }
+              onChange={(e) => handleInputChange('currentPassword', e.target.value)}
               className="bg-secondary"
             />
             <Input
@@ -192,14 +219,12 @@ const ProfileForm: React.FC = () => {
               type="password"
               placeholder="Confirm New Password"
               value={formData.confirmPassword}
-              onChange={(e) =>
-                handleInputChange('confirmPassword', e.target.value)
-              }
+              onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
               className="bg-secondary"
             />
           </div>
 
-          {/* Action Buttons */}
+          {/* Buttons */}
           <div className="flex justify-end pt-6 space-x-4">
             <Button variant="outline" onClick={handleCancel}>
               Cancel

@@ -1,11 +1,14 @@
 import { fetchAllProducts, ProductItem } from '@/api/api';
 import ProductCard from '@/components/product/ProductCard';
 import React, { useState, useEffect } from 'react';
+import PaginatedList from './PaginatedList';
 
- const AllProductsPage: React.FC = () => {
+const AllProductsPage: React.FC = () => {
   const [products, setProducts] = useState<ProductItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,15 +42,17 @@ import React, { useState, useEffect } from 'react';
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">ALL PRODUCTS</h1>
           <div>
-            <p className="text-muted-foreground">
-              Showing {products.length} products
-            </p>
+            <p className="text-muted-foreground">Showing {products.length} products</p>
           </div>
         </div>
 
         {products.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-            {products.map((product) => (
+          <PaginatedList
+            items={products}
+            itemsPerPage={itemsPerPage}
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            renderItem={(product) => (
               <ProductCard
                 key={product.id}
                 item={{
@@ -57,8 +62,8 @@ import React, { useState, useEffect } from 'react';
                   rating: product.rating,
                 }}
               />
-            ))}
-          </div>
+            )}
+          />
         ) : (
           <div className="text-center py-10">
             <p className="text-muted-foreground">No products available.</p>

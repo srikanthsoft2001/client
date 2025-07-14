@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { RootState } from '@/store/store';
 
 interface CartItem {
@@ -13,20 +13,42 @@ interface CartItem {
   quantity: number;
 }
 
+interface LocationState {
+  productData?: {
+    id: string;
+    name: string;
+    salePrice?: number; // ✅ camelCase
+    originalPrice?: number;
+    mainImageUrl?: string;
+    quantity?: number;
+  };
+}
+
 const OrderSummary: React.FC = () => {
-  const cartItems = useSelector((state: RootState) => state.cart) as CartItem[];
+  const location = useLocation();
   const navigate = useNavigate();
+
+  const passedProduct = (location.state as LocationState)?.productData;
+  const cartItems = useSelector((state: RootState) => state.cart) as CartItem[];
+
+  const itemsToShow = passedProduct
+    ? [
+        {
+          _id: passedProduct.id,
+          name: passedProduct.name,
+          mainImageUrl: passedProduct.mainImageUrl || '',
+          price: Number(passedProduct.salePrice ?? 0),
+          quantity: passedProduct.quantity ?? 1,
+        },
+      ]
+    : cartItems;
 
   const [couponCode, setCouponCode] = useState('');
   const [appliedCoupon, setAppliedCoupon] = useState('');
   const [couponFixedDiscount, setCouponFixedDiscount] = useState(0);
   const [couponPercentageDiscount, setCouponPercentageDiscount] = useState(0);
 
-  const subtotal = cartItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  );
-
+  const subtotal = itemsToShow.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const percentageDiscountAmount = subtotal * (couponPercentageDiscount / 100);
   const totalDiscount = percentageDiscountAmount + couponFixedDiscount;
   const discountedSubtotal = subtotal - totalDiscount;
@@ -37,7 +59,6 @@ const OrderSummary: React.FC = () => {
   const handleApplyCoupon = () => {
     const code = couponCode.trim().toUpperCase();
     let fixedDiscount = 0;
-    let percentage = 0;
     let message = '';
 
     if (code === 'PATAKHA300' && subtotal >= 900) {
@@ -56,32 +77,26 @@ const OrderSummary: React.FC = () => {
 
     setAppliedCoupon(message);
     setCouponFixedDiscount(fixedDiscount);
-    setCouponPercentageDiscount(percentage);
+    setCouponPercentageDiscount(0);
     setCouponCode('');
   };
 
   return (
     <div className="bg-white p-6 border rounded-lg shadow-sm space-y-4">
-      <h2 className="text-lg font-semibold">🛒 Your Cart</h2>
+      <h2 className="text-lg font-semibold">🛒 Your Order Summary</h2>
 
-      {cartItems.length > 0 ? (
-        cartItems.map((item) => (
+      {itemsToShow.length > 0 ? (
+        itemsToShow.map((item) => (
           <div key={item._id} className="flex items-center gap-3">
             <div className="h-16 w-16 bg-gray-100 rounded flex items-center justify-center">
-              <img
-                src={item.mainImageUrl}
-                alt={item.name}
-                className="h-12 w-12 object-contain"
-              />
+              <img src={item.mainImageUrl} alt={item.name} className="h-12 w-12 object-contain" />
             </div>
             <div className="flex-1">
               <p className="text-sm">{item.name}</p>
               <p className="text-xs text-gray-500">Qty: {item.quantity}</p>
             </div>
             <div>
-              <p className="font-medium">
-                ₹{(item.price * item.quantity).toFixed(2)}
-              </p>
+              <p className="font-medium">₹{(item.price * item.quantity).toFixed(2)}</p>
             </div>
           </div>
         ))
@@ -89,7 +104,6 @@ const OrderSummary: React.FC = () => {
         <p className="text-gray-500">Your cart is empty.</p>
       )}
 
-      {/* Summary */}
       <div className="border-t border-b py-4 my-4 space-y-2">
         <div className="flex justify-between">
           <p className="text-gray-600">Subtotal:</p>
@@ -120,9 +134,7 @@ const OrderSummary: React.FC = () => {
 
         <div className="flex justify-between">
           <p className="text-gray-600">Shipping:</p>
-          <p className="font-medium">
-            {shipping === 0 ? 'Free' : `₹${shipping.toFixed(2)}`}
-          </p>
+          <p className="font-medium">{shipping === 0 ? 'Free' : `₹${shipping.toFixed(2)}`}</p>
         </div>
 
         <div className="flex justify-between font-semibold text-lg pt-2">
@@ -131,7 +143,6 @@ const OrderSummary: React.FC = () => {
         </div>
       </div>
 
-      {/* Coupon input */}
       <div className="flex gap-2 mt-6">
         <Input
           placeholder="Coupon Code"
@@ -139,10 +150,7 @@ const OrderSummary: React.FC = () => {
           onChange={(e) => setCouponCode(e.target.value)}
           className="flex-1"
         />
-        <Button
-          onClick={handleApplyCoupon}
-          className="bg-red-500 hover:bg-red-600 text-white"
-        >
+        <Button onClick={handleApplyCoupon} className="bg-red-500 hover:bg-red-600 text-white">
           Apply Coupon
         </Button>
       </div>
@@ -153,11 +161,8 @@ const OrderSummary: React.FC = () => {
         </div>
       )}
 
-      {/* Available coupons */}
       <div className="mt-6 border-t pt-4">
-        <h3 className="text-lg font-semibold mb-2 text-gray-700">
-          🎁 Available Coupons
-        </h3>
+        <h3 className="text-lg font-semibold mb-2 text-gray-700">🎁 Available Coupons</h3>
         <ul className="list-disc pl-5 text-sm text-gray-600 space-y-1">
           <li>
             <strong>PATAKHA300</strong>: ₹300 off on orders ≥ ₹900
@@ -170,12 +175,12 @@ const OrderSummary: React.FC = () => {
           </li>
         </ul>
       </div>
-      {/* Proceed to Payment Button */}
+
       <div className="pt-6">
         <Button
-          onClick={() => navigate('/paymentmethod', { state: { total } })}
+          onClick={() => navigate('/paymentmethod', { state: { total, items: itemsToShow } })}
           className="w-full bg-green-600 hover:bg-green-700 text-white py-2 text-lg"
-          disabled={cartItems.length === 0}
+          disabled={itemsToShow.length === 0}
         >
           Proceed to Payment
         </Button>

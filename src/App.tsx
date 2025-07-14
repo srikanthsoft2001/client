@@ -5,13 +5,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { Toaster as Sonner } from '@/components/ui/sonner';
 
-import {
-  store,
-  useAppDispatch,
-  useAppSelector,
-  validateToken,
-} from '@/store/store';
-import { AuthProvider } from './context/AuthContext';
+import { store, useAppDispatch, useAppSelector, validateToken } from '@/store/store';
+
 import ProtectedRoute from './routes/ProtectedRoute';
 
 import Layout from './components/Layout';
@@ -38,17 +33,18 @@ import FoodPage from './pages/ProductPages/FoodPage';
 import ElectronicsPage from './pages/ProductPages/ElectronicsPage';
 import RealEstatePage from './pages/ProductPages/RealEstatePage';
 import MedicalPage from './pages/ProductPages/MedicalPage';
+import { AuthProvider } from './context/AuthProvider';
 
 const queryClient = new QueryClient();
 
 // Wrapper for dynamic category routes
 const CategoryProductsWrapper = () => {
-  const { category, subcategory } = useParams<{
+  const { category } = useParams<{
     category: string;
     subcategory?: string;
   }>();
   if (!category) return <div>Category not found</div>;
-  return <CategoryProducts category={category} subcategory={subcategory} />;
+  return <CategoryProducts category={category} />;
 };
 
 const AppContent = () => {
@@ -84,14 +80,8 @@ const AppContent = () => {
                 <Route path="/food" element={<FoodPage />} />
                 <Route path="/electronics" element={<ElectronicsPage />} />
                 <Route path="/realestate" element={<RealEstatePage />} />
-                <Route
-                  path="/Medical & Para Medical"
-                  element={<MedicalPage />}
-                />
-                <Route
-                  path="/category/:category"
-                  element={<CategoryProductsWrapper />}
-                />
+                <Route path="/Medical & Para Medical" element={<MedicalPage />} />
+                <Route path="/category/:category" element={<CategoryProductsWrapper />} />
                 <Route
                   path="/category/:category/:subcategory"
                   element={<CategoryProductsWrapper />}
