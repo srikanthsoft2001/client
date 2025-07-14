@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { fetchAllProducts, ProductItem } from '@/api/api';
 import ProductCard from '@/components/product/ProductCard';
 
@@ -12,7 +12,10 @@ const FlashSales: React.FC = () => {
     error: null as string | null,
   });
 
-  const scrollRef = useRef<HTMLDivElement>(null);
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8; // or any number you want
+
   const saleType = 'Flash';
 
   useEffect(() => {
@@ -30,6 +33,8 @@ const FlashSales: React.FC = () => {
           loading: false,
           error: null,
         });
+
+        setCurrentPage(1); // Reset page on new data
       } catch (err) {
         setState((prev) => ({
           ...prev,
@@ -43,16 +48,6 @@ const FlashSales: React.FC = () => {
     fetchData();
   }, []);
 
-  const scroll = (direction: 'left' | 'right') => {
-    if (scrollRef.current) {
-      const scrollAmount = scrollRef.current.offsetWidth / 1.5;
-      scrollRef.current.scrollBy({
-        left: direction === 'left' ? -scrollAmount : scrollAmount,
-        behavior: 'smooth',
-      });
-    }
-  };
-
   const { loading, error, filteredItems } = state;
 
   const timeRemaining = {
@@ -62,8 +57,27 @@ const FlashSales: React.FC = () => {
     seconds: '56',
   };
 
-  if (loading) return <div className="text-center py-12">Loading flash sales...</div>;
-  if (error) return <div className="text-center py-12 text-red-500">{error}</div>;
+  const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
+
+  // Pagination slice
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredItems.slice(indexOfFirstItem, indexOfLastItem);
+
+  const goToPage = (page: number) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  if (loading) {
+    return <div className="text-center py-10">Loading flash sales...</div>;
+  }
+
+  if (error) {
+    return <div className="text-center py-10 text-red-500">{error}</div>;
+  }
 
   return (
     <section className="py-10">
@@ -73,6 +87,7 @@ const FlashSales: React.FC = () => {
           <h2 className="text-xl font-bold">Flash Sales</h2>
         </div>
 
+        {/* Countdown + Navigation Buttons */}
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             {['Days', 'Hours', 'Minutes', 'Seconds'].map((label, i) => (
@@ -86,53 +101,45 @@ const FlashSales: React.FC = () => {
             ))}
           </div>
 
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="icon"
-              className="rounded-full"
-              onClick={() => scroll('left')}
-            >
-              <FiChevronLeft size={16} />
-            </Button>
+          <Button
+            variant="outline"
+            size="icon"
+            className="rounded-full transition-transform active:scale-95"
+            disabled={currentPage === 1}
+            onClick={() => goToPage(currentPage - 1)}
+          >
+            <ChevronLeft size={16} />
+          </Button>
 
-            <Button
-              variant="outline"
-              size="icon"
-              className="rounded-full"
-              onClick={() => scroll('right')}
-            >
-              <FiChevronRight size={16} />
-            </Button>
-          </div>
+          <Button
+            variant="outline"
+            size="icon"
+            className="rounded-full transition-transform active:scale-95"
+            disabled={currentPage === totalPages}
+            onClick={() => goToPage(currentPage + 1)}
+          >
+            <ChevronRight size={16} />
+          </Button>
         </div>
       </div>
 
-      {filteredItems.length > 0 ? (
-        <div
-          ref={scrollRef}
-          className="flex overflow-x-auto gap-4 scroll-smooth hide-scrollbar pb-2"
-        >
-          {filteredItems.map((product) => (
-            <div key={product.id} className="min-w-[250px] max-w-[250px] shrink-0">
-              <ProductCard
-                item={{
-                  ...product,
-                  salePrice: String(product.salePrice),
-                  mainImageUrl: product.mainImageUrl,
-                  rating: product.rating,
-                }}
-              />
-            </div>
+      {currentItems.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+          {currentItems.map((product) => (
+            <ProductCard
+              key={product.id}
+              item={{
+                ...product,
+                salePrice: String(product.salePrice),
+                mainImageUrl: product.mainImageUrl,
+                rating: product.rating,
+              }}
+            />
           ))}
         </div>
       ) : (
         <div className="text-center py-10">No flash sale items found. Please check back later.</div>
       )}
-
-      <div className="flex justify-center mt-10">
-        <Button className="bg-red-500 hover:bg-red-600 text-white">View All Products</Button>
-      </div>
     </section>
   );
 };

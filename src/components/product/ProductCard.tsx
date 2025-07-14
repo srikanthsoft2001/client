@@ -168,7 +168,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
               >
                 <FiHeart
                   size={16}
-                  className={isWishlisted ? 'text-red-500 fill-red-500' : 'text-gray-500'}
+                  // Only red if user logged in AND wishlisted, else gray
+                  className={
+                    user && isWishlisted ? 'text-red-500 fill-red-500' : 'text-gray-500 fill-none'
+                  }
                 />
               </Button>
               <Button

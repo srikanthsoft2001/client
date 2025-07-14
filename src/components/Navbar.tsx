@@ -1,9 +1,9 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Search, Heart, ShoppingCart, User, Menu, X, ChevronDown, LogOut } from 'lucide-react';
+import { Search, Heart, ShoppingCart, User, Menu, X, LogOut } from 'lucide-react';
 
-import { useState } from 'react'; //useEffect was there
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
 import { toast } from 'react-toastify';
@@ -15,7 +15,6 @@ const Navbar = () => {
   );
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isCategoryHovered, setIsCategoryHovered] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
 
   const navigate = useNavigate();
@@ -110,7 +109,7 @@ const Navbar = () => {
                 <Button variant="ghost" size="icon" className="text-white">
                   <ShoppingCart size={24} />
                 </Button>
-                {itemCount > 0 && (
+                {user && itemCount > 0 && (
                   <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs h-5 w-5 rounded-full flex items-center justify-center z-10">
                     {itemCount}
                   </span>
@@ -174,7 +173,7 @@ const Navbar = () => {
         )}
       </nav>
 
-      {/* Bottom Category Navigation */}
+      {/* Bottom Navigation Bar with Horizontal Categories Only */}
       <div className="bg-primary text-secondary shadow-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center h-10">
           {/* Dashboard Button */}
@@ -186,40 +185,6 @@ const Navbar = () => {
           >
             <Menu size={24} />
           </Button>
-
-          {/* All Categories Dropdown */}
-          <div
-            className="relative ml-4 px-4 py-2 hover:bg-navy-800 cursor-pointer"
-            onMouseEnter={() => setIsCategoryHovered(true)}
-            onMouseLeave={() => setIsCategoryHovered(false)}
-          >
-            <span className="font-medium">All Categories</span>
-            <ChevronDown size={16} className="ml-2 inline" />
-            {isCategoryHovered && (
-              <div className="absolute left-0 top-full w-64 bg-white text-black shadow-lg z-50">
-                {categories.map((cat, idx) => (
-                  <div key={idx} className="group relative border-b border-gray-200">
-                    <div className="flex justify-between px-4 py-3 hover:bg-gray-100">
-                      <span>{cat.name}</span>
-                      <ChevronDown size={14} />
-                    </div>
-                    <div className="hidden group-hover:block absolute left-full top-0 w-64 bg-white shadow-lg">
-                      {cat.subcategories.map((sub, subIdx) => (
-                        <Link
-                          key={subIdx}
-                          to={`/category/${slugify(cat.name)}/${slugify(sub)}`}
-                          className="block px-4 py-2 hover:bg-gray-100"
-                          onClick={() => setIsCategoryHovered(false)}
-                        >
-                          {sub}
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
 
           {/* Horizontal Categories */}
           <div className="hidden md:flex ml-6 gap-6">
