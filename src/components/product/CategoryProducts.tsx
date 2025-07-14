@@ -1,24 +1,31 @@
+import React, { useState, useEffect } from 'react';
 import { fetchAllProducts, ProductItem } from '@/api/api';
 import ProductCard from '@/components/product/ProductCard';
-import React, { useState, useEffect } from 'react';
+import PaginatedList from '../PaginatedList';
 
 interface CategoryProductsProps {
   category: string;
   subcategory?: string;
 }
 
-const CategoryProducts: React.FC<CategoryProductsProps> = ({
-  category,
-  subcategory,
-}) => {
+const CategoryProducts: React.FC<CategoryProductsProps> = ({ category, subcategory }) => {
   const [products, setProducts] = useState<ProductItem[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<ProductItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8;
 
   // Slugify function to normalize category strings
   const slugify = (text: string) =>
     text.toLowerCase().trim().replace(/\s+/g, '-').replace(/&/g, 'and');
+
+  // Format title for display
+  const formatTitle = (text: string) =>
+    text
+      .replace(/-/g, ' ')
+      .replace(/\b\w/g, (l) => l.toUpperCase())
+      .replace(/ And /gi, ' & ');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -41,20 +48,17 @@ const CategoryProducts: React.FC<CategoryProductsProps> = ({
 
   useEffect(() => {
     if (products.length > 0) {
-      let filtered = products.filter(
-        (product) => slugify(product.category) === slugify(category)
+      const filtered = products.filter(
+        (product) => slugify(product.category) === slugify(category),
       );
-
       setFilteredProducts(filtered);
     }
   }, [products, category, subcategory]);
 
-  const formatTitle = (text: string) => {
-    return text
-      .replace(/-/g, ' ')
-      .replace(/\b\w/g, (l) => l.toUpperCase())
-      .replace(/ And /gi, ' & ');
-  };
+  // Reset to first page on category/subcategory change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [category, subcategory]);
 
   if (loading) {
     return <div className="text-center py-12">Loading products...</div>;
@@ -81,8 +85,12 @@ const CategoryProducts: React.FC<CategoryProductsProps> = ({
         </div>
 
         {filteredProducts.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-            {filteredProducts.map((product) => (
+          <PaginatedList
+            items={filteredProducts}
+            itemsPerPage={itemsPerPage}
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            renderItem={(product) => (
               <ProductCard
                 key={product.id}
                 item={{
@@ -92,13 +100,11 @@ const CategoryProducts: React.FC<CategoryProductsProps> = ({
                   rating: product.rating,
                 }}
               />
-            ))}
-          </div>
+            )}
+          />
         ) : (
           <div className="text-center py-10">
-            <p className="text-muted-foreground">
-              No products available in this category.
-            </p>
+            <p className="text-muted-foreground">No products available in this category.</p>
           </div>
         )}
       </div>
