@@ -1,9 +1,4 @@
-import {
-  configureStore,
-  createSlice,
-  PayloadAction,
-  createAsyncThunk,
-} from '@reduxjs/toolkit';
+import { configureStore, createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import wishlistReducer from '@/slices/wishlistSlice';
 
@@ -17,9 +12,7 @@ interface CartItem {
   subtotal: number;
 }
 
-const initialCartState: CartItem[] = JSON.parse(
-  localStorage.getItem('cart') || '[]'
-);
+const initialCartState: CartItem[] = JSON.parse(localStorage.getItem('cart') || '[]');
 
 const cartSlice = createSlice({
   name: 'cart',
@@ -56,10 +49,7 @@ const cartSlice = createSlice({
       }
       localStorage.setItem('cart', JSON.stringify(state));
     },
-    updateQuantity: (
-      state,
-      action: PayloadAction<{ _id: string; quantity: number }>
-    ) => {
+    updateQuantity: (state, action: PayloadAction<{ _id: string; quantity: number }>) => {
       const item = state.find((i) => i._id === action.payload._id);
       if (item) {
         item.quantity = action.payload.quantity;
@@ -157,50 +147,44 @@ const initialAuthState: AuthState = {
 };
 
 // ✅ FIXED validateToken to use /auth/validate-token
-export const validateToken = createAsyncThunk(
-  'auth/validateToken',
-  async (_, { dispatch }) => {
-    const token = getTokenFromStorage();
-    if (!token) {
-      dispatch(setAuthLoading(false));
-      return null;
-    }
-
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/auth/validate-token`, // ✅ Corrected path
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error('Token invalid');
-      }
-
-      const user = await response.json();
-      dispatch(loginSuccess({ user, token }));
-      return user;
-    } catch (error) {
-      console.error('Token validation failed:', error);
-      dispatch(logout());
-      return null;
-    } finally {
-      dispatch(setAuthLoading(false));
-    }
+export const validateToken = createAsyncThunk('auth/validateToken', async (_, { dispatch }) => {
+  const token = getTokenFromStorage();
+  if (!token) {
+    dispatch(setAuthLoading(false));
+    return null;
   }
-);
+
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_API_BASE_URL}/auth/validate-token`, // ✅ Corrected path
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    if (!response.ok) {
+      throw new Error('Token invalid');
+    }
+
+    const user = await response.json();
+    dispatch(loginSuccess({ user, token }));
+    return user;
+  } catch (error) {
+    console.error('Token validation failed:', error);
+    dispatch(logout());
+    return null;
+  } finally {
+    dispatch(setAuthLoading(false));
+  }
+});
 
 const authSlice = createSlice({
   name: 'auth',
   initialState: initialAuthState,
   reducers: {
-    loginSuccess: (
-      state,
-      action: PayloadAction<{ user: User; token: string }>
-    ) => {
+    loginSuccess: (state, action: PayloadAction<{ user: User; token: string }>) => {
       state.user = action.payload.user;
       state.token = action.payload.token;
       state.loading = false;

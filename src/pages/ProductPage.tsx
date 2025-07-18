@@ -20,7 +20,7 @@ import QuantitySelector from '@/components/product/QuantitySelector';
 import ShippingInfo from '@/components/product/ShippingInfo';
 import RelatedProducts from '@/components/product/RelatedProducts';
 import { useAuth } from '@/context/useAuth';
-import { useAppDispatch, addToCart } from '@/store/store';
+import { useAppDispatch, addToCart } from '@/store';
 
 interface Color {
   name: string;

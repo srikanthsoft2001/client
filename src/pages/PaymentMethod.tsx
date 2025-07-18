@@ -163,8 +163,8 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '@/store/store';
-import { clearCart } from '@/store/store';
+import { AppDispatch, RootState } from '@/store';
+import { clearCart } from '@/store';
 import { toast } from 'react-toastify';
 import { createOrder } from '@/api/cart';
 

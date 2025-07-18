@@ -2,7 +2,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import CartItem from '@/components/cart/CartItem';
 import CartSummary from '@/components/cart/CartSummary';
 import { Button } from '@/components/ui/button';
-import { removeFromCart, RootState, updateQuantity } from '@/store/store';
+import { removeFromCart, RootState, updateQuantity } from '@/store';
 
 const Cart: React.FC = () => {
   const products = useSelector((state: RootState) => state.cart);
@@ -17,10 +17,7 @@ const Cart: React.FC = () => {
     dispatch(removeFromCart(_id));
   };
 
-  const subtotal = products.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  );
+  const subtotal = products.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   return (
     <div className="container mx-auto px-4 py-12 max-w-6xl">

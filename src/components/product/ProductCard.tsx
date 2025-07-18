@@ -5,7 +5,7 @@ import { FiHeart, FiEye, FiStar, FiTrash2 } from 'react-icons/fi';
 import { FaShoppingCart } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { addToWishlist, removeFromWishlist } from '@/api/api';
-import { addToCart, useAppDispatch } from '@/store/store';
+import { addToCart, useAppDispatch } from '@/store';
 import { useAuth } from '@/context/useAuth';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';

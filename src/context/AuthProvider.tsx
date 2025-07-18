@@ -1,7 +1,7 @@
 // src/context/AuthProvider.tsx
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import { useSelector } from 'react-redux';
-import { useAppDispatch, RootState, loginSuccess, logout } from '@/store/store';
+import { useAppDispatch, RootState, loginSuccess, logout } from '@/store';
 import { AuthContext } from './AuthContext';
 import { User } from './authTypes';
 

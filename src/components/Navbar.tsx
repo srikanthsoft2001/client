@@ -5,7 +5,7 @@ import { Search, Heart, ShoppingCart, User, Menu, X, LogOut } from 'lucide-react
 
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from '@/store/store';
+import { RootState } from '@/store';
 import { toast } from 'react-toastify';
 import { useAuth } from '@/context/useAuth';
 

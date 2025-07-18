@@ -1,6 +1,6 @@
 // src/pages/OrderListPage.tsx
 import { useEffect, useState } from 'react';
-import { useAppSelector } from '@/store/store';
+import { useAppSelector } from '@/store';
 import { Card } from '@/components/ui/card';
 import { fetchUserOrders } from '@/api/cart';
 
@@ -46,8 +46,7 @@ export const OrderListPage = () => {
     loadOrders();
   }, [user]);
 
-  if (!user)
-    return <div className="p-6">Please login to view your orders.</div>;
+  if (!user) return <div className="p-6">Please login to view your orders.</div>;
   if (loading) return <div className="p-6">Loading orders...</div>;
   if (error) return <div className="p-6 text-red-500">{error}</div>;
 
@@ -57,9 +56,7 @@ export const OrderListPage = () => {
       {orders.length === 0 && <div>No orders found.</div>}
       {orders.map((order) => (
         <Card key={order._id} className="p-4 space-y-2">
-          <div className="text-sm text-gray-700 font-medium">
-            Order ID: {order._id}
-          </div>
+          <div className="text-sm text-gray-700 font-medium">Order ID: {order._id}</div>
           <div className="text-sm">Total: ₹{order.totalAmount}</div>
           <div className="text-sm">Payment: {order.paymentMethod}</div>
           <div className="text-sm">Status: {order.status}</div>
