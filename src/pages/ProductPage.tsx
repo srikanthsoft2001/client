@@ -1,4 +1,3 @@
-// ProductPage.tsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
@@ -60,6 +59,19 @@ const ProductPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isWishlisted, setIsWishlisted] = useState<boolean>(false);
 
+  // Helper to extract images from product object dynamically
+  const extractImages = (product: {
+    mainImageUrl?: string;
+    subimageUrls?: string[];
+    images?: string[];
+  }): string[] => {
+    const images: string[] = [];
+    if (product.mainImageUrl) images.push(product.mainImageUrl);
+    if (Array.isArray(product.subimageUrls)) images.push(...product.subimageUrls);
+    if (Array.isArray(product.images)) images.push(...product.images);
+    return images;
+  };
+
   useEffect(() => {
     const fetchProductAndWishlist = async () => {
       setIsLoading(true);
@@ -76,10 +88,7 @@ const ProductPage: React.FC = () => {
           originalPrice: product.originalPrice ? Number(product.originalPrice) : undefined,
           rating: Number(product.rating) || 0,
           reviewCount: Number(product.reviewsCount || 0),
-          images: [
-            ...(product.mainImageUrl ? [product.mainImageUrl] : []),
-            ...(Array.isArray(product.images) ? product.images : []),
-          ],
+          images: extractImages(product),
           colors: Array.isArray(product.colors)
             ? product.colors.map((color: string) => ({ name: color, value: color }))
             : [],
@@ -91,6 +100,7 @@ const ProductPage: React.FC = () => {
           mainImageUrl: product.mainImageUrl,
         };
         setProductData(validated);
+
         if (validated.colors.length) setSelectedColor(validated.colors[0].value);
         if (validated.sizes.length) {
           const mid = Math.floor(validated.sizes.length / 2);
