@@ -35,6 +35,7 @@ import RealEstatePage from './pages/ProductPages/RealEstatePage';
 import MedicalPage from './pages/ProductPages/MedicalPage';
 import { AuthProvider } from './context/AuthProvider';
 import Chatbot from './pages/Chatbot';
+import AddProduct from './pages/AddProduct';
 
 const queryClient = new QueryClient();
 
@@ -101,6 +102,7 @@ const AppContent = () => {
                     <Route path="order-list" element={<OrderListPage />} />
                   </Route>
                   <Route path="/chat" element={<Chatbot />} />
+                  <Route path="/addproduct" element={<AddProduct />} />
                 </Route>
               </Route>
             </Routes>
