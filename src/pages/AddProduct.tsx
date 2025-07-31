@@ -1,12 +1,12 @@
 import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 
 type ProductData = {
-  title: string;
+  name: string;
   originalPrice: string;
-  discount: string;
+  discountPercentage: string;
   description: string;
-  mainImage: File | null;
-  subImages: File[];
+  mainImageUrl: File | null;
+  subimageUrls: File[];
   category: string;
   stockQuantity: string;
   saleType: string;
@@ -14,12 +14,12 @@ type ProductData = {
 
 const AddProduct: React.FC = () => {
   const [form, setForm] = useState<ProductData>({
-    title: '',
+    name: '',
     originalPrice: '',
-    discount: '',
+    discountPercentage: '',
     description: '',
-    mainImage: null,
-    subImages: [],
+    mainImageUrl: null,
+    subimageUrls: [],
     category: '',
     stockQuantity: '',
     saleType: '',
@@ -35,7 +35,7 @@ const AddProduct: React.FC = () => {
 
   useEffect(() => {
     const price = parseFloat(form.originalPrice);
-    const discount = parseFloat(form.discount);
+    const discount = parseFloat(form.discountPercentage);
 
     if (!isNaN(price)) {
       const discountAmount = !isNaN(discount) ? (price * discount) / 100 : 0;
@@ -44,7 +44,7 @@ const AddProduct: React.FC = () => {
     } else {
       setSalePrice(null);
     }
-  }, [form.originalPrice, form.discount]);
+  }, [form.originalPrice, form.discountPercentage]);
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
@@ -84,7 +84,7 @@ const AddProduct: React.FC = () => {
       }
       setErrors((prev) => ({ ...prev, subImages: '' }));
 
-      const newFiles = [...form.subImages];
+      const newFiles = [...form.subimageUrls];
       const newPreviews = [...subImagePreviews];
 
       if (index < newFiles.length) {
@@ -102,7 +102,7 @@ const AddProduct: React.FC = () => {
 
   const validate = (): boolean => {
     const newErrors: Record<string, string> = {};
-    if (!form.title.trim()) newErrors.title = 'Title is required';
+    if (!form.name.trim()) newErrors.title = 'Title is required';
     if (
       !form.originalPrice.trim() ||
       isNaN(Number(form.originalPrice)) ||
@@ -111,14 +111,16 @@ const AddProduct: React.FC = () => {
       newErrors.originalPrice = 'Valid original price is required';
     }
     if (
-      form.discount &&
-      (isNaN(Number(form.discount)) || Number(form.discount) < 0 || Number(form.discount) > 100)
+      form.discountPercentage &&
+      (isNaN(Number(form.discountPercentage)) ||
+        Number(form.discountPercentage) < 0 ||
+        Number(form.discountPercentage) > 100)
     ) {
       newErrors.discount = 'Discount must be between 0 and 100';
     }
     if (!form.description.trim()) newErrors.description = 'Description is required';
-    if (!form.mainImage) newErrors.mainImage = 'Main image is required';
-    if (form.subImages.length !== 4) newErrors.subImages = 'Exactly 4 sub-images are required';
+    if (!form.mainImageUrl) newErrors.mainImage = 'Main image is required';
+    if (form.subimageUrls.length !== 4) newErrors.subImages = 'Exactly 4 sub-images are required';
     if (!form.category) newErrors.category = 'Category is required';
     if (
       !form.stockQuantity.trim() ||
@@ -137,17 +139,17 @@ const AddProduct: React.FC = () => {
     if (!validate()) return;
 
     const formData = new FormData();
-    formData.append('title', form.title);
+    formData.append('title', form.name);
     formData.append('originalPrice', form.originalPrice);
-    formData.append('discount', form.discount);
+    formData.append('discount', form.discountPercentage);
     formData.append('description', form.description);
     formData.append('category', form.category);
     formData.append('stockQuantity', form.stockQuantity);
     formData.append('saleType', form.saleType);
-    if (form.mainImage) {
-      formData.append('mainImage', form.mainImage);
+    if (form.mainImageUrl) {
+      formData.append('mainImage', form.mainImageUrl);
     }
-    form.subImages.forEach((file, i) => {
+    form.subimageUrls.forEach((file, i) => {
       formData.append(`subImage${i + 1}`, file);
     });
 
@@ -157,12 +159,12 @@ const AddProduct: React.FC = () => {
     });
 
     setForm({
-      title: '',
+      name: '',
       originalPrice: '',
-      discount: '',
+      discountPercentage: '',
       description: '',
-      mainImage: null,
-      subImages: [],
+      mainImageUrl: null,
+      subimageUrls: [],
       category: '',
       stockQuantity: '',
       saleType: 'none',
@@ -189,11 +191,11 @@ const AddProduct: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm md:text-base font-medium text-gray-700 mb-1">
-                    Title*
+                    Name*
                   </label>
                   <input
-                    name="title"
-                    value={form.title}
+                    name="name"
+                    value={form.name}
                     onChange={handleChange}
                     className="mt-1 block w-full border border-gray-300 rounded-md p-2 md:p-3 bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   />
@@ -248,7 +250,7 @@ const AddProduct: React.FC = () => {
                     min="0"
                     max="100"
                     step="1"
-                    value={form.discount}
+                    value={form.discountPercentage}
                     onChange={handleChange}
                     className="mt-1 block w-full border border-gray-300 rounded-md p-2 md:p-3 bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   />
@@ -403,7 +405,7 @@ const AddProduct: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => {
-                              const newFiles = [...form.subImages];
+                              const newFiles = [...form.subimageUrls];
                               const newPreviews = [...subImagePreviews];
                               newFiles.splice(index, 1);
                               newPreviews.splice(index, 1);
