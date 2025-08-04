@@ -2,7 +2,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search, Heart, ShoppingCart, User, Menu, X, LogOut } from 'lucide-react';
-
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
@@ -134,15 +133,17 @@ const Navbar = () => {
                 </Link>
               )}
 
-              {/* Mobile Menu Toggle */}
-              <Button
-                variant="ghost"
-                size="icon"
-                className="md:hidden text-white"
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-              >
-                {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-              </Button>
+              {/* Mobile Menu Toggle - Only show for sellers */}
+              {user?.role === 'seller' && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="md:hidden text-white"
+                  onClick={() => setIsMenuOpen(!isMenuOpen)}
+                >
+                  {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                </Button>
+              )}
             </div>
           </div>
         </div>
@@ -176,18 +177,20 @@ const Navbar = () => {
       {/* Bottom Navigation Bar with Horizontal Categories Only */}
       <div className="bg-primary text-secondary shadow-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center h-10">
-          {/* Dashboard Button */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-white"
-            onClick={() => navigate('/dashboard')}
-          >
-            <Menu size={24} />
-          </Button>
+          {/* Dashboard Button - Only for sellers */}
+          {user?.role === 'seller' && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-white"
+              onClick={() => navigate('/dashboard')}
+            >
+              <Menu size={24} />
+            </Button>
+          )}
 
           {/* Horizontal Categories */}
-          <div className="hidden md:flex ml-6 gap-6">
+          <div className={`${user?.role === 'seller' ? 'md:ml-6' : 'ml-0'} hidden md:flex gap-6`}>
             {categories.map((cat, idx) => (
               <Link key={idx} to={`/category/${slugify(cat.name)}`} className="hover:text-gray-300">
                 {cat.name}

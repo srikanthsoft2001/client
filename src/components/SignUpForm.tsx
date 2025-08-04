@@ -1,4 +1,4 @@
-import ReusableForm from './ReusableForm'; // Adjust the import path as needed
+import ReusableForm from './ReusableForm';
 
 interface SignUpFormData {
   name: string;
@@ -8,9 +8,10 @@ interface SignUpFormData {
 
 interface SignUpFormProps {
   onSubmit: (formData: SignUpFormData) => void;
+  isLoading: boolean;
 }
 
-const SignUpForm = ({ onSubmit }: SignUpFormProps) => {
+const SignUpForm = ({ onSubmit, isLoading }: SignUpFormProps) => {
   const formFields = [
     {
       name: 'name',
@@ -45,11 +46,13 @@ const SignUpForm = ({ onSubmit }: SignUpFormProps) => {
         fields={formFields}
         onSubmit={handleSubmit}
         submitLabel="Create Account"
+        isLoading={isLoading}
       />
 
       <button
         type="button"
-        className="w-full mt-4 py-3 flex items-center justify-center gap-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+        className="w-full mt-4 py-3 flex items-center justify-center gap-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+        disabled={isLoading}
       >
         <img
           src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"

@@ -4,6 +4,7 @@ export interface User {
   _id: string;
   name: string;
   email: string;
+  role: 'seller' | 'buyer';
 }
 
 export interface AuthContextType {

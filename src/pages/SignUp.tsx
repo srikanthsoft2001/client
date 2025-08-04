@@ -1,27 +1,44 @@
-// src/pages/SignUp.tsx
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { signup } from '@/api/auth';
 import SignUpForm from '../components/SignUpForm';
 
+interface SignupPayload {
+  name: string;
+  email: string;
+  password: string;
+  role: 'seller' | 'buyer';
+}
+
 const SignUp = () => {
   const navigate = useNavigate();
+  const [userType, setUserType] = useState<'seller' | 'buyer' | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = async (formData: {
-    name: string;
-    email: string;
-    password: string;
-  }) => {
+  const handleSubmit = async (formData: { name: string; email: string; password: string }) => {
+    if (!userType) {
+      setError('Please select a user type');
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+
     try {
-      const response = await signup(formData);
+      const payload: SignupPayload = {
+        ...formData,
+        role: userType,
+      };
+
+      const response = await signup(payload);
       console.log('Signup successful:', response);
-
-      // Optional: show success message here
-
-      // Redirect to login after signup
       navigate('/login');
     } catch (error) {
       console.error('Signup failed:', error);
-      alert('Signup failed. Please try again.');
+      setError('Signup failed. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -41,7 +58,64 @@ const SignUp = () => {
 
             {/* Right side - Sign up form */}
             <div className="w-full md:w-1/2 flex flex-col justify-center">
-              <SignUpForm onSubmit={handleSubmit} />
+              <h2 className="text-2xl font-bold mb-6 text-center">Create an Account</h2>
+
+              {error && (
+                <div className="mb-4 p-2 bg-red-100 text-red-700 rounded-md text-center">
+                  {error}
+                </div>
+              )}
+
+              {!userType ? (
+                <div className="space-y-4">
+                  <p className="text-gray-600 mb-4 text-center">
+                    Are you signing up as a buyer or seller?
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    <button
+                      onClick={() => setUserType('buyer')}
+                      className="w-full bg-red-500 text-white px-6 py-3 rounded-md hover:bg-red-600 transition-all duration-300 hover:shadow-md active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed"
+                    >
+                      I'm a Buyer
+                    </button>
+                    <button
+                      onClick={() => setUserType('seller')}
+                      className="w-full bg-red-500 text-white px-6 py-3 rounded-md hover:bg-red-600 transition-all duration-300 hover:shadow-md active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed"
+                    >
+                      I'm a Seller
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div className="mb-6 flex justify-center gap-2">
+                    <button
+                      onClick={() => setUserType(null)}
+                      className="text-sm text-gray-600 hover:text-gray-800 flex items-center"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4 mr-1"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                        />
+                      </svg>
+                      Back
+                    </button>
+                    <span className="text-sm font-medium text-gray-700">
+                      Signing up as a {userType}
+                    </span>
+                  </div>
+                  <SignUpForm onSubmit={handleSubmit} isLoading={isLoading} />
+                </>
+              )}
             </div>
           </div>
         </div>
