@@ -1,3 +1,4 @@
+import { createProduct } from '@/api/api';
 import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 
 type ProductData = {
@@ -5,8 +6,8 @@ type ProductData = {
   originalPrice: string;
   discountPercentage: string;
   description: string;
-  mainImageUrl: File | null;
-  subimageUrls: File[];
+  mainImage: File | null;
+  subImages: File[];
   category: string;
   stockQuantity: string;
   saleType: string;
@@ -18,8 +19,8 @@ const AddProduct: React.FC = () => {
     originalPrice: '',
     discountPercentage: '',
     description: '',
-    mainImageUrl: null,
-    subimageUrls: [],
+    mainImage: null,
+    subImages: [],
     category: '',
     stockQuantity: '',
     saleType: '',
@@ -29,6 +30,7 @@ const AddProduct: React.FC = () => {
   const [mainImagePreview, setMainImagePreview] = useState<string | null>(null);
   const [subImagePreviews, setSubImagePreviews] = useState<string[]>([]);
   const [salePrice, setSalePrice] = useState<number | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const categories = ['Food', 'Electronics', 'Realestate', 'Medical & Para Medical'];
   const saleTypes = ['none', 'Flash sale', 'Best selling'];
@@ -40,7 +42,7 @@ const AddProduct: React.FC = () => {
     if (!isNaN(price)) {
       const discountAmount = !isNaN(discount) ? (price * discount) / 100 : 0;
       const calculatedSalePrice = price - discountAmount;
-      setSalePrice(Number(calculatedSalePrice.toFixed(2)));
+      setSalePrice(calculatedSalePrice);
     } else {
       setSalePrice(null);
     }
@@ -56,9 +58,9 @@ const AddProduct: React.FC = () => {
   const validateImageSize = (file: File, type: 'main' | 'sub'): boolean => {
     const sizeInKB = file.size / 1024;
     if (type === 'main') {
-      return sizeInKB >= 300 && sizeInKB <= 1024; // 300KB to 1MB
+      return sizeInKB >= 300 && sizeInKB <= 1024;
     } else {
-      return sizeInKB >= 100 && sizeInKB <= 300; // 100KB to 300KB
+      return sizeInKB >= 100 && sizeInKB <= 300;
     }
   };
 
@@ -84,7 +86,7 @@ const AddProduct: React.FC = () => {
       }
       setErrors((prev) => ({ ...prev, subImages: '' }));
 
-      const newFiles = [...form.subimageUrls];
+      const newFiles = [...form.subImages];
       const newPreviews = [...subImagePreviews];
 
       if (index < newFiles.length) {
@@ -102,7 +104,8 @@ const AddProduct: React.FC = () => {
 
   const validate = (): boolean => {
     const newErrors: Record<string, string> = {};
-    if (!form.name.trim()) newErrors.title = 'Title is required';
+
+    if (!form.name.trim()) newErrors.name = 'Name is required';
     if (
       !form.originalPrice.trim() ||
       isNaN(Number(form.originalPrice)) ||
@@ -116,11 +119,11 @@ const AddProduct: React.FC = () => {
         Number(form.discountPercentage) < 0 ||
         Number(form.discountPercentage) > 100)
     ) {
-      newErrors.discount = 'Discount must be between 0 and 100';
+      newErrors.discountPercentage = 'Discount must be between 0 and 100';
     }
     if (!form.description.trim()) newErrors.description = 'Description is required';
-    if (!form.mainImageUrl) newErrors.mainImage = 'Main image is required';
-    if (form.subimageUrls.length !== 4) newErrors.subImages = 'Exactly 4 sub-images are required';
+    if (!form.mainImage) newErrors.mainImage = 'Main image is required';
+    if (form.subImages.length !== 4) newErrors.subImages = 'Exactly 4 sub-images are required';
     if (!form.category) newErrors.category = 'Category is required';
     if (
       !form.stockQuantity.trim() ||
@@ -134,45 +137,68 @@ const AddProduct: React.FC = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!validate()) return;
 
-    const formData = new FormData();
-    formData.append('title', form.name);
-    formData.append('originalPrice', form.originalPrice);
-    formData.append('discount', form.discountPercentage);
-    formData.append('description', form.description);
-    formData.append('category', form.category);
-    formData.append('stockQuantity', form.stockQuantity);
-    formData.append('saleType', form.saleType);
-    if (form.mainImageUrl) {
-      formData.append('mainImage', form.mainImageUrl);
+    if (!validate()) {
+      return;
     }
-    form.subimageUrls.forEach((file, i) => {
-      formData.append(`subImage${i + 1}`, file);
-    });
 
-    console.log('Submitting product:', {
-      ...form,
-      salePrice,
-    });
+    setIsSubmitting(true);
 
-    setForm({
-      name: '',
-      originalPrice: '',
-      discountPercentage: '',
-      description: '',
-      mainImageUrl: null,
-      subimageUrls: [],
-      category: '',
-      stockQuantity: '',
-      saleType: 'none',
-    });
-    setMainImagePreview(null);
-    setSubImagePreviews([]);
-    setErrors({});
-    setSalePrice(null);
+    try {
+      const formData = new FormData();
+
+      // Append all product data
+      formData.append('name', form.name);
+      formData.append('originalPrice', form.originalPrice);
+      formData.append('discountPercentage', form.discountPercentage || '0');
+      formData.append('description', form.description);
+      formData.append('category', form.category);
+      formData.append('stockQuantity', form.stockQuantity);
+      formData.append('saleType', form.saleType || 'none');
+
+      // Calculate and append sale price
+      const original = parseFloat(form.originalPrice);
+      const discount = parseFloat(form.discountPercentage || '0');
+      const salePrice = (original - (original * discount) / 100).toFixed(2);
+      formData.append('salePrice', salePrice);
+
+      // Append image files with correct field names
+      if (form.mainImage) {
+        formData.append('mainImage', form.mainImage);
+      }
+
+      form.subImages.forEach((file) => {
+        formData.append('subImages', file);
+      });
+
+      // Send to API
+      await createProduct(formData);
+
+      // Reset form on success
+      setForm({
+        name: '',
+        originalPrice: '',
+        discountPercentage: '',
+        description: '',
+        mainImage: null,
+        subImages: [],
+        category: '',
+        stockQuantity: '',
+        saleType: '',
+      });
+      setMainImagePreview(null);
+      setSubImagePreviews([]);
+      setErrors({});
+      setSalePrice(null);
+      alert('Product added successfully!');
+    } catch (error) {
+      console.error('Error submitting product:', error);
+      setErrors((prev) => ({ ...prev, submit: 'Failed to submit product. Please try again.' }));
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -182,13 +208,15 @@ const AddProduct: React.FC = () => {
           <h2 className="text-2xl md:text-3xl font-bold mb-6 text-center text-gray-800">
             Add Product
           </h2>
+
           <form onSubmit={handleSubmit} encType="multipart/form-data" className="space-y-8">
             {/* Product Information Section */}
             <div className="pb-4">
               <h3 className="text-lg md:text-xl font-semibold text-gray-800 mb-4">
-                Add Single Product
+                Product Details
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Name Field */}
                 <div>
                   <label className="block text-sm md:text-base font-medium text-gray-700 mb-1">
                     Name*
@@ -199,9 +227,10 @@ const AddProduct: React.FC = () => {
                     onChange={handleChange}
                     className="mt-1 block w-full border border-gray-300 rounded-md p-2 md:p-3 bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   />
-                  {errors.title && <p className="text-red-600 text-sm mt-1">{errors.title}</p>}
+                  {errors.name && <p className="text-red-600 text-sm mt-1">{errors.name}</p>}
                 </div>
 
+                {/* Category Field */}
                 <div>
                   <label className="block text-sm md:text-base font-medium text-gray-700 mb-1">
                     Category*
@@ -224,13 +253,16 @@ const AddProduct: React.FC = () => {
                   )}
                 </div>
 
+                {/* Original Price Field */}
                 <div>
                   <label className="block text-sm md:text-base font-medium text-gray-700 mb-1">
                     Original Price*
                   </label>
                   <input
                     name="originalPrice"
-                    type="text"
+                    type="number"
+                    min="0"
+                    step="0.01"
                     value={form.originalPrice}
                     onChange={handleChange}
                     className="mt-1 block w-full border border-gray-300 rounded-md p-2 md:p-3 bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -240,12 +272,13 @@ const AddProduct: React.FC = () => {
                   )}
                 </div>
 
+                {/* Discount Percentage Field */}
                 <div>
                   <label className="block text-sm md:text-base font-medium text-gray-700 mb-1">
                     Discount (%)
                   </label>
                   <input
-                    name="discount"
+                    name="discountPercentage"
                     type="number"
                     min="0"
                     max="100"
@@ -254,23 +287,25 @@ const AddProduct: React.FC = () => {
                     onChange={handleChange}
                     className="mt-1 block w-full border border-gray-300 rounded-md p-2 md:p-3 bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   />
-                  {errors.discount && (
-                    <p className="text-red-600 text-sm mt-1">{errors.discount}</p>
+                  {errors.discountPercentage && (
+                    <p className="text-red-600 text-sm mt-1">{errors.discountPercentage}</p>
                   )}
                 </div>
 
+                {/* Sale Price Field (Read-only) */}
                 <div>
                   <label className="block text-sm md:text-base font-medium text-gray-700 mb-1">
                     Sale Price
                   </label>
                   <input
-                    type="text"
+                    type="number"
                     readOnly
                     value={salePrice !== null ? salePrice.toFixed(2) : ''}
                     className="mt-1 block w-full border border-gray-300 rounded-md p-2 md:p-3 bg-gray-100 text-gray-700 cursor-not-allowed"
                   />
                 </div>
 
+                {/* Stock Quantity Field */}
                 <div>
                   <label className="block text-sm md:text-base font-medium text-gray-700 mb-1">
                     Stock Quantity*
@@ -288,6 +323,7 @@ const AddProduct: React.FC = () => {
                   )}
                 </div>
 
+                {/* Sale Type Field */}
                 <div>
                   <label className="block text-sm md:text-base font-medium text-gray-700 mb-1">
                     Sale Type
@@ -298,7 +334,7 @@ const AddProduct: React.FC = () => {
                     onChange={handleChange}
                     className="mt-1 block w-full border border-gray-300 rounded-md p-2 md:p-3 bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   >
-                    <option value="disabled selected">Select sale type</option>
+                    <option value="">Select sale type</option>
                     {saleTypes.map((type) => (
                       <option key={type} value={type}>
                         {type}
@@ -307,6 +343,7 @@ const AddProduct: React.FC = () => {
                   </select>
                 </div>
 
+                {/* Description Field */}
                 <div className="md:col-span-2">
                   <label className="block text-sm md:text-base font-medium text-gray-700 mb-1">
                     Description*
@@ -325,10 +362,11 @@ const AddProduct: React.FC = () => {
               </div>
             </div>
 
-            {/* Images Section */}
+            {/* Product Images Section */}
             <div className="pb-4">
               <h3 className="text-base font-semibold text-gray-800 mb-2">Product Images</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Main Image Upload */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Main Image* (300KB-1MB)
@@ -374,6 +412,7 @@ const AddProduct: React.FC = () => {
                   )}
                 </div>
 
+                {/* Sub Images Upload */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Sub Images (4 required, 100KB-300KB each)*
@@ -405,7 +444,7 @@ const AddProduct: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => {
-                              const newFiles = [...form.subimageUrls];
+                              const newFiles = [...form.subImages];
                               const newPreviews = [...subImagePreviews];
                               newFiles.splice(index, 1);
                               newPreviews.splice(index, 1);
@@ -431,46 +470,18 @@ const AddProduct: React.FC = () => {
             <div className="flex justify-center">
               <button
                 type="submit"
-                className="bg-red-500 hover:bg-red-600 text-white font-medium py-3 px-8 rounded-md text-lg transition-colors shadow-md"
+                disabled={isSubmitting}
+                className={`bg-red-500 hover:bg-red-600 text-white font-medium py-3 px-8 rounded-md text-lg transition-colors shadow-md ${
+                  isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
               >
-                Add Product
+                {isSubmitting ? 'Adding Product...' : 'Add Product'}
               </button>
             </div>
+            {errors.submit && (
+              <p className="text-red-600 text-sm text-center mt-2">{errors.submit}</p>
+            )}
           </form>
-
-          {/* <div className="flex justify-center">
-            <p className="mt-4">OR</p>
-          </div> */}
-
-          {/* Bulk Upload Section */}
-          {/* <div className="pt-4">
-            <h3 className="text-lg md:text-xl font-semibold text-gray-800 mb-4">
-              Add Multiple Products
-            </h3>
-            <div className="flex flex-col md:flex-row md:items-center md:justify-center gap-4">
-              <input
-                type="file"
-                accept=".csv, .xlsx, .xls"
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (file) {
-                    console.log('Bulk file selected:', file);
-                    alert(`Selected file: ${file.name}`);
-                  }
-                }}
-                className="block w-full max-w-sm text-sm text-gray-900 border border-gray-300 rounded-md cursor-pointer"
-              />
-              <button
-                type="button"
-                className="bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-6 rounded-md text-lg transition-colors shadow-md"
-              >
-                Upload
-              </button>
-            </div>
-            <p className="text-sm text-center text-gray-500 mt-2">
-              Supported formats: .csv, .xlsx, .xls (Max: 5MB)
-            </p>
-          </div> */}
         </div>
       </div>
     </div>

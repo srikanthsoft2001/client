@@ -15,7 +15,7 @@ type Product = {
   name: string;
   originalPrice: string;
   salePrice: string;
-  discountPercentage: string;
+  discountPercentage: number;
   mainImageUrl: string;
   rating: number;
   saleType: string;
@@ -137,9 +137,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
       className="border border-gray-200 overflow-hidden cursor-pointer hover:shadow-md transition-shadow duration-300"
     >
       <div className="relative">
-        {item.discountPercentage && (
+        {item.discountPercentage >= 1 && (
           <div className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 text-xs rounded">
-            {item.discountPercentage}
+            {item.discountPercentage}%
           </div>
         )}
         <div className="absolute top-2 right-2 flex space-x-1 z-10">

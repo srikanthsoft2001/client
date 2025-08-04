@@ -1,6 +1,7 @@
+// api.ts
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://13.204.19.250:3000' ;
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -29,7 +30,7 @@ export interface ProductItem {
   saleType: string;
   category: string;
 }
-// src/types/api.ts
+
 export interface APIError {
   response?: {
     data?: {
@@ -102,6 +103,27 @@ export const getProduct = async (id: string): Promise<ProductItem | null> => {
   } catch (error) {
     console.error('Error fetching product:', error);
     return null;
+  }
+};
+
+export const createProduct = async (productData: FormData): Promise<ProductItem> => {
+  try {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      throw new Error('No authentication token found');
+    }
+
+    const response = await api.post<ProductItem>(`${API_BASE_URL}/products/add`, productData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('Error creating product:', error);
+    throw error;
   }
 };
 

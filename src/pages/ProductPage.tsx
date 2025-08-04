@@ -62,12 +62,12 @@ const ProductPage: React.FC = () => {
   // Helper to extract images from product object dynamically
   const extractImages = (product: {
     mainImageUrl?: string;
-    subimageUrls?: string[];
+    subImageUrls?: string[];
     images?: string[];
   }): string[] => {
     const images: string[] = [];
     if (product.mainImageUrl) images.push(product.mainImageUrl);
-    if (Array.isArray(product.subimageUrls)) images.push(...product.subimageUrls);
+    if (Array.isArray(product.subImageUrls)) images.push(...product.subImageUrls);
     if (Array.isArray(product.images)) images.push(...product.images);
     return images;
   };
